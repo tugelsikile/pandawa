@@ -13,3 +13,15 @@ const mix = require('laravel-mix');
 
 mix.js('resources/js/app.js', 'public/js')
    .sass('resources/sass/app.scss', 'public/css');
+
+//mix css
+mix.styles([
+    'vendor/fortawesome/font-awesome/css/font-awesome.min.css',
+    'node_modules/sweetalert2/dist/sweetalert2.min.css'
+],'public/pandawa/css/mix-all.css');
+
+mix.scripts([
+    'node_modules/sweetalert2/dist/sweetalert2.min.js',
+],'public/pandawa/js/mix-all.js');
+
+mix.copyDirectory('vendor/fortawesome/font-awesome/fonts', 'public/fonts');
