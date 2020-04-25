@@ -81,7 +81,7 @@
 
             <div class="content">
                 <div class="title m-b-md">
-                    {{ config('app.name', 'Laravel') }}
+                    <img src="{{ asset('images/logo.png') }}" height="100%">
                 </div>
 
                 <div class="links">
