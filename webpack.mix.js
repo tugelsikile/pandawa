@@ -17,8 +17,10 @@ const mix = require('laravel-mix');
 //mix css
 mix.styles([
     'vendor/twitter/bootstrap/dist/css/bootstrap.min.css',
+    'vendor/datatables/datatables/media/css/dataTables.bootstrap.css',
     'vendor/fortawesome/font-awesome/css/font-awesome.min.css',
-    'node_modules/sweetalert2/dist/sweetalert2.min.css'
+    'node_modules/sweetalert2/dist/sweetalert2.min.css',
+    'resources/sass/custom.scss'
 ],'public/pandawa/css/mix-all.css');
 mix.styles([
     'vendor/twitter/bootstrap/dist/css/bootstrap.min.css',
@@ -28,7 +30,9 @@ mix.styles([
 
 mix.scripts([
     'vendor/components/jquery/jquery.min.js',
+    'vendor/datatables/datatables/media/js/jquery.dataTables.min.js',
     'vendor/twitter/bootstrap/dist/js/bootstrap.min.js',
+    'vendor/datatables/datatables/media/js/dataTables.bootstrap.js',
     'node_modules/sweetalert2/dist/sweetalert2.min.js',
 ],'public/pandawa/js/mix-all.js');
 mix.scripts([

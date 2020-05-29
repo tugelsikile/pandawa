@@ -10,7 +10,7 @@
     <title>{{ config('app.name', 'Laravel') }}</title>
 
     <!-- Scripts -->
-    <script src="{{ asset('pandawa/js/mix-all.js') }}" defer></script>
+    <script src="{{ asset('pandawa/js/mix-all.js') }}"></script>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -35,10 +35,10 @@
         </div>
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
-                <li><a href="{{ url('/home') }}"><i class="fa fa-home"></i> Dashboard</a></li>
+                <li class="@isset($curMenu) @if($curMenu == 'dashboard') active @endif @endisset"><a href="{{ url('/home') }}"><i class="fa fa-home"></i> Dashboard</a></li>
                 @if($menus)
                     @foreach($menus as $key => $val)
-                        <li><a href="{{ url($val->ctrl_url) }}">{!! $val->ctrl_icon !!}&nbsp;{{ $val->ctrl_label }}</a></li>
+                        <li class="@isset($curMenu) @if($curMenu == $val->ctrl_url) active @endif @endisset"><a href="{{ url($val->ctrl_url) }}">{!! $val->ctrl_icon !!}&nbsp;{{ $val->ctrl_label }}</a></li>
                     @endforeach
                 @endif
             </ul>

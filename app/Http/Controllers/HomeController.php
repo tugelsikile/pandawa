@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 class HomeController extends Controller
 {
     protected $userMenuRepositories;
-
+    public $curMenu = 'dashboard';
     public function __construct(
         UserMenuRepositories $userMenuRepositories
     )
@@ -20,7 +20,8 @@ class HomeController extends Controller
 
     public function index()
     {
+        $curMenu = $this->curMenu;
         $menus = $this->userMenuRepositories->getMenu(Auth::user()->level);
-        return view('home',compact('menus'));
+        return view('home',compact('curMenu','menus'));
     }
 }
