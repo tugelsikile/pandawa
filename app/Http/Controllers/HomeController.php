@@ -3,26 +3,24 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Repositories\UserMenuRepositories;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
+    protected $userMenuRepositories;
+
+    public function __construct(
+        UserMenuRepositories $userMenuRepositories
+    )
     {
+        $this->userMenuRepositories = $userMenuRepositories;
         $this->middleware('auth');
     }
 
-    /**
-     * Show the application dashboard.
-     *
-     * @return \Illuminate\Contracts\Support\Renderable
-     */
     public function index()
     {
-        return view('home');
+        $menus = $this->userMenuRepositories->getMenu(Auth::user()->level);
+        return view('home',compact('menus'));
     }
 }

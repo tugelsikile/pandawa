@@ -37,4 +37,9 @@ class User extends Authenticatable
     protected $casts = [
         'created' => 'datetime',
     ];
+
+    public function userLevelOjb(){
+        return $this->belongsTo(UserLevel::class,'level');
+    }
+
 }

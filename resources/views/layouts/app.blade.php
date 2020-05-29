@@ -34,6 +34,14 @@
             </a>
         </div>
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li><a href="{{ url('/home') }}"><i class="fa fa-home"></i> Dashboard</a></li>
+                @if($menus)
+                    @foreach($menus as $key => $val)
+                        <li><a href="{{ url($val->ctrl_url) }}">{!! $val->ctrl_icon !!}&nbsp;{{ $val->ctrl_label }}</a></li>
+                    @endforeach
+                @endif
+            </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li><a class="" href="{{ url('user/'.Auth::user()->id) }}">{{ Auth::user()->name }}</a></li>
                 <li class="dropdown">

@@ -1,4 +1,6 @@
 {
-    "/js/app.js": "/js/app.js",
-    "/css/app.css": "/css/app.css"
+    "/pandawa/css/mix-all.css": "/pandawa/css/mix-all.css",
+    "/pandawa/css/guest.css": "/pandawa/css/guest.css",
+    "/pandawa/js/mix-all.js": "/pandawa/js/mix-all.js",
+    "/pandawa/js/guest.js": "/pandawa/js/guest.js"
 }
