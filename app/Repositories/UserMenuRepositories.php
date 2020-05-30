@@ -18,6 +18,7 @@ class UserMenuRepositories{
             foreach ($data as $key => $val){
                 $exists = collect($datas)->where('ctrl_refs',$val->ctrl_refs);
                 if ($exists->isEmpty()){
+                    $val->ctrl_url = str_replace('_','-',$val->ctrl_url);
                     $datas[$key] = $val;
                 }
             }

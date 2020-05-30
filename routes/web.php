@@ -16,6 +16,11 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+Route::group(['prefix'=>'regional'],function (){
+    Route::get('/get-kab','RegionalController@kabupaten');
+    Route::get('/get-kec','RegionalController@kecamatan');
+    Route::get('/get-desa','RegionalController@desa');
+});
 
 Auth::routes();
 Route::group(['middleware'=>'auth'],function (){

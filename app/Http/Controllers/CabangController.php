@@ -8,7 +8,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Repositories\UserMenuRepositories;
 use App\Repositories\{
     UserPriviledgesRepositories,
-    CabangRepositories
+    CabangRepositories,
+    RegionalRepositories
 };
 
 class CabangController extends Controller
@@ -16,13 +17,17 @@ class CabangController extends Controller
     protected $menuRepositories;
     protected $cabangRepositories;
     protected $priviledges;
+    protected $regional;
     public $curMenu = 'admin-cabang';
+
     public function __construct(
         UserMenuRepositories $menuRepositories,
         UserPriviledgesRepositories $userPriviledgesRepositories,
-        CabangRepositories $cabangRepositories
+        CabangRepositories $cabangRepositories,
+        RegionalRepositories $regionalRepositories
     )
     {
+        $this->regional = $regionalRepositories;
         $this->cabangRepositories = $cabangRepositories;
         $this->priviledges = $userPriviledgesRepositories;
         $this->menuRepositories = $menuRepositories;
@@ -50,7 +55,8 @@ class CabangController extends Controller
         if ($request->method() == 'POST'){
 
         } else {
-            return view('cabang.create');
+            $prov = $this->regional->getProv($request);
+            return view('cabang.create',compact('prov'));
         }
     }
 }

@@ -13,6 +13,8 @@
                     <thead>
                     <tr>
                         <th>Nama Cabang</th>
+                        <th>Jenis</th>
+                        <th>Share</th>
                         <th>Jml Pelanggan</th>
                     </tr>
                     </thead>
@@ -36,6 +38,14 @@
             },
             "columns"   : [
                 { "data" : "cab_name" },
+                { "data" : "mitra", "width" : "100px", "className" : "text-center", render : function (a,b,c) {
+                        return c.mitra == 1 ? '<span class="label label-success">Mitra</span>' : '<span class="label label-default">Cabang</span>';
+                    }
+                },
+                { "data" : "share_percent", "width" : "50px", "className" : "text-center", render : function (a,b,c) {
+                        return c.share_percent+'%';
+                    }
+                },
                 { "data" : "customer_count", "width" : "70px", "className" : "text-center", "orderable" : false, render : function (a,b,c) {
                         return c.customer.length;
                     }

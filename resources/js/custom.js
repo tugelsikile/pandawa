@@ -1,3 +1,4 @@
+$.fn.select2.defaults.set( "theme", "bootstrap" );
 var btnSave = '<i class="fa fa-floppy-o"></i> Simpan';
 var btnSaveLoad = '<i class="fa fa-spin fa-circle-o-notch"></i> Simpan';
 var btnClose = '<i class="fa fa-close"></i> Tutup';
@@ -8,7 +9,7 @@ function show_modal(obj) {
     if (url){
         var html = '' +
             '<div id="MyModal" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static">\n' +
-            '  <form id="ModalForm" method="post" action="" onsubmit="submitForm(this);return false">' +
+            '  <form id="ModalForm" class="form form-horizontal" method="post" action="" onsubmit="submitForm(this);return false">' +
             '  <div class="modal-dialog modal-lg" role="document">\n' +
             '    <div class="modal-content">\n' +
             '      <div class="modal-header">\n' +
@@ -85,5 +86,86 @@ function showInfo(msg) {
     },{
         type : 'info',
         z_index : 99999
+    });
+}
+function ucWords(str) {
+    str = str.toLowerCase().replace(/\b[a-z]/g, function(letter) {
+        return letter.toUpperCase();
+    });
+    return str;
+}
+function getKab(obj) {
+    var prov_id = $(obj).val();
+    $('.regency_id').html('<option value="">Loading...</option>');
+    $.ajax({
+        url     : '/regional/get-kab',
+        type    : 'GET',
+        dataType: 'JSON',
+        data    : { id : prov_id },
+        error   : function (e) {
+            $('.regency_id,.district_id,.village_id').html('<option value="">'+e.statusText+'</option>');
+        },
+        success : function (e) {
+            if (e.code < 1000){
+                $('.regency_id,.district_id,.village_id').html('<option value="">'+e.msg+'</option>');
+            } else {
+                $('.regency_id').html('');
+                $.each(e.params,function (i,v) {
+                    $('.regency_id').append('<option value="'+v.id+'">'+ucWords(v.name)+'</option>');
+                    if (i + 1 >= e.params.length){
+                        $('.regency_id').trigger('change');
+                    }
+                });
+            }
+        }
+    });
+}
+function getKec(obj) {
+    var kab_id = $(obj).val();
+    $('.district_id').html('<option value="">Loading...</option>');
+    $.ajax({
+        url     : '/regional/get-kec',
+        type    : 'GET',
+        dataType: 'JSON',
+        data    : { id : kab_id },
+        error   : function (e) {
+            $('.district_id,.village_id').html('<option value="">'+e.statusText+'</option>');
+        },
+        success : function (e) {
+            if (e.code < 1000){
+                $('.district_id,.village_id').html('<option value="">'+e.msg+'</option>');
+            } else {
+                $('.district_id').html('');
+                $.each(e.params,function (i,v) {
+                    $('.district_id').append('<option value="'+v.id+'">'+ucWords(v.name)+'</option>');
+                    if (i + 1 >= e.params.length){
+                        $('.district_id').trigger('change');
+                    }
+                });
+            }
+        }
+    });
+}
+function getDesa(obj) {
+    var kab_id = $(obj).val();
+    $('.village_id').html('<option value="">Loading...</option>');
+    $.ajax({
+        url     : '/regional/get-desa',
+        type    : 'GET',
+        dataType: 'JSON',
+        data    : { id : kab_id },
+        error   : function (e) {
+            $('.village_id').html('<option value="">'+e.statusText+'</option>');
+        },
+        success : function (e) {
+            if (e.code < 1000){
+                $('.village_id').html('<option value="">'+e.msg+'</option>');
+            } else {
+                $('.village_id').html('');
+                $.each(e.params,function (i,v) {
+                    $('.village_id').append('<option value="'+v.id+'">'+ucWords(v.name)+'</option>');
+                });
+            }
+        }
     });
 }
