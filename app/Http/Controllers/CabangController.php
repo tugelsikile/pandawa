@@ -2,21 +2,28 @@
 
 namespace App\Http\Controllers;
 
+use Mockery\Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Repositories\UserMenuRepositories;
-use App\Repositories\UserPriviledgesRepositories;
+use App\Repositories\{
+    UserPriviledgesRepositories,
+    CabangRepositories
+};
 
 class CabangController extends Controller
 {
     protected $menuRepositories;
+    protected $cabangRepositories;
     protected $priviledges;
     public $curMenu = 'admin-cabang';
     public function __construct(
         UserMenuRepositories $menuRepositories,
-        UserPriviledgesRepositories $userPriviledgesRepositories
+        UserPriviledgesRepositories $userPriviledgesRepositories,
+        CabangRepositories $cabangRepositories
     )
     {
+        $this->cabangRepositories = $cabangRepositories;
         $this->priviledges = $userPriviledgesRepositories;
         $this->menuRepositories = $menuRepositories;
         $this->middleware('auth');
@@ -30,12 +37,20 @@ class CabangController extends Controller
         return view('cabang.index',compact('curMenu','menus','privs'));
     }
     public function table(Request $request){
-        $data = [
-            'draw' => $request->post('draw'),
-            'data' => [],
-            'recordsFiltered' => 0,
-            'recordsTotal' => 0
-        ];
-        return $data;
+        $response = [ 'draw' => $request->post('draw'), 'data' => [], 'recordsFiltered' => 0, 'recordsTotal' => 0 ];
+        try{
+            $data  = $this->cabangRepositories->table($request);
+            $response['data'] = $data;
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return $response;
+    }
+    public function create(Request $request){
+        if ($request->method() == 'POST'){
+
+        } else {
+            return view('cabang.create');
+        }
     }
 }

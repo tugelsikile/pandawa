@@ -20,6 +20,7 @@ mix.styles([
     'vendor/datatables/datatables/media/css/dataTables.bootstrap.css',
     'vendor/fortawesome/font-awesome/css/font-awesome.min.css',
     'node_modules/sweetalert2/dist/sweetalert2.min.css',
+    'node_modules/animate.css/animate.min.css',
     'resources/sass/custom.scss'
 ],'public/pandawa/css/mix-all.css');
 mix.styles([
@@ -34,6 +35,8 @@ mix.scripts([
     'vendor/twitter/bootstrap/dist/js/bootstrap.min.js',
     'vendor/datatables/datatables/media/js/dataTables.bootstrap.js',
     'node_modules/sweetalert2/dist/sweetalert2.min.js',
+    'vendor/mouse0270/bootstrap-growl/dist/bootstrap-notify.min.js',
+    'resources/js/custom.js'
 ],'public/pandawa/js/mix-all.js');
 mix.scripts([
     'vendor/components/jquery/jquery.min.js',

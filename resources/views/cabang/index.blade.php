@@ -6,16 +6,14 @@
             <div class="card-body">
                 <div class="mb-15">
                     @if($privs->C_opt == 1)
-                        <a href="" class="btn btn-primary"><i class="fa fa-plus"></i> Cabang Baru</a>
+                        <a title="Tambah Cabang" href="{{ url('admin-cabang/create') }}" class="btn btn-primary" onclick="show_modal(this);return false"><i class="fa fa-plus"></i> Cabang Baru</a>
                     @endif
                 </div>
                 <table class="table table-bordered" id="dataTable" style="width: 100%">
                     <thead>
                     <tr>
-                        <th><input type="checkbox"></th>
                         <th>Nama Cabang</th>
                         <th>Jml Pelanggan</th>
-                        <th>Tagihan Bulan Ini</th>
                     </tr>
                     </thead>
                     <tbody></tbody>
@@ -26,7 +24,7 @@
     <script>
         $('#dataTable').dataTable({
             "lengthMenu"    : [[30, 60, 120, 240, 580], [30, 60, 120, 240, 580]],
-            "order"         : [[ 1, "asc" ]],
+            "order"         : [[ 0, "asc" ]],
             "processing"    : true,
             "serverSide"    : true,
             "ajax"          : {
@@ -37,10 +35,11 @@
                 }
             },
             "columns"   : [
-                { "data" : "input", "width" : "20px", "className" : "text-center", "orderable" : false },
                 { "data" : "cab_name" },
-                { "data" : "customer_count", "width" : "70px", "className" : "text-center" },
-                { "data" : "invoice", "width" : "150px" }
+                { "data" : "customer_count", "width" : "70px", "className" : "text-center", "orderable" : false, render : function (a,b,c) {
+                        return c.customer.length;
+                    }
+                }
             ]
         });
     </script>
