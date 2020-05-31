@@ -10,6 +10,6 @@ class Provinces extends Model
     public $primaryKey = 'id';
 
     public function kabObj(){
-        return $this->hasMany(Kabupaten::class,'province_id','id');
+        return $this->hasMany(Kabupaten::class,'province_id','id')->orderBy('name','asc');
     }
 }

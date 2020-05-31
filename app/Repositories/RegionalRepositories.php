@@ -12,7 +12,7 @@ class RegionalRepositories{
     public function getProv(Request $request){
         try{
             if ($request->method() == 'POST'){
-                $data = Provinces::find($request->post('id'));
+                $data = Provinces::find($request->post('id'))->orderBy('name','asc');
                 $data->map(function ($data){
                     $data->kab = $data->kabObj;
                     return $data;
@@ -32,7 +32,7 @@ class RegionalRepositories{
     public function getKab(Request $request){
         try{
             if ($request->get('id')){
-                $data   = Kabupaten::where('province_id',$request->get('id'))->get();
+                $data   = Kabupaten::where('province_id',$request->get('id'))->orderBy('name','asc')->get();
             } else {
                 $data   = Kabupaten::all();
             }
@@ -48,7 +48,7 @@ class RegionalRepositories{
     public function getKec(Request $request){
         try{
             if ($request->get('id')){
-                $data   = Kecamatan::where('regency_id',$request->get('id'))->get();
+                $data   = Kecamatan::where('regency_id',$request->get('id'))->orderBy('name','asc')->get();
             } else {
                 $data   = Kecamatan::all();
             }
@@ -64,10 +64,34 @@ class RegionalRepositories{
     public function getDesa(Request $request){
         try{
             if ($request->get('id')){
-                $data = Desa::where('district_id',$request->get('id'))->get();
+                $data = Desa::where('district_id',$request->get('id'))->orderBy('name','asc')->get();
             } else {
                 $data = Desa::all();
             }
+        }catch (\Exception $exception){
+            throw new \Exception($exception->getMessage());
+        }
+        return $data;
+    }
+    public function getDesaByID($request){
+        try{
+            $data = Desa::where('id',$request)->get()->first();
+        }catch (\Exception $exception){
+            throw new \Exception($exception->getMessage());
+        }
+        return $data;
+    }
+    public function getKecByID($request){
+        try{
+            $data = Kecamatan::where('id',$request)->get()->first();
+        }catch (\Exception $exception){
+            throw new \Exception($exception->getMessage());
+        }
+        return $data;
+    }
+    public function getKabByID($request){
+        try{
+            $data = Kabupaten::where('id',$request)->get()->first();
         }catch (\Exception $exception){
             throw new \Exception($exception->getMessage());
         }

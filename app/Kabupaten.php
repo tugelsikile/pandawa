@@ -13,6 +13,6 @@ class Kabupaten extends Model
         return $this->belongsTo(Provinces::class,'id','province_id');
     }
     public function kecObj(){
-        return $this->hasMany(Kecamatan::class,'id','regency_id');
+        return $this->hasMany(Kecamatan::class,'id','regency_id')->orderBy('name','asc');
     }
 }

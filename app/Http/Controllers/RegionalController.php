@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Template;
 use App\Repositories\RegionalRepositories;
 use Illuminate\Http\Request;
 
@@ -21,7 +22,7 @@ class RegionalController extends Controller
         }catch (\Exception $exception){
             throw new \Exception($exception->getMessage());
         }
-        return ['code'=>1000,'msg'=>'OK','params'=>$data];
+        return format(1000,'OK',$data);
     }
     public function kecamatan(Request $request){
         try{
@@ -29,7 +30,7 @@ class RegionalController extends Controller
         }catch (\Exception $exception){
             throw new \Exception($exception->getMessage());
         }
-        return ['code'=>'1000','msg'=>'OK','params'=>$data];
+        return format(1000,'OK',$data);
     }
     public function desa(Request $request){
         try{
@@ -37,6 +38,6 @@ class RegionalController extends Controller
         }catch (\Exception $exception){
             throw new \Exception($exception->getMessage());
         }
-        return ['code'=>1000,'msg'=>'OK','params'=>$data];
+        return format(1000,'OK',$data);
     }
 }

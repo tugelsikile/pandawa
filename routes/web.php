@@ -21,6 +21,7 @@ Route::group(['prefix'=>'regional'],function (){
     Route::get('/get-kec','RegionalController@kecamatan');
     Route::get('/get-desa','RegionalController@desa');
 });
+Route::post('preview-id','TemplateController@PreviewID');
 
 Auth::routes();
 Route::group(['middleware'=>'auth'],function (){
@@ -39,6 +40,6 @@ Route::group(['middleware'=>'auth'],function (){
         Route::post('/create','CabangController@create');
         Route::get('/update','CabangController@update');
         Route::post('/update','CabangController@update');
-        Route::get('/delete','CabangController@delete');
+        Route::post('/delete','CabangController@delete');
     });
 });

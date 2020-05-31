@@ -50,11 +50,80 @@ function submitForm(obj) {
         error   : function (e) {
             $('#MyModal .modal-footer .btn-submit').prop({'disabled':false}).html(btnSave);
             $('#MyModal .modal-footer .btn-close').prop({'disabled':false}).html(btnClose);
-            showError(e.statusText);
+            var msg = '';
+            var jsonResponse = e.responseJSON;
+            if (jsonResponse){
+                jsonResponse = jsonResponse.message;
+                jsonResponse = jsonResponse.split('#');
+                msg = '<ul>';
+                $.each(jsonResponse,function (i,v) {
+                    msg += '<li>'+v+'</li>';
+                });
+                msg += '</ul>';
+            }
+            showError(e.statusText+'<br>'+msg);
         },
         success : function (e) {
+            if (e.code == 1000){
+                if (typeof table !== 'undefined'){
+                    table._fnDraw(false);
+                }
+                $('#MyModal').modal('hide');
+                showSuccess(e.msg);
+            } else {
+                showError(e.msg);
+            }
             $('#MyModal .modal-footer .btn-submit').prop({'disabled':false}).html(btnSave);
             $('#MyModal .modal-footer .btn-close').prop({'disabled':false}).html(btnClose);
+        }
+    });
+}
+function delete_data(obj) {
+    var id      = $(obj).attr('data-id');
+    var title   = $(obj).attr('title');
+    var url     = $(obj).attr('href');
+    var token   = $(obj).attr('data-token');
+    Swal.fire({
+        title               : title+'?',
+        text                : 'Data yang bersangkutan akan dihapus juga',
+        icon                : 'warning',
+        showCancelButton    : true,
+        confirmButtonColor  : '#3085d6',
+        cancelButtonColor   : '#d33',
+        confirmButtonText   : 'Hapus',
+        cancelButtonText    : 'Batal',
+    }).then((result) => {
+        if (result.value) {
+            $.ajax({
+                url     : url,
+                type    : 'POST',
+                dataType: 'JSON',
+                data    : { _token : token, id : id },
+                error   : function (e) {
+                    var msg = '';
+                    var jsonResponse = e.responseJSON;
+                    if (jsonResponse){
+                        jsonResponse = jsonResponse.message;
+                        jsonResponse = jsonResponse.split('#');
+                        msg = '<ul>';
+                        $.each(jsonResponse,function (i,v) {
+                            msg += '<li>'+v+'</li>';
+                        });
+                        msg += '</ul>';
+                    }
+                    showError(e.statusText+'<br>'+msg);
+                },
+                success : function (e) {
+                    if (e.code == 1000){
+                        if (typeof table !== 'undefined'){
+                            table._fnDraw(false);
+                        }
+                        showSuccess(e.msg);
+                    } else {
+                        showError(e.msg);
+                    }
+                }
+            });
         }
     });
 }
@@ -63,29 +132,44 @@ $(document).on('hidden.bs.modal','#MyModal', function () {
 });
 function showError(msg) {
     $.notify({
-        icon : '<i class="fa fa-exclamation-triangle"></i>',
-        message: msg
+        title   : 'Error',
+        icon    : 'fa fa-exclamation-triangle',
+        message : msg
     },{
-        type : 'danger',
-        z_index : 99999
+        type    : 'danger',
+        z_index : 99999,
+        animate : {
+            enter: 'animated fadeInRight',
+            exit: 'animated fadeOutRight'
+        }
     });
 }
 function showSuccess(msg) {
     $.notify({
-        icon : '<i class="fa fa-check-circle"></i>',
-        message: msg
+        title   : 'Sukses',
+        icon    : 'fa fa-check-circle',
+        message : msg
     },{
-        type : 'success',
-        z_index : 99999
+        type    : 'success',
+        z_index : 99999,
+        animate : {
+            enter: 'animated fadeInRight',
+            exit: 'animated fadeOutRight'
+        }
     });
 }
 function showInfo(msg) {
     $.notify({
-        icon : '<i class="fa fa-info-circle"></i>',
-        message: msg
+        title   : 'Informasi',
+        icon    : 'fa fa-info-circle',
+        message : msg
     },{
-        type : 'info',
-        z_index : 99999
+        type    : 'info',
+        z_index : 99999,
+        animate : {
+            enter: 'animated fadeInRight',
+            exit: 'animated fadeOutRight'
+        }
     });
 }
 function ucWords(str) {
@@ -94,7 +178,7 @@ function ucWords(str) {
     });
     return str;
 }
-function getKab(obj) {
+function getKab(obj,defaultRegencyID){
     var prov_id = $(obj).val();
     $('.regency_id').html('<option value="">Loading...</option>');
     $.ajax({
@@ -111,7 +195,11 @@ function getKab(obj) {
             } else {
                 $('.regency_id').html('');
                 $.each(e.params,function (i,v) {
-                    $('.regency_id').append('<option value="'+v.id+'">'+ucWords(v.name)+'</option>');
+                    if (v.id == '3212' || v.id == defaultRegencyID){
+                        $('.regency_id').append('<option selected value="'+v.id+'">'+ucWords(v.name)+'</option>');
+                    } else {
+                        $('.regency_id').append('<option value="'+v.id+'">'+ucWords(v.name)+'</option>');
+                    }
                     if (i + 1 >= e.params.length){
                         $('.regency_id').trigger('change');
                     }
@@ -120,7 +208,7 @@ function getKab(obj) {
         }
     });
 }
-function getKec(obj) {
+function getKec(obj,defaultDistrictID) {
     var kab_id = $(obj).val();
     $('.district_id').html('<option value="">Loading...</option>');
     $.ajax({
@@ -137,7 +225,11 @@ function getKec(obj) {
             } else {
                 $('.district_id').html('');
                 $.each(e.params,function (i,v) {
-                    $('.district_id').append('<option value="'+v.id+'">'+ucWords(v.name)+'</option>');
+                    if (v.id == defaultDistrictID){
+                        $('.district_id').append('<option selected value="'+v.id+'">'+ucWords(v.name)+'</option>');
+                    } else {
+                        $('.district_id').append('<option value="'+v.id+'">'+ucWords(v.name)+'</option>');
+                    }
                     if (i + 1 >= e.params.length){
                         $('.district_id').trigger('change');
                     }
@@ -146,7 +238,7 @@ function getKec(obj) {
         }
     });
 }
-function getDesa(obj) {
+function getDesa(obj,defaultDesaID) {
     var kab_id = $(obj).val();
     $('.village_id').html('<option value="">Loading...</option>');
     $.ajax({
@@ -163,8 +255,33 @@ function getDesa(obj) {
             } else {
                 $('.village_id').html('');
                 $.each(e.params,function (i,v) {
-                    $('.village_id').append('<option value="'+v.id+'">'+ucWords(v.name)+'</option>');
+                    if (v.id == defaultDesaID){
+                        $('.village_id').append('<option selected value="'+v.id+'">'+ucWords(v.name)+'</option>');
+                    } else {
+                        $('.village_id').append('<option value="'+v.id+'">'+ucWords(v.name)+'</option>');
+                    }
                 });
+            }
+        }
+    });
+}
+function previewID() {
+    var template    = $('#template').val();
+    var padding     = $('#pad').val();
+    $('#preview_id').val('Loading...');
+    $.ajax({
+        url     : '/preview-id',
+        type    : 'POST',
+        dataType: 'JSON',
+        data    : { template : template, padding : padding },
+        error   : function (e) {
+            $('#preview_id').val(e.statusText);
+        },
+        success : function (e) {
+            if (e.code == 1000){
+                $('#preview_id').val(e.params);
+            } else {
+                $('#preview_id').val('Undefined');
             }
         }
     });

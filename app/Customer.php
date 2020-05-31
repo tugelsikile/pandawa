@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Customer extends Model
 {
-    public $primaryKey = 'cust_id';
+    protected $primaryKey = 'cust_id';
     protected $table = 'isp_customer';
 
     public function cabangObj(){
