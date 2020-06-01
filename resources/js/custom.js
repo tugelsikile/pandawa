@@ -127,6 +127,62 @@ function delete_data(obj) {
         }
     });
 }
+function bulk_delete(obj) {
+    var title   = $(obj).attr('title');
+    var url     = $(obj).attr('href');
+    var token   = $(obj).attr('data-token');
+    var dataLength = $('#dataTable tbody input:checkbox:checked').length;
+    if (dataLength == 0){
+        showError('Pilih data yang akan dihapus lebih dulu');
+    } else {
+        Swal.fire({
+            title               : title+'?',
+            text                : 'Data yang bersangkutan akan dihapus juga',
+            icon                : 'warning',
+            showCancelButton    : true,
+            confirmButtonColor  : '#3085d6',
+            cancelButtonColor   : '#d33',
+            confirmButtonText   : 'Hapus',
+            cancelButtonText    : 'Batal',
+        }).then((result) => {
+            if (result.value) {
+                $.ajax({
+                    url     : url,
+                    type    : 'POST',
+                    dataType: 'JSON',
+                    data    : $('#FormTable').serialize()+'&_token='+token,
+                    error   : function (e) {
+                        var msg = '';
+                        var jsonResponse = e.responseJSON;
+                        if (jsonResponse){
+                            jsonResponse = jsonResponse.message;
+                            jsonResponse = jsonResponse.split('#');
+                            msg = '<ul>';
+                            $.each(jsonResponse,function (i,v) {
+                                msg += '<li>'+v+'</li>';
+                            });
+                            msg += '</ul>';
+                        }
+                        showError(e.statusText+'<br>'+msg);
+                    },
+                    success : function (e) {
+                        if (e.code == 1000){
+                            if (typeof table !== 'undefined'){
+                                table._fnDraw(false);
+                            }
+                            showSuccess(e.msg);
+                        } else {
+                            showError(e.msg);
+                        }
+                    }
+                });
+            }
+        });
+    }
+}
+function tableCbxAll(obj) {
+    $('#dataTable tbody input:checkbox').prop({'checked':$(obj).prop('checked')});
+}
 $(document).on('hidden.bs.modal','#MyModal', function () {
     $('#MyModal').remove();
 });

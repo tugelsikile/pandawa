@@ -52,5 +52,6 @@ Route::group(['middleware'=>'auth'],function (){
         Route::get('/update','ProdukController@update');
         Route::post('/update','ProdukController@update');
         Route::post('/delete','ProdukController@delete');
+        Route::post('/bulk-delete','ProdukController@bulkDelete');
     });
 });

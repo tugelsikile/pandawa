@@ -29,6 +29,7 @@
     </div>
     <script>
         var table = $('#dataTable').dataTable({
+            "searchDelay"   : 2000,
             "lengthMenu"    : [[30, 60, 120, 240, 580], [30, 60, 120, 240, 580]],
             "order"         : [[ 0, "asc" ]],
             "processing"    : true,

@@ -7,25 +7,39 @@ use Illuminate\Support\Facades\Auth;
 use App\Repositories\{
     UserMenuRepositories,
     UserPriviledgesRepositories,
-    CabangRepositories
+    CabangRepositories,
+    ProdukRepositories,
+    CustomerRepositories
 };
+use App\Validations\ProdukValidations;
+
+use Exception;
 
 class ProdukController extends Controller
 {
     protected $menuRepositories;
     protected $priviledges;
     protected $cabang;
+    protected $produk;
+    protected $produkValidation;
+    protected $customer;
     public $curMenu = 'admin-produk';
 
     public function __construct(
         UserMenuRepositories $userMenuRepositories,
         UserPriviledgesRepositories $userPriviledgesRepositories,
-        CabangRepositories $cabangRepositories
+        CabangRepositories $cabangRepositories,
+        ProdukRepositories $produkRepositories,
+        ProdukValidations $produkValidations,
+        CustomerRepositories $customerRepositories
     )
     {
         $this->priviledges = $userPriviledgesRepositories;
         $this->menuRepositories = $userMenuRepositories;
         $this->cabang = $cabangRepositories;
+        $this->produk = $produkRepositories;
+        $this->produkValidation = $produkValidations;
+        $this->customer = $customerRepositories;
     }
     public function index(){
         $curMenu = $this->curMenu;
@@ -35,8 +49,17 @@ class ProdukController extends Controller
         $cabangs = $this->cabang->all();
         return view('produk.index',compact('curMenu','menus','privs','cabangs'));
     }
-    public function table(){
-
+    public function table(Request $request){
+        $response = [ 'draw' => $request->post('draw'), 'data' => [], 'recordsFiltered' => 0, 'recordsTotal' => 0 ];
+        try{
+            $data  = $this->produk->table($request);
+            $response['data'] = $data;
+            $response['recordsFiltered'] = $this->produk->numRows($request);
+            $response['recordsTotal'] = $this->produk->numRowsAll($request);
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return $response;
     }
     public function create(){
 
@@ -46,5 +69,15 @@ class ProdukController extends Controller
     }
     public function delete(){
 
+    }
+    public function bulkDelete(Request $request){
+        try{
+            $valid  = $this->produkValidation->bulkDelete($request);
+            $update = $this->produk->bulkDelete($valid);
+            $updateCustomer = $this->customer->deletePackage($update);
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return format(1000,'Produk berhasil dihapus',$updateCustomer);
     }
 }
