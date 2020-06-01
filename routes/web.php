@@ -56,4 +56,17 @@ Route::group(['middleware'=>'auth'],function (){
         Route::post('/delete','ProdukController@delete');
         Route::post('/bulk-delete','ProdukController@bulkDelete');
     });
+
+    Route::group(['prefix'=>'admin-customer'],function (){
+        Route::get('/','CustomerController@index');
+        Route::post('/table','CustomerController@table');
+
+        Route::post('/customer-id','CustomerController@customerID');
+        Route::get('/create','CustomerController@create');
+        Route::post('/create','CustomerController@create');
+        Route::get('/update','CustomerController@update');
+        Route::post('/update','CustomerController@update');
+        Route::post('/delete','CustomerController@delete');
+        Route::post('/bulk-delete','CustomerController@bulkDelete');
+    });
 });

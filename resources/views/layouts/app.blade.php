@@ -61,5 +61,9 @@
 <div style="padding-top:70px">
     @yield('content')
 </div>
+
+<div class="footer">
+    Copyright Pandawa {{ date('Y') }}
+</div>
 </body>
 </html>

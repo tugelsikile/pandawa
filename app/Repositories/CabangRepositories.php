@@ -33,7 +33,7 @@ class CabangRepositories{
                 ->get();
             if (!is_null($data)){
                 $data->map(function ($data){
-                    $cur_date = date('Y-').'05-01';
+                    $cur_date = date('Y-m-').'01';
                     $data->customer = Customer::where(['status'=>1,'cab_id'=>$data->cab_id])->get();
                     $data->invoice  = format_rp(Invoice::where(['status'=>1,'cab_id'=>$data->cab_id,'inv_date'=>$cur_date])->sum('price_with_tax'));
                     return $data;
