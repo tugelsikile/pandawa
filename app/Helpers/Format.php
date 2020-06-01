@@ -7,3 +7,7 @@ function format($code,$msg,$params=false){
         'params'=> $params
     ];
 }
+
+function format_rp($ammount){
+    return number_format($ammount,0,'','.');
+}

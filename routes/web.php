@@ -42,4 +42,15 @@ Route::group(['middleware'=>'auth'],function (){
         Route::post('/update','CabangController@update');
         Route::post('/delete','CabangController@delete');
     });
+
+    Route::group(['prefix'=>'admin-produk'],function (){
+        Route::get('/','ProdukController@index');
+        Route::post('/table','ProdukController@table');
+
+        Route::get('/create','ProdukController@create');
+        Route::post('/create','ProdukController@create');
+        Route::get('/update','ProdukController@update');
+        Route::post('/update','ProdukController@update');
+        Route::post('/delete','ProdukController@delete');
+    });
 });

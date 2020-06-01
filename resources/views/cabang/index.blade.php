@@ -5,17 +5,21 @@
         <div class="card">
             <div class="card-body">
                 <div class="mb-15">
-                    @if($privs->C_opt == 1)
-                        <a title="Tambah Cabang" href="{{ url('admin-cabang/create') }}" class="btn btn-primary" onclick="show_modal(this);return false"><i class="fa fa-plus"></i> Cabang Baru</a>
-                    @endif
+                    <div class="pull-right">
+                        @if($privs->C_opt == 1)
+                            <a title="Tambah Cabang" href="{{ url('admin-cabang/create') }}" class="btn btn-primary" onclick="show_modal(this);return false"><i class="fa fa-plus"></i> Cabang Baru</a>
+                        @endif
+                    </div>
+                    <div class="clearfix"></div>
                 </div>
                 <table class="table table-bordered" id="dataTable" style="width: 100%">
                     <thead>
                     <tr>
                         <th>Nama Cabang</th>
-                        <th>Jenis</th>
+                        <th>Jenis Mitra</th>
                         <th>Share</th>
                         <th>Jml Pelanggan</th>
+                        <th>Tagihan Bulan Ini</th>
                     </tr>
                     </thead>
                     <tbody></tbody>
@@ -70,6 +74,10 @@
                 },
                 { "data" : "customer_count", "width" : "70px", "className" : "text-center", "orderable" : false, render : function (a,b,c) {
                         return c.customer.length;
+                    }
+                },
+                { "data" : "invoice", "orderable" : false, "width" : "150px", "className" : "text-right", render : function (a,b,c) {
+                        return 'Rp. '+c.invoice;
                     }
                 }
             ]

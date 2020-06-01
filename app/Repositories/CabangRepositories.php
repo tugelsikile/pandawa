@@ -3,12 +3,20 @@
 namespace App\Repositories;
 
 use App\{
-    Cabang, CabangMember, Desa
+    Cabang, Customer, Desa, Invoice
 };
 use Illuminate\Http\Request;
 use Mockery\Exception;
 
 class CabangRepositories{
+    public function all(){
+        try{
+            $data = Cabang::where(['status'=>1])->get();
+        }catch (\Exception $exception){
+            throw new \Exception($exception->getMessage());
+        }
+        return $data;
+    }
     public function table(Request $request){
         try{
             $keyword    = $request->post('search')['value'];
@@ -25,7 +33,9 @@ class CabangRepositories{
                 ->get();
             if (!is_null($data)){
                 $data->map(function ($data){
-                    $data->customer = CabangMember::where('status',1)->where('cab_id',$data->cab_id)->get();
+                    $cur_date = date('Y-').'05-01';
+                    $data->customer = Customer::where(['status'=>1,'cab_id'=>$data->cab_id])->get();
+                    $data->invoice  = format_rp(Invoice::where(['status'=>1,'cab_id'=>$data->cab_id,'inv_date'=>$cur_date])->sum('price_with_tax'));
                     return $data;
                 });
             }
