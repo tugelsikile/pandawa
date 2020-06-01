@@ -72,16 +72,41 @@ class ProdukController extends Controller
     }
     public function create(Request $request){
         if ($request->method()=='POST'){
+            try{
+                $valid  = $this->produkValidation->create($request);
+                $save   = $this->produk->create($valid);
+            }catch (Exception $exception){
+                throw new Exception($exception->getMessage());
+            }
+            return format(1000,'Produk berhasil dibuat',$save);
         } else {
             $cabangs = $this->cabang->all();
             return view('produk.create',compact('cabangs'));
         }
     }
-    public function update(){
-
+    public function update(Request $request){
+        if ($request->method()=='POST'){
+            try{
+                $valid = $this->produkValidation->update($request);
+                $save = $this->produk->update($valid);
+            }catch (Exception $exception){
+                throw new Exception($exception->getMessage());
+            }
+            return format(1000,'Produk berhasil diupdate',$save);
+        } else {
+            $data = $this->produk->getByID($request->id);
+            $cabangs = $this->cabang->all();
+            return view('produk.update',compact('cabangs','data'));
+        }
     }
-    public function delete(){
-
+    public function delete(Request $request){
+        try{
+            $valid = $this->produkValidation->delete($request);
+            $delete = $this->produk->delete($valid);
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return format(1000,'Produk berhasil dihapus',$delete);
     }
     public function bulkDelete(Request $request){
         try{

@@ -9,6 +9,14 @@ use Illuminate\Http\Request;
 use Exception;
 
 class ProdukRepositories{
+    public function getByID($request){
+        try{
+            $data = Produk::where(['pac_id'=>$request])->get()->first();
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return $data;
+    }
     public function KodeProduk(Request $request){
         try{
             $cab_id = $request->cab_id;
@@ -78,6 +86,54 @@ class ProdukRepositories{
                 $data->status = 0;
                 $data->save();
             }
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return $request;
+    }
+    public function create(Request $request){
+        try{
+            $data = new Produk();
+            $data->kode     = $request->kode_produk;
+            $data->pac_name = $request->nama_produk;
+            $data->price    = $request->harga_produk;
+            $data->description = $request->keterangan_produk;
+            $data->cap      = $request->kapasitas;
+            $data->cap_byte = $request->besaran_kapasitas;
+            $data->tax_percent = $request->pajak_produk;
+            $data->price_with_tax = ( $data->price * $data->tax_percent) / 100;
+            $data->price_with_tax = $data->price_with_tax + $data->price;
+            $data->cab_id   = $request->nama_cabang;
+            $data->save();
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return $data;
+    }
+    public function update(Request $request){
+        try{
+            $data   = Produk::where(['pac_id'=>$request->pac_id])->get()->first();
+            $data->kode     = $request->kode_produk;
+            $data->pac_name = $request->nama_produk;
+            $data->price    = $request->harga_produk;
+            $data->description = $request->keterangan_produk;
+            $data->cap      = $request->kapasitas;
+            $data->cap_byte = $request->besaran_kapasitas;
+            $data->tax_percent = $request->pajak_produk;
+            $data->price_with_tax = ( $data->price * $data->tax_percent) / 100;
+            $data->price_with_tax = $data->price_with_tax + $data->price;
+            $data->cab_id   = $request->nama_cabang;
+            $data->save();
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return $request;
+    }
+    public function delete(Request $request){
+        try{
+            $data   = Produk::where(['pac_id'=>$request->id])->get()->first();
+            $data->status = null;
+            $data->save();
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
