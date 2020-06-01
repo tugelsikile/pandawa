@@ -63,7 +63,29 @@
                         return '<input type="checkbox" name="pac_id[]" value="'+c.pac_id+'">';
                     }
                 },
-                { "data" : "pac_name" },
+                { "data" : "pac_name", render : function (a,b,c) {
+                        var html = '' +
+                                @if($privs->U_opt == 1 || $privs->D_opt == 1)
+                                    '<div class="btn-group btn-group-xs pull-right">\n' +
+                            '  <button type="button" class="btn btn-default">Action</button>\n' +
+                            '  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">\n' +
+                            '    <span class="caret"></span>\n' +
+                            '    <span class="sr-only">Toggle Dropdown</span>\n' +
+                            '  </button>\n' +
+                            '  <ul class="dropdown-menu">\n' +
+                                @if($privs->U_opt == 1)
+                                    '    <li><a onclick="show_modal(this);return false" title="Rubah Data Produk" href="{{ url('admin-produk/update?id=') }}'+c.pac_id+'"><i class="fa fa-pencil"></i> Rubah Data</a></li>\n' +
+                                @endif
+                                        @if($privs->D_opt == 1)
+                                    '    <li><a data-token="{{ csrf_token() }}" title="Hapus Data Produk" data-id="'+c.pac_id+'" onclick="delete_data(this);return false" href="{{ url('admin-produk/delete') }}"><i class="fa fa-trash-o"></i> Hapus Data</a></li>\n' +
+                                @endif
+                                    '  </ul>\n' +
+                            '</div>\n' +
+                                @endif
+                            '';
+                        return c.pac_name+html;
+                    }
+                },
                 { "data" : "jml", "width" : "30px", "orderable" : false, "className" : "text-center", render : function (a,b,c) {
                         return c.customers <= 0 ? '<span class="label label-danger">'+c.customers+'</span>' : '<span class="label label-success">'+c.customers+'</span>';
                     }

@@ -61,8 +61,21 @@ class ProdukController extends Controller
         }
         return $response;
     }
-    public function create(){
-
+    public function kodeProduk(Request $request){
+        try{
+            $data = $this->produk->KodeProduk($request);
+            $data = date('Ymd').str_pad($request->cab_id,4,'0',STR_PAD_LEFT).str_pad($data,4,'0',STR_PAD_LEFT);
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return format(1000,'OK',$data);
+    }
+    public function create(Request $request){
+        if ($request->method()=='POST'){
+        } else {
+            $cabangs = $this->cabang->all();
+            return view('produk.create',compact('cabangs'));
+        }
     }
     public function update(){
 

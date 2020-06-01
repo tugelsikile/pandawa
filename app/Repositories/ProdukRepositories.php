@@ -9,6 +9,15 @@ use Illuminate\Http\Request;
 use Exception;
 
 class ProdukRepositories{
+    public function KodeProduk(Request $request){
+        try{
+            $cab_id = $request->cab_id;
+            $data = Produk::where(['cab_id'=>$cab_id])->get()->count();
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return $data;
+    }
     public function table(Request $request){
         try{
             $keyword    = $request->post('search')['value'];

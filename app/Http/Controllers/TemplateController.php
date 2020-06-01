@@ -6,6 +6,13 @@ use Illuminate\Http\Request;
 
 class TemplateController extends Controller
 {
+    public function PreviewHarga(Request $request){
+        $harga  = $request->price;
+        $tax    = $request->tax;
+        $tax_price = ( $harga * $tax ) / 100;
+        $tax_price = $tax_price + $harga;
+        return format(1000,'OK','Rp. '.format_rp($tax_price));
+    }
     public function PreviewID(Request $request){
         $template   = $request->post('template');
         $padding    = $request->post('padding');

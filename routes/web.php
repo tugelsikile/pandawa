@@ -22,6 +22,7 @@ Route::group(['prefix'=>'regional'],function (){
     Route::get('/get-desa','RegionalController@desa');
 });
 Route::post('preview-id','TemplateController@PreviewID');
+Route::post('preview-harga','TemplateController@PreviewHarga');
 
 Auth::routes();
 Route::group(['middleware'=>'auth'],function (){
@@ -47,6 +48,7 @@ Route::group(['middleware'=>'auth'],function (){
         Route::get('/','ProdukController@index');
         Route::post('/table','ProdukController@table');
 
+        Route::post('/kode-produk','ProdukController@kodeProduk');
         Route::get('/create','ProdukController@create');
         Route::post('/create','ProdukController@create');
         Route::get('/update','ProdukController@update');

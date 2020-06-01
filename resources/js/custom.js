@@ -180,6 +180,53 @@ function bulk_delete(obj) {
         });
     }
 }
+function kodeProduk() {
+    var cab_id  = $('#nama_cabang').val();
+    if (cab_id.length == 0){
+        $('#kode_produk').val('');
+    } else {
+        $.ajax({
+            url     : '/admin-produk/kode-produk',
+            type    : 'POST',
+            dataType: 'JSON',
+            data    : { cab_id : cab_id },
+            error   : function (e) {
+                $('#kode_produk').val('');
+            },
+            success : function (e) {
+                $('#kode_produk').val(e.params);
+            }
+        });
+    }
+}
+function previewHarga() {
+    var price   = $('#harga_produk').val();
+    var tax     = $('#pajak_produk').val();
+    $('#preview_harga').val('Loading...');
+    $.ajax({
+        url     : '/preview-harga',
+        type    : 'POST',
+        dataType: 'JSON',
+        data    : { price : price, tax : tax },
+        error   : function (e) {
+            var msg = '';
+            var jsonResponse = e.responseJSON;
+            if (jsonResponse){
+                jsonResponse = jsonResponse.message;
+                jsonResponse = jsonResponse.split('#');
+                msg = '<ul>';
+                $.each(jsonResponse,function (i,v) {
+                    msg += '<li>'+v+'</li>';
+                });
+                msg += '</ul>';
+            }
+            $('#preview_harga').val(e.statusText+' '+msg);
+        },
+        success : function (e) {
+            $('#preview_harga').val(e.params);
+        }
+    });
+}
 function tableCbxAll(obj) {
     $('#dataTable tbody input:checkbox').prop({'checked':$(obj).prop('checked')});
 }
