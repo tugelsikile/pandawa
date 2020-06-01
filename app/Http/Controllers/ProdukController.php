@@ -103,6 +103,7 @@ class ProdukController extends Controller
         try{
             $valid = $this->produkValidation->delete($request);
             $delete = $this->produk->delete($valid);
+            $setNullCustomer = $this->customer->deletePackageID($delete);
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }

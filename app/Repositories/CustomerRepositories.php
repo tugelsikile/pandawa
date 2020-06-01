@@ -18,4 +18,12 @@ class CustomerRepositories{
         }
         return $request;
     }
+    public function deletePackageID(Request $request){
+        try{
+            DB::table('isp_customer')->where(['pac_id'=>$request->id,'status'=>1])->update(['pac_id'=>null]);
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return $request;
+    }
 }
