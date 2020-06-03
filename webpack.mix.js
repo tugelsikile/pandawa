@@ -11,10 +11,11 @@ const mix = require('laravel-mix');
  |
  */
 
-/*mix.js('resources/js/app.js', 'public/js')
-   .sass('resources/sass/app.scss', 'public/css');*/
+mix.js('resources/js/app.js', 'public/js')
+   .sass('resources/sass/app.scss', 'public/css');
 
 //mix css
+/*
 mix.styles([
     'vendor/twitter/bootstrap/dist/css/bootstrap.min.css',
     'vendor/datatables/datatables/media/css/dataTables.bootstrap.css',
@@ -48,4 +49,4 @@ mix.scripts([
 
 
 mix.copyDirectory('vendor/fortawesome/font-awesome/fonts', 'public/pandawa/fonts');
-mix.copyDirectory('vendor/twitter/bootstrap/dist/fonts', 'public/pandawa/fonts');
+mix.copyDirectory('vendor/twitter/bootstrap/dist/fonts', 'public/pandawa/fonts');*/
