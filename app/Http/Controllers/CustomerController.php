@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Provinces;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Repositories\{
@@ -11,6 +12,7 @@ use App\Repositories\{
     CustomerRepositories,
     CabangRepositories
 };
+use App\Validations\CustomerValidations;
 use Exception;
 
 class CustomerController extends Controller
@@ -18,6 +20,7 @@ class CustomerController extends Controller
     protected $menuRepositories;
     protected $priviledges;
     protected $regional;
+    protected $customerValidation;
     protected $customer;
     protected $cabang;
     public $curMenu = 'admin-customer';
@@ -27,6 +30,7 @@ class CustomerController extends Controller
         UserPriviledgesRepositories $userPriviledgesRepositories,
         RegionalRepositories $regionalRepositories,
         CustomerRepositories $customerRepositories,
+        CustomerValidations $customerValidations,
         CabangRepositories $cabangRepositories
     )
     {
@@ -34,6 +38,7 @@ class CustomerController extends Controller
         $this->priviledges = $userPriviledgesRepositories;
         $this->regional = $regionalRepositories;
         $this->customer = $customerRepositories;
+        $this->customerValidation = $customerValidations;
         $this->cabang = $cabangRepositories;
     }
     public function index(){
@@ -56,13 +61,24 @@ class CustomerController extends Controller
         return $response;
     }
     public function create(Request $request){
-
+        if ($request->method()=='POST'){
+            try{
+                $valid  = $this->customerValidation->create($request);
+                $save   = $this->customer->create($valid);
+            }catch (Exception $exception){
+                throw new Exception($exception->getMessage());
+            }
+            return format(1000,'Pelanggan berhasil ditambahkan',$save);
+        } else {
+            $cabangs = $this->cabang->all();
+            $provs = Provinces::all();
+            return view('customer.create',compact('provs','cabangs'));
+        }
     }
     public function update(Request $request){
 
     }
     public function delete(Request $request){
-
     }
     public function bulkDelete(Request $request){
 
