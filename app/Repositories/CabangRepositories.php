@@ -3,7 +3,7 @@
 namespace App\Repositories;
 
 use App\{
-    Cabang, Customer, Desa, Invoice
+    Cabang, Customer, Desa, Invoice, Kabupaten, Kecamatan, Provinces
 };
 use Illuminate\Http\Request;
 use Mockery\Exception;
@@ -114,6 +114,9 @@ class CabangRepositories{
     public function getByID($id){
         try{
             $data   = Cabang::find($id);
+            $data->districts = Kecamatan::where('id',$data->district_id)->get()->first();
+            $data->regencies = Kabupaten::where('id',$data->districts->regency_id)->get()->first();
+            $data->provinces = Provinces::where('id',$data->regencies->province_id)->get()->first();
         }catch (\Exception $exception){
             throw new \Exception($exception->getMessage());
         }

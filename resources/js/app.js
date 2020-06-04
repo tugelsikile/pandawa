@@ -16,7 +16,7 @@ require('../../node_modules/datatables.net-fixedheader/js/dataTables.fixedHeader
 require('../../node_modules/datatables.net-fixedheader-bs4/js/fixedHeader.bootstrap4.min');
 require('../../vendor/select2/select2/dist/js/select2.full.min');
 require('../../vendor/mouse0270/bootstrap-growl/dist/bootstrap-notify.min');
-
+require('../../vendor/eternicode/bootstrap-datepicker/dist/js/bootstrap-datepicker.min');
 
 window.Vue = require('vue');
 

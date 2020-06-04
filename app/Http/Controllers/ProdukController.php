@@ -119,4 +119,12 @@ class ProdukController extends Controller
         }
         return format(1000,'Produk berhasil dihapus',$updateCustomer);
     }
+    public function getCabangProduk(Request $request){
+        try{
+            $data = $this->produk->getCabangProduk($request);
+        }catch (\Mockery\Exception $exception){
+            throw new \Mockery\Exception($exception->getMessage());
+        }
+        return format(1000,'OK',$data);
+    }
 }

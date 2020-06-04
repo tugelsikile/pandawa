@@ -73,6 +73,7 @@
                 },
                 { "data" : "pac_name", "responsivePriority" : 1,render : function (a,b,c) {
                         var html = '' +
+                            @if($privs->U_opt == 1 || $privs->D_opt == 1)
                             '<div class="dropdown show float-right">' +
                                 '<a class="btn btn-secondary btn-sm dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></a>' +
                                 '<div class="dropdown-menu" aria-labelledby="dropdownMenuLink">' +
@@ -83,7 +84,9 @@
                                     '<a class="dropdown-item" data-token="{{ csrf_token() }}" title="Hapus Data Produk" data-id="'+c.pac_id+'" onclick="delete_data(this);return false" href="{{ url('admin-produk/delete') }}"><i class="fa fa-trash-o"></i> Hapus Data</a>' +
                                 @endif
                                 '</div>' +
-                            '</div>';
+                            '</div>' +
+                            @endif
+                            '';
                         return c.pac_name+html;
                     }
                 },

@@ -9,9 +9,21 @@ use Illuminate\Http\Request;
 use Exception;
 
 class ProdukRepositories{
+    public function getCabangProduk(Request $request){
+        try{
+            $data = Produk::where(['status'=>1,'cab_id'=>$request->cab_id])->orderBy('cap','asc')->orderBy('price','asc')->get();
+            $data->map(function ($data){
+                $data->price_format = 'Rp. '.format_rp($data->price_with_tax);
+                return $data;
+            });
+        }catch (\Mockery\Exception $exception){
+            throw new \Mockery\Exception($exception->getMessage());
+        }
+        return $data;
+    }
     public function getByID($request){
         try{
-            $data = Produk::where(['pac_id'=>$request])->get()->first();
+            $data = Produk::where(['pac_id'=>$request,'status'=>1])->get()->first();
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }

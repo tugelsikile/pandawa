@@ -104,6 +104,22 @@ class CustomerRepositories{
         }
         return $data;
     }
+    public function PreviewID($cabID,$kecID=false,$kabID=false,$provID=false){
+        try{
+            $data = Customer::select('cust_id');
+            if ($kecID || $kabID || $provID){
+                if ($kecID) $data = $data->where('district_id','=',$kecID);
+                if ($kabID) $data = $data->where('regency_id','=',$kabID);
+                if ($provID) $data = $data->where('province_id','=',$provID);
+            } else {
+                $data = $data->where('cab_id','=',$cabID);
+            }
+            $data = $data->get()->count();
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return $data;
+    }
     public function create(Request $request){
 
     }

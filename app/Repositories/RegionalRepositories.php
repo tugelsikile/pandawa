@@ -30,43 +30,40 @@ class RegionalRepositories{
         return $data;
     }
     public function getKab(Request $request){
+        $data = [];
         try{
             if ($request->get('id')){
                 $data   = Kabupaten::where('province_id',$request->get('id'))->orderBy('name','asc')->get();
-            } else {
-                $data   = Kabupaten::all();
+                $data->map(function ($data){
+                    $data->kecamatan    = $data->kecObj;
+                    return $data;
+                });
             }
-            $data->map(function ($data){
-                $data->kecamatan    = $data->kecObj;
-                return $data;
-            });
         }catch (\Exception $exception){
             throw new \Exception($exception->getMessage());
         }
         return $data;
     }
     public function getKec(Request $request){
+        $data = [];
         try{
             if ($request->get('id')){
                 $data   = Kecamatan::where('regency_id',$request->get('id'))->orderBy('name','asc')->get();
-            } else {
-                $data   = Kecamatan::all();
+                $data->map(function ($data){
+                    $data->desa     = $data->desaObj;
+                    return $data;
+                });
             }
-            $data->map(function ($data){
-                $data->desa     = $data->desaObj;
-                return $data;
-            });
         }catch (\Exception $exception){
             throw new \Exception($exception->getMessage());
         }
         return $data;
     }
     public function getDesa(Request $request){
+        $data = [];
         try{
             if ($request->get('id')){
                 $data = Desa::where('district_id',$request->get('id'))->orderBy('name','asc')->get();
-            } else {
-                $data = Desa::all();
             }
         }catch (\Exception $exception){
             throw new \Exception($exception->getMessage());

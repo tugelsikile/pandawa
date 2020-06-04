@@ -22,6 +22,7 @@ Route::group(['prefix'=>'regional'],function (){
     Route::get('/get-desa','RegionalController@desa');
 });
 Route::post('preview-id','TemplateController@PreviewID');
+Route::post('preview-id-pelanggan','TemplateController@PreviewCustomerID');
 Route::post('preview-harga','TemplateController@PreviewHarga');
 
 Auth::routes();
@@ -31,6 +32,7 @@ Route::group(['middleware'=>'auth'],function (){
     Route::group(['prefix'=>'lists'],function (){
         Route::post('/cabang','ListController@cabang');
         Route::post('/members','ListController@members');
+        Route::post('/produk-cabang','ProdukController@getCabangProduk');
     });
 
     Route::group(['prefix'=>'admin-cabang'],function (){

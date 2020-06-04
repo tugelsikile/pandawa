@@ -14,6 +14,8 @@ class VerifyCsrfToken extends Middleware
     protected $except = [
         'preview-id',
         'preview-harga',
+        'preview-id-pelanggan',
+        'lists/produk-cabang',
         'admin-produk/kode-produk'
     ];
 }

@@ -10,6 +10,7 @@
     "require": {
         "php": "^7.2.5",
         "doctrine/dbal": "^2.10",
+        "eternicode/bootstrap-datepicker": "^1.9",
         "fideloper/proxy": "^4.2",
         "fortawesome/font-awesome": "4.7",
         "fruitcake/laravel-cors": "^1.0",
