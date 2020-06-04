@@ -2,20 +2,23 @@
 
 namespace App\Repositories;
 
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class UserPriviledgesRepositories{
     public function checkPrivs($level,$url){
         $url = str_replace('-','_',$url);
-        $data = DB::select("
-            SELECT    iup.priv_id,iup.R_opt,iup.C_opt,iup.U_opt,iup.D_opt
-            FROM      isp_user_priviledges AS iup
-            LEFT JOIN isp_controllers AS ic ON iup.ctrl_id = ic.ctrl_id
-            WHERE     iup.lvl_id = ".$level." AND ic.ctrl_url = '".$url."'
-        ");
-        if (!is_null($data)){
-            return $data[0];
+        //DB::enableQueryLog();
+        $data = DB::table('isp_user_priviledges','ip')
+            ->select('priv_id','R_opt','C_opt','U_opt','D_opt')
+            ->join('isp_controllers','ip.ctrl_id','=','isp_controllers.ctrl_id','left')
+            ->where('ip.lvl_id',$level)
+            ->where('isp_controllers.ctrl_url','like',"%$url%")
+            ->get()->first();
+        //dd(DB::getQueryLog());
+        if (is_null($data)){
+            return false;
+        } else {
+            return $data;
         }
     }
 }

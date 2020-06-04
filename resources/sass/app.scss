@@ -6,3 +6,12 @@
 
 // Bootstrap
 @import '~bootstrap/scss/bootstrap';
+@import "../../node_modules/datatables.net-bs4/css/dataTables.bootstrap4.min.css";
+@import "../../node_modules/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css";
+@import "../../node_modules/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css";
+@import "../../node_modules/datatables.net-fixedheader-bs4/css/fixedHeader.bootstrap4.min.css";
+@import "../../node_modules/sweetalert2/dist/sweetalert2.min.css";
+@import "../../vendor/select2/select2/dist/css/select2.min.css";
+@import "../../node_modules/select2-bootstrap-theme/dist/select2-bootstrap.min.css";
+@import "../../vendor/fortawesome/font-awesome/css/font-awesome.min.css";
+@import "../../node_modules/animate.css/animate.min.css";

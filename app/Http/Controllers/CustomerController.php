@@ -46,7 +46,11 @@ class CustomerController extends Controller
         $privs   = $this->priviledges->checkPrivs(Auth::user()->level,$this->curMenu);
 
         $menus = $this->menuRepositories->getMenu(Auth::user()->level);
-        $cabangs = $this->cabang->all();
+        if (strlen(Auth::user()->cab_id)>0){
+            $cabangs = $this->cabang->getByID(Auth::user()->cab_id);
+        } else {
+            $cabangs = $this->cabang->all();
+        }
         return view('customer.index',compact('curMenu','menus','privs','cabangs'));
     }
     public function table(Request $request){

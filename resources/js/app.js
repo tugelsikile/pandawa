@@ -5,6 +5,17 @@
  */
 
 require('./bootstrap');
+require('../../node_modules/sweetalert2/dist/sweetalert2.all');
+require('../../node_modules/datatables.net/js/jquery.dataTables.min');
+require('../../node_modules/datatables.net-bs4/js/dataTables.bootstrap4.min');
+require('../../node_modules/datatables.net-buttons/js/dataTables.buttons.min');
+require('../../node_modules/datatables.net-buttons-bs4/js/buttons.bootstrap4.min');
+require('../../node_modules/datatables.net-responsive/js/dataTables.responsive.min');
+require('../../node_modules/datatables.net-responsive-bs4/js/responsive.bootstrap4.min');
+require('../../node_modules/datatables.net-fixedheader/js/dataTables.fixedHeader.min');
+require('../../node_modules/datatables.net-fixedheader-bs4/js/fixedHeader.bootstrap4.min');
+require('../../vendor/select2/select2/dist/js/select2.full.min');
+require('../../vendor/mouse0270/bootstrap-growl/dist/bootstrap-notify.min');
 
 
 window.Vue = require('vue');
