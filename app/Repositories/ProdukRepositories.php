@@ -11,11 +11,19 @@ use Exception;
 class ProdukRepositories{
     public function getCabangProduk(Request $request){
         try{
-            $data = Produk::where(['status'=>1,'cab_id'=>$request->cab_id])->orderBy('cap','asc')->orderBy('price','asc')->get();
-            $data->map(function ($data){
-                $data->price_format = 'Rp. '.format_rp($data->price_with_tax);
-                return $data;
-            });
+            if ($request->method()=='POST'){
+                $data = Produk::where(['status'=>1,'cab_id'=>$request->cab_id])->orderBy('cap','asc')->orderBy('price','asc')->get();
+                $data->map(function ($data){
+                    $data->price_format = 'Rp. '.format_rp($data->price_with_tax);
+                    return $data;
+                });
+            } else {
+                $data = Produk::where(['status'=>1,'cab_id'=>$request->id])->orderBy('cap','asc')->orderBy('price','asc')->get();
+                $data->map(function ($data){
+                    $data->price_format = 'Rp. '.format_rp($data->price_with_tax);
+                    return $data;
+                });
+            }
         }catch (\Mockery\Exception $exception){
             throw new \Mockery\Exception($exception->getMessage());
         }
@@ -144,7 +152,7 @@ class ProdukRepositories{
     public function delete(Request $request){
         try{
             $data   = Produk::where(['pac_id'=>$request->id])->get()->first();
-            $data->status = null;
+            $data->status = 0;
             $data->save();
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());

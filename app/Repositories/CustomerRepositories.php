@@ -4,13 +4,22 @@ namespace App\Repositories;
 
 use App\Cabang;
 use App\Customer;
+use App\Desa;
 use App\Invoice;
 use App\Produk;
 use Illuminate\Http\Request;
-use Exception;
 use Illuminate\Support\Facades\DB;
+use Mockery\Exception;
 
 class CustomerRepositories{
+    public function getByID($id){
+        try{
+            $data   = Customer::where('cust_id',$id)->get()->first();
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return $data;
+    }
     public function deletePackage(Request $request){
         try{
             foreach ($request->pac_id as $key => $pac){
@@ -121,15 +130,140 @@ class CustomerRepositories{
         return $data;
     }
     public function create(Request $request){
-
+        try{
+            $data   = new Customer();
+            $data->cab_id       = $request->nama_cabang;
+            $data->kode         = $request->nomor_pelanggan;
+            $data->npwp         = $request->punya_npwp;
+            $data->npwp_nomor   = $request->nomor_npwp;
+            $data->fullname     = $request->nama_pelanggan;
+            $data->no_ktp       = $request->nomor_ktp;
+            $data->address_01   = $request->alamat_perusahaan;
+            $data->address_02   = Desa::find($request->nama_desa)->first()->name;
+            $data->village_id   = $request->nama_desa;
+            $data->district_id  = $request->nama_kecamatan;
+            $data->regency_id   = $request->nama_kabupaten;
+            $data->province_id  = $request->nama_provinsi;
+            $data->postal_code  = $request->kode_pos;
+            $data->phone        = $request->nomor_telp_pelanggan;
+            $data->email        = $request->email_pelanggan;
+            $data->penjab_name  = $request->nama_penanggunjawab;
+            $data->penjab_jab   = $request->jabatan_penanggungjawab;
+            $data->penjab_phone = $request->no_telp_penanggungjawab;
+            $data->penjab_email = $request->email_penanggungjawab;
+            $data->tech_name    = $request->nama_teknisi;
+            $data->tech_jab     = $request->jabatan_teknisi;
+            $data->tech_phone   = $request->no_telp_teknisi;
+            $data->tech_email   = $request->email_teknisi;
+            $data->order_num    = $request->nomor_order;
+            $data->po_num       = $request->nomor_purchase_order;
+            $data->quo_num      = $request->nomor_quotation;
+            $data->finance_name = $request->nama_penanggungjawab_keuangan;
+            $data->pas_address01= $request->alamat_penagihan;
+            $data->pas_address02= Desa::find($request->desa_penagihan)->first()->name;
+            $data->pas_village_id = $request->desa_penagihan;
+            $data->pas_district_id= $request->kecamatan_penagihan;
+            $data->pas_regency_id= $request->kabupaten_penagihan;
+            $data->pas_province_id= $request->provinsi_penagihan;
+            $data->pas_postal   = $request->kode_pos_penagihan;
+            $data->pas_phone    = $request->no_telp_penagihan;
+            $data->tagih_email  = $request->email_penagihan;
+            $data->pac_id       = $request->nama_produk;
+            $data->pas_ip       = implode(', ',$request->alamat_ip);
+            $data->pas_promo    = $request->promosi;
+            $data->paid_tipe    = $request->jenis_pembayaran;
+            $data->pas_price    = $request->biaya_instalasi;
+            $data->duration     = $request->durasi_berlangganan;
+            $data->pas_date     = $request->tanggal_pemasangan;
+            $data->from_date    = $request->tanggal_berlangganan;
+            $data->saveOrFail();
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return $request;
     }
     public function update(Request $request){
-
+        try{
+            $data               = Customer::where('cust_id',$request->data_pelanggan)->get()->first();
+            $data->cab_id       = $request->nama_cabang;
+            $data->npwp         = $request->punya_npwp;
+            $data->npwp_nomor   = $request->nomor_npwp;
+            $data->fullname     = $request->nama_pelanggan;
+            $data->no_ktp       = $request->nomor_ktp;
+            $data->address_01   = $request->alamat_perusahaan;
+            $data->address_02   = Desa::find($request->nama_desa)->first()->name;
+            $data->village_id   = $request->nama_desa;
+            $data->district_id  = $request->nama_kecamatan;
+            $data->regency_id   = $request->nama_kabupaten;
+            $data->province_id  = $request->nama_provinsi;
+            $data->postal_code  = $request->kode_pos;
+            $data->phone        = $request->nomor_telp_pelanggan;
+            $data->email        = $request->email_pelanggan;
+            $data->penjab_name  = $request->nama_penanggunjawab;
+            $data->penjab_jab   = $request->jabatan_penanggungjawab;
+            $data->penjab_phone = $request->no_telp_penanggungjawab;
+            $data->penjab_email = $request->email_penanggungjawab;
+            $data->tech_name    = $request->nama_teknisi;
+            $data->tech_jab     = $request->jabatan_teknisi;
+            $data->tech_phone   = $request->no_telp_teknisi;
+            $data->tech_email   = $request->email_teknisi;
+            $data->order_num    = $request->nomor_order;
+            $data->po_num       = $request->nomor_purchase_order;
+            $data->quo_num      = $request->nomor_quotation;
+            $data->finance_name = $request->nama_penanggungjawab_keuangan;
+            $data->pas_address01= $request->alamat_penagihan;
+            $data->pas_address02= Desa::find($request->desa_penagihan)->first()->name;
+            $data->pas_village_id = $request->desa_penagihan;
+            $data->pas_district_id= $request->kecamatan_penagihan;
+            $data->pas_regency_id= $request->kabupaten_penagihan;
+            $data->pas_province_id= $request->provinsi_penagihan;
+            $data->pas_postal   = $request->kode_pos_penagihan;
+            $data->pas_phone    = $request->no_telp_penagihan;
+            $data->tagih_email  = $request->email_penagihan;
+            $data->pac_id       = $request->nama_produk;
+            $data->pas_ip       = implode(', ',$request->alamat_ip);
+            $data->pas_promo    = $request->promosi;
+            $data->paid_tipe    = $request->jenis_pembayaran;
+            $data->pas_price    = $request->biaya_instalasi;
+            $data->duration     = $request->durasi_berlangganan;
+            $data->pas_date     = $request->tanggal_pemasangan;
+            $data->from_date    = $request->tanggal_berlangganan;
+            $data->saveOrFail();
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return $request;
     }
     public function delete(Request $request){
-
+        try{
+            $data = Customer::where('cust_id',$request->id)->get()->first();
+            $data->status = 0;
+            $data->save();
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return $request;
     }
     public function bulkDelete(Request $request){
-
+        try{
+            foreach ($request->id as $key => $item){
+                $data = Customer::where('cust_id','=',$item)->get()->first();
+                $data->status = 0;
+                $data->save();
+            }
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return $request;
+    }
+    public function setStatus(Request $request){
+        try{
+            $data = Customer::where('cust_id','=',$request->id)->get()->first();
+            $data->is_active = $request->data_status;
+            $data->save();
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return $request;
     }
 }

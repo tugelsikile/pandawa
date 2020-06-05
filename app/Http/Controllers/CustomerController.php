@@ -6,14 +6,10 @@ use App\Provinces;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Repositories\{
-    UserMenuRepositories,
-    UserPriviledgesRepositories,
-    RegionalRepositories,
-    CustomerRepositories,
-    CabangRepositories
+    ProdukRepositories, UserMenuRepositories, UserPriviledgesRepositories, RegionalRepositories, CustomerRepositories, CabangRepositories
 };
 use App\Validations\CustomerValidations;
-use Exception;
+use Mockery\Exception;
 
 class CustomerController extends Controller
 {
@@ -23,9 +19,11 @@ class CustomerController extends Controller
     protected $customerValidation;
     protected $customer;
     protected $cabang;
+    protected $produk;
     public $curMenu = 'admin-customer';
 
     public function __construct(
+        ProdukRepositories $produkRepositories,
         UserMenuRepositories $userMenuRepositories,
         UserPriviledgesRepositories $userPriviledgesRepositories,
         RegionalRepositories $regionalRepositories,
@@ -34,6 +32,7 @@ class CustomerController extends Controller
         CabangRepositories $cabangRepositories
     )
     {
+        $this->produk = $produkRepositories;
         $this->menuRepositories = $userMenuRepositories;
         $this->priviledges = $userPriviledgesRepositories;
         $this->regional = $regionalRepositories;
@@ -80,11 +79,50 @@ class CustomerController extends Controller
         }
     }
     public function update(Request $request){
-
+        if ($request->method()=='POST'){
+            try{
+                $valid  = $this->customerValidation->update($request);
+                $save   = $this->customer->update($valid);
+            }catch (Exception $exception){
+                throw new Exception($exception->getMessage());
+            }
+            return format(1000,'Pelanggan berhasil diupdate',$save);
+        } else {
+            $data   = $this->customer->getByID($request->id);
+            $newReq = new Request();
+            $newReq->setMethod('POST');
+            $newReq->cab_id = $data->cab_id;
+            $products = $this->produk->getCabangProduk($newReq);
+            $cabangs = $this->cabang->all();
+            $provs = Provinces::all();
+            return view('customer.update',compact('data','provs','cabangs','products'));
+        }
     }
     public function delete(Request $request){
+        try{
+            $valid  = $this->customerValidation->delete($request);
+            $delete = $this->customer->delete($valid);
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return format(1000,'Customer berhasil dihapus',$delete);
     }
     public function bulkDelete(Request $request){
-
+        try{
+            $valid  = $this->customerValidation->bulkDelete($request);
+            $delete = $this->customer->bulkDelete($valid);
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return format(1000,'Beberapa customer berhasil dihapus',$delete);
+    }
+    public function setStatus(Request $request){
+        try{
+            $valid = $this->customerValidation->setStatus($request);
+            $set   = $this->customer->setStatus($valid);
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return format(1000,'Status Customer berhasil diupdate',$set);
     }
 }
