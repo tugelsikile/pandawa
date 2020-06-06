@@ -20,8 +20,8 @@ function show_modal(obj) {
                             '</div>\n' +
                             '<div class="modal-body"><div class="text-center">Loading...</div></div>\n' +
                             '<div class="modal-footer">\n' +
-                                '<button type="submit" class="btn-close btn btn-primary">'+ btnSave +'</button>\n' +
-                                '<button type="button" class="btn-submit btn btn-secondary" data-dismiss="modal">'+ btnClose +'</button>\n' +
+                                '<button type="submit" class="btn-submit btn btn-primary">'+ btnSave +'</button>\n' +
+                                '<button type="button" class="btn-close btn btn-secondary" data-dismiss="modal">'+ btnClose +'</button>\n' +
                             '</div>\n' +
                         '</div>\n' +
                     '</form>\n' +
@@ -78,6 +78,56 @@ function submitForm(obj) {
         }
     });
 }
+function setStatusAktif(obj) {
+    var id      = $(obj).attr('data-id');
+    var status  = $(obj).attr('data-value');
+    var title   = $(obj).attr('title');
+    var url     = $(obj).attr('href');
+    var token   = $(obj).attr('data-token');
+    Swal.fire({
+        title               : title,
+        text                : 'Anda yakin ?',
+        icon                : 'warning',
+        showCancelButton    : true,
+        confirmButtonColor  : '#3085d6',
+        cancelButtonColor   : '#d33',
+        confirmButtonText   : 'Hapus',
+        cancelButtonText    : 'Batal',
+    }).then((result) => {
+        if (result.value) {
+            $.ajax({
+                url     : url,
+                type    : 'POST',
+                dataType: 'JSON',
+                data    : { _token : token, id : id, data_status : status },
+                error   : function (e) {
+                    var msg = '';
+                    var jsonResponse = e.responseJSON;
+                    if (jsonResponse){
+                        jsonResponse = jsonResponse.message;
+                        jsonResponse = jsonResponse.split('#');
+                        msg = '<ul>';
+                        $.each(jsonResponse,function (i,v) {
+                            msg += '<li>'+v+'</li>';
+                        });
+                        msg += '</ul>';
+                    }
+                    showError(e.statusText+'<br>'+msg);
+                },
+                success : function (e) {
+                    if (e.code == 1000){
+                        if (typeof table !== 'undefined'){
+                            table._fnDraw(false);
+                        }
+                        showSuccess(e.msg);
+                    } else {
+                        showError(e.msg);
+                    }
+                }
+            });
+        }
+    });
+}
 function delete_data(obj) {
     var id      = $(obj).attr('data-id');
     var title   = $(obj).attr('title');
@@ -117,6 +167,9 @@ function delete_data(obj) {
                     if (e.code == 1000){
                         if (typeof table !== 'undefined'){
                             table._fnDraw(false);
+                        }
+                        if ($('#MyModal').length > 0){
+                            $('#MyModal').modal('hide');
                         }
                         showSuccess(e.msg);
                     } else {
@@ -180,6 +233,31 @@ function bulk_delete(obj) {
         });
     }
 }
+function getProdukCabang(obj){
+    var cab_id  = $(obj).val();
+    if (cab_id.length == 0){
+        $('#nama_produk').html('');
+    } else {
+        $('#nama_produk').html('<option value="">Loading...</option>');
+        $.ajax({
+            url     : '/lists/produk-cabang',
+            type    : 'POST',
+            dataType: 'JSON',
+            data    : { cab_id : cab_id },
+            error   : function (e) {
+                $('#nama_produk').html('<option value="">'+e.statusText+'</option>');
+            },
+            success : function (e) {
+                if (e.params.length > 0){
+                    $('#nama_produk').html('');
+                    $.each(e.params,function (i,v) {
+                        $('#nama_produk').append('<option value="'+v.pac_id+'">'+v.pac_name+' | '+v.price_format+'</option>');
+                    });
+                }
+            }
+        });
+    }
+}
 function kodeProduk() {
     var cab_id  = $('#nama_cabang').val();
     if (cab_id.length == 0){
@@ -197,6 +275,25 @@ function kodeProduk() {
                 $('#kode_produk').val(e.params);
             }
         });
+    }
+}
+function kodeCustomer() {
+    var cab_id  = $('#nama_cabang').val();
+    if (cab_id.length == 0){
+        $('#nomor_pelanggan,#nomor_pelanggan_text').val('');
+    } else {
+        $.ajax({
+            url     : '/preview-id-pelanggan',
+            type    : 'POST',
+            dataType: 'JSON',
+            data    : { cab_id : cab_id },
+            error   : function (e) {
+                $('#nomor_pelanggan,#nomor_pelanggan_text').val('');
+            },
+            success : function (e) {
+                $('#nomor_pelanggan,#nomor_pelanggan_text').val(e.params);
+            }
+        })
     }
 }
 function previewHarga() {
@@ -298,13 +395,43 @@ function getKab(obj,defaultRegencyID){
             } else {
                 $('.regency_id').html('');
                 $.each(e.params,function (i,v) {
-                    if (v.id == '3212' || v.id == defaultRegencyID){
+                    if (v.id == defaultRegencyID){
                         $('.regency_id').append('<option selected value="'+v.id+'">'+ucWords(v.name)+'</option>');
                     } else {
                         $('.regency_id').append('<option value="'+v.id+'">'+ucWords(v.name)+'</option>');
                     }
                     if (i + 1 >= e.params.length){
                         $('.regency_id').trigger('change');
+                    }
+                });
+            }
+        }
+    });
+}
+function getKabPenagihan(kabID) {
+    var prov_id = $('#provinsi_penagihan').val();
+    $('#kabupaten_penagihan,#kecamatan_penagihan,#desa_penagihan').html('<option value="">Loading...</option>');
+    $.ajax({
+        url     : '/regional/get-kab',
+        type    : 'GET',
+        dataType: 'JSON',
+        data    : { id : prov_id },
+        error   : function (e) {
+            $('#kabupaten_penagihan,#kecamatan_penagihan,#desa_penagihan').html('<option value="">'+e.statusText+'</option>');
+        },
+        success : function (e) {
+            if (e.code < 1000){
+                $('#kabupaten_penagihan,#kecamatan_penagihan,#desa_penagihan').html('<option value="">'+e.msg+'</option>');
+            } else {
+                $('#kabupaten_penagihan').html('');
+                $.each(e.params,function (i,v) {
+                    if (v.id == kabID){
+                        $('#kabupaten_penagihan').append('<option selected value="'+v.id+'">'+ucWords(v.name)+'</option>');
+                    } else {
+                        $('#kabupaten_penagihan').append('<option value="'+v.id+'">'+ucWords(v.name)+'</option>');
+                    }
+                    if (i + 1 >= e.params.length){
+                        $('#kabupaten_penagihan').trigger('change');
                     }
                 });
             }
@@ -341,6 +468,36 @@ function getKec(obj,defaultDistrictID) {
         }
     });
 }
+function getKecPenagihan(kecID){
+    var kab_id = $('#kabupaten_penagihan').val();
+    $('#kecamatan_penagihan,#desa_penagihan').html('<option value="">Loading...</option>');
+    $.ajax({
+        url     : '/regional/get-kec',
+        type    : 'GET',
+        dataType: 'JSON',
+        data    : { id : kab_id },
+        error   : function (e) {
+            $('#kecamatan_penagihan,#desa_penagihan').html('<option value="">'+e.statusText+'</option>');
+        },
+        success : function (e) {
+            if (e.code < 1000){
+                $('#kecamatan_penagihan,#desa_penagihan').html('<option value="">'+e.msg+'</option>');
+            } else {
+                $('#kecamatan_penagihan').html('');
+                $.each(e.params,function (i,v) {
+                    if (v.id == kecID){
+                        $('#kecamatan_penagihan').append('<option selected value="'+v.id+'">'+ucWords(v.name)+'</option>');
+                    } else {
+                        $('#kecamatan_penagihan').append('<option value="'+v.id+'">'+ucWords(v.name)+'</option>');
+                    }
+                    if (i + 1 >= e.params.length){
+                        $('#kecamatan_penagihan').trigger('change');
+                    }
+                });
+            }
+        }
+    });
+}
 function getDesa(obj,defaultDesaID) {
     var kab_id = $(obj).val();
     $('.village_id').html('<option value="">Loading...</option>');
@@ -362,6 +519,33 @@ function getDesa(obj,defaultDesaID) {
                         $('.village_id').append('<option selected value="'+v.id+'">'+ucWords(v.name)+'</option>');
                     } else {
                         $('.village_id').append('<option value="'+v.id+'">'+ucWords(v.name)+'</option>');
+                    }
+                });
+            }
+        }
+    });
+}
+function getDesaPenagihan(desaID){
+    var kec_id = $('#kecamatan_penagihan').val();
+    $('#desa_penagihan').html('<option value="">Loading...</option>');
+    $.ajax({
+        url     : '/regional/get-desa',
+        type    : 'GET',
+        dataType: 'JSON',
+        data    : { id : kec_id },
+        error   : function (e) {
+            $('#desa_penagihan').html('<option value="">'+e.statusText+'</option>');
+        },
+        success : function (e) {
+            if (e.code < 1000){
+                $('#desa_penagihan').html('<option value="">'+e.msg+'</option>');
+            } else {
+                $('#desa_penagihan').html('');
+                $.each(e.params,function (i,v) {
+                    if (v.id == desaID){
+                        $('#desa_penagihan').append('<option selected value="'+v.id+'">'+ucWords(v.name)+'</option>');
+                    } else {
+                        $('#desa_penagihan').append('<option value="'+v.id+'">'+ucWords(v.name)+'</option>');
                     }
                 });
             }
