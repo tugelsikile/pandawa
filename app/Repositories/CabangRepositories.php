@@ -6,12 +6,17 @@ use App\{
     Cabang, Customer, Desa, Invoice, Kabupaten, Kecamatan, Provinces
 };
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Mockery\Exception;
 
 class CabangRepositories{
     public function all(){
         try{
-            $data = Cabang::where(['status'=>1])->get();
+            if (strlen(Auth::user()->cab_id)>0){
+                $data = Cabang::where(['status'=>1,'cab_id'=>Auth::user()->cab_id])->get();
+            } else {
+                $data = Cabang::where(['status'=>1])->get();
+            }
         }catch (\Exception $exception){
             throw new \Exception($exception->getMessage());
         }

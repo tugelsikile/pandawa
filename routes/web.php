@@ -80,6 +80,9 @@ Route::group(['middleware'=>'auth'],function (){
         Route::get('/','TagihanController@index');
         Route::post('/table','TagihanController@table');
 
+        Route::get('/generate-invoice','TagihanController@FormGenerate');
+        Route::post('/generate-invoice','TagihanController@FormGenerate');
+
         Route::get('/create','TagihanController@create');
         Route::post('/create','TagihanController@create');
 
