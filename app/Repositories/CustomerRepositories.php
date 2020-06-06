@@ -17,6 +17,15 @@ class CustomerRepositories{
             $data = Customer::where('status','=',1)->where('is_active','=',1);
             if (strlen($request->nama_cabang)>0) $data->where('cab_id','=',$request->nama_cabang);
             $data = $data->get();
+            $data->map(function ($data) use ($request){
+                $data->bulan_tagihan = $request->bulan_tagihan;
+                $data->tahun_tagihan = $request->tahun_tagihan;
+                $data->paket = $data->paketObj;
+                $data->cabang = $data->cabangObj;
+                $data->makeHidden('cabangObj');
+                $data->makeHidden('paketObj');
+                return $data;
+            });
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }

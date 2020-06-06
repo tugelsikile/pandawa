@@ -8,6 +8,28 @@ use Illuminate\Support\Facades\DB;
 use Mockery\Exception;
 
 class TagihanRepositories{
+    public function GenInvoiceGetCustomer(Request $request){
+        try{
+            $data                   = new Tagihan();
+            $data->inv_number       = $request->npwp == 1 ? genInvNumber($request->bulan_tagihan,$request->tahun_tagihan,1) : genInvNumber($request->bulan_tagihan,$request->tahun_tagihan);
+            $data->cust_id          = $request->data_pelanggan;
+            $data->cab_id           = $request->nama_cabang;
+            $data->inv_date         = $request->tahun_tagihan.'-'.$request->bulan_tagihan.'-01';
+            $data->due_date         = $request->tahun_tagihan.'-'.$request->bulan_tagihan.'-'.dueDate();
+            $data->is_tax           = $request->npwp;
+            $data->tax_percent      = $request->pajak_produk;
+            $data->price            = $request->harga_produk;
+            $data->price_tax        = $request->harga_produk_termasuk_pajak - $request->harga_produk;
+            $data->price_with_tax   = $request->harga_produk_termasuk_pajak;
+            $data->pac_id           = $request->nama_produk;
+            $data->delete_date      = null;
+            $data->paid_date        = null;
+            $data->saveOrFail();
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return $request;
+    }
     public function minYear(Request $request){
         $year = date('Y');
         try{

@@ -72,7 +72,13 @@ class TagihanController extends Controller
             }
         }
     }
-    public function GenInvoiceGetCustomer(){
-
+    public function GenInvoiceGetCustomer(Request $request){
+        try{
+            $valid  = $this->tagihanValidation->GenInvoiceGetCustomer($request);
+            $save   = $this->tagihanRepositories->GenInvoiceGetCustomer($valid);
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return format(1000,'OK',$save);
     }
 }

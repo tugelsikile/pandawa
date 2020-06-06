@@ -106,21 +106,34 @@
                             $('.progress-bar').css({'width':percent+'%'}).prop({'aria-valuenow':percent}).html(percent+'%');
                             $.each(e.params,function (i,v) {
                                 percent = Math.round(((i+1) / total) * 100);
-                                $('.progress-bar').css({'width':percent+'%'}).prop({'aria-valuenow':percent}).html(percent+'%<br>Memproses ');
-                                $.ajax({
-                                    url     : '{{ url('admin-tagihan/generate-invoice-next-step') }}',
-                                    type    : 'POST',
-                                    dataType: 'JSON',
-                                    data    : { _token : '{{ csrf_token() }}', data : v },
-                                    async   : false,
-                                    cache   : false,
-                                    error   : function () {
+                                $('.progress-bar').css({'width':percent+'%'}).prop({'aria-valuenow':percent}).html(percent+'%<br>Memproses data : '+v.fullname);
+                                if (v.paket != null){
+                                    $.ajax({
+                                        url     : '{{ url('admin-tagihan/generate-invoice-next-step') }}',
+                                        type    : 'POST',
+                                        dataType: 'JSON',
+                                        data    : {
+                                            _token          : '{{ csrf_token() }}',
+                                            data_pelanggan  : v.cust_id,
+                                            nama_cabang     : v.cab_id,
+                                            bulan_tagihan   : v.bulan_tagihan,
+                                            tahun_tagihan   : v.tahun_tagihan,
+                                            npwp            : v.npwp,
+                                            nama_produk     : v.pac_id,
+                                            pajak_produk    : v.paket.tax_percent,
+                                            harga_produk    : v.paket.price,
+                                            harga_produk_termasuk_pajak  : v.paket.price_with_tax
+                                        },
+                                        async   : false,
+                                        cache   : false,
+                                        error   : function () {
 
-                                    },
-                                    success : function (e) {
+                                        },
+                                        success : function (e) {
 
-                                    }
-                                });
+                                        }
+                                    });
+                                }
                                 if (i + 1 >= total ){
                                     $('#MyModal').data('bs.modal')._config.backdrop = true;
                                     $('#MyModal').data('bs.modal')._config.keyboard = true;
@@ -128,6 +141,11 @@
                                     $('#MyModal .modal-header .close').show();
                                     $('.form-inputnya').show();
                                     $('.form-progressnya').hide();
+                                    $('#MyModal').modal('hide');
+                                    if (table != null){
+                                        table._fnDraw();
+                                    }
+                                    showSuccess('Sebanyak '+total+' Tagihan berhasil digenerate');
                                 }
                             });
                         }

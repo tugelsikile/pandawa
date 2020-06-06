@@ -11,7 +11,100 @@ function format($code,$msg,$params=false){
 function format_rp($ammount){
     return number_format($ammount,0,'','.');
 }
-
+function dueDate(){
+    return \Illuminate\Support\Facades\DB::table('isp_site')->select('due_date')->get()->first()->due_date;
+}
+function templateInvoice($npwp=false){
+    if (!$npwp){
+        $data = \Illuminate\Support\Facades\DB::table('isp_template_id')->select(['id_string','str_pad'])->where('idnya','=',2)->get()->first();
+    } else {
+        $data = \Illuminate\Support\Facades\DB::table('isp_template_id')->select(['id_string','str_pad'])->where('idnya','=',1)->get()->first();
+    }
+    return ['template' => $data->id_string, 'padding' => $data->str_pad];
+}
+function genInvNumber($month,$year,$npwp=false){
+    $template = templateInvoice($npwp);
+    $stringInv  = $template['template'];
+    $stringPad  = $template['padding'];
+    $invDateFormat = $year.'-'.$month.'-01';
+    $counter    = \Illuminate\Support\Facades\DB::table('isp_invoice')
+        ->select('inv_id')
+        ->where('inv_date','=',$invDateFormat)
+        ->where('status','>',0);
+    if ($npwp){
+        $counter = $counter->where('is_tax','=',1);
+    } else {
+        $counter = $counter->where('is_tax','=',0);
+    }
+    $counter    = $counter->get()->count();
+    $counter    = $counter + 1;
+    $kodenya    = null;
+    $explode    = explode('|',$stringInv);
+    $register   = ['date','month','year','num','DATE','MONTH','YEAR'];
+    foreach ($explode as $key => $string){
+        $strpos     = strpos($string,'{');
+        $kodenya    .= substr($string,0,$strpos);
+        if (preg_match_all("/{(.*?)}/",$string,$m)){
+            foreach ($m[1] as $i => $format){
+                if (!in_array($format,$register)){
+                    $kodenya .= $format;
+                } else {
+                    if ($format == 'date'){
+                        $kodenya .= date('d');
+                    } elseif ($format == 'month'){
+                        $kodenya .= date('m');
+                    } elseif ($format == 'year') {
+                        $kodenya .= date('Y');
+                    } elseif ($format == 'DATE'){
+                        $kodenya .= romawi((int)date('d'));
+                    } elseif ($format == 'MONTH'){
+                        $kodenya .= romawi((int)date('m'));
+                    } elseif ($format == 'YEAR'){
+                        $kodenya .= romawi((int)date('Y'));
+                    } else {
+                        $kodenya .= str_pad($counter,$stringPad,'0',STR_PAD_LEFT);
+                    }
+                }
+            }
+        } else {
+            $kodenya .= $string;
+        }
+    }
+    return $kodenya;
+}
+function romawi($integer, $upcase = true) {
+    $table = array('M'=>1000, 'CM'=>900, 'D'=>500, 'CD'=>400, 'C'=>100, 'XC'=>90, 'L'=>50, 'XL'=>40, 'X'=>10, 'IX'=>9, 'V'=>5, 'IV'=>4, 'I'=>1);
+    $return = '';
+    while($integer > 0) {
+        foreach($table as $rom=>$arb) {
+            if($integer >= $arb) {
+                $integer -= $arb;
+                $return .= $rom;
+                break;
+            }
+        }
+    }
+    return $return;
+}
+function terbilang($x) {
+    $angka = ["", "satu", "dua", "tiga", "empat", "lima", "enam", "tujuh", "delapan", "sembilan", "sepuluh", "sebelas"];
+    if ($x < 12)
+        return " " . $angka[$x];
+    elseif ($x < 20)
+        return terbilang($x - 10) . " belas";
+    elseif ($x < 100)
+        return terbilang($x / 10) . " puluh" .terbilang($x % 10);
+    elseif ($x < 200)
+        return " seratus" . terbilang($x - 100);
+    elseif ($x < 1000)
+        return terbilang($x / 100) . " ratus" . terbilang($x % 100);
+    elseif ($x < 2000)
+        return " seribu" . terbilang($x - 1000);
+    elseif ($x < 1000000)
+        return terbilang($x / 1000) . " ribu" . terbilang($x % 1000);
+    elseif ($x < 1000000000)
+        return terbilang($x / 1000000) . " juta" . terbilang($x % 1000000);
+}
 function ArrayBulan(){
     return [
         [ 'value' => '01', 'name' => 'Januari' ],

@@ -9,4 +9,8 @@ class Produk extends Model
     protected $primaryKey = 'pac_id';
     protected $table = 'isp_package';
     public $timestamps = false;
+
+    public function customerObj(){
+        return $this->hasMany(Customer::class,'pac_id');
+    }
 }
