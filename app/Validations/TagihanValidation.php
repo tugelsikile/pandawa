@@ -32,9 +32,8 @@ class TagihanValidation{
                     'status'    => 1,
                     'cust_id'   => $request->data_pelanggan,
                 ])
-                ->where('(inv_date)','=',$invDateFormat)
+                ->where('inv_date','=',$invDateFormat)
                 ->get();
-            //dd($dataTagihan);
             if ($dataTagihan->count()>0){
                 throw new Exception('#Sudah ada invoice',403);
             }

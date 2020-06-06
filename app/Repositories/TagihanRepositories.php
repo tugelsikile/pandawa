@@ -63,8 +63,8 @@ class TagihanRepositories{
             if (strlen($npwp)>0) $where['isp_customer.npwp'] = $npwp;
             if (strlen($isPaid)>0) $where['isp_invoice.is_paid'] = $isPaid;
             $data       = Tagihan::where($where)->join('isp_customer','isp_invoice.cust_id','=','isp_customer.cust_id','left');
-            if (strlen($invMonth)>0) $data = $data->where(DB::raw('MONTH(isp_invoice.inv_date)'),$invMonth);
-            if (strlen($invYear)>0) $data = $data->where(DB::raw('YEAR(isp_invoice.inv_date)'),$invYear);
+            if (strlen($invMonth)>0) $data = $data->whereMonth('isp_invoice.inv_date','=',$invMonth);
+            if (strlen($invYear)>0) $data = $data->whereYear('isp_invoice.inv_date','=',$invYear);
             $data       = $data->where(function ($q) use ($keyword){
                     $q->where('isp_invoice.inv_number','like',"%$keyword%");
                     $q->orWhere('isp_customer.fullname','like',"%$keyword%");

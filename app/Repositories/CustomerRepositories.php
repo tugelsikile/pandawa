@@ -14,7 +14,9 @@ use Mockery\Exception;
 class CustomerRepositories{
     public function getForGenerate(Request $request){
         try{
-            $data = Customer::where('status','=',1)->where('is_active','=',1);
+            $invDate = $request->tahun_tagihan.'-'.$request->bulan_tagihan.'-01';
+            $data = Customer::where('status','=',1)->where('is_active','=',1)
+                ->whereDate('from_date','<=',$invDate);
             if (strlen($request->nama_cabang)>0) $data->where('cab_id','=',$request->nama_cabang);
             $data = $data->get();
             $data->map(function ($data) use ($request){
