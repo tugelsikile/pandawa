@@ -12,6 +12,16 @@ use Illuminate\Support\Facades\DB;
 use Mockery\Exception;
 
 class CustomerRepositories{
+    public function getForGenerate(Request $request){
+        try{
+            $data = Customer::where('status','=',1)->where('is_active','=',1);
+            if (strlen($request->nama_cabang)>0) $data->where('cab_id','=',$request->nama_cabang);
+            $data = $data->get();
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return $data;
+    }
     public function getByID($id){
         try{
             $data   = Customer::where('cust_id',$id)->get()->first();

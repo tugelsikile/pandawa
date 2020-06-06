@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Repositories\{ CabangRepositories, TagihanRepositories, UserMenuRepositories, UserPriviledgesRepositories };
+use App\Repositories\{ CustomerRepositories, CabangRepositories, TagihanRepositories, UserMenuRepositories, UserPriviledgesRepositories };
 use App\Validations\TagihanValidation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,9 +15,11 @@ class TagihanController extends Controller
     protected $tagihanValidation;
     protected $tagihanRepositories;
     protected $cabangRepositories;
+    protected $customerRepositories;
     public $curMenu = 'admin-tagihan';
 
     public function __construct(
+        CustomerRepositories $customerRepositories,
         UserMenuRepositories $userMenuRepositories,
         UserPriviledgesRepositories $userPriviledgesRepositories,
         CabangRepositories $cabangRepositories,
@@ -30,6 +32,7 @@ class TagihanController extends Controller
         $this->cabangRepositories = $cabangRepositories;
         $this->tagihanRepositories = $tagihanRepositories;
         $this->tagihanValidation = $tagihanValidation;
+        $this->customerRepositories = $customerRepositories;
     }
 
     public function index(Request $request){
@@ -55,12 +58,21 @@ class TagihanController extends Controller
         if (!$request->ajax()){
             abort(403);
         } else {
-            if ($request->method()=='post'){
-
+            if ($request->method()=='POST'){
+                try{
+                    $valid  = $this->tagihanValidation->generate($request);
+                    $data   = $this->customerRepositories->getForGenerate($valid);
+                }catch (Exception $exception){
+                    throw new Exception($exception->getMessage());
+                }
+                return format(1000,'OK',$data);
             } else {
                 $cabangs    = $this->cabangRepositories->all();
                 return view('tagihan.generate-invoice',compact('cabangs'));
             }
         }
+    }
+    public function GenInvoiceGetCustomer(){
+
     }
 }

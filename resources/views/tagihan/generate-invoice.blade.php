@@ -48,24 +48,29 @@
     $('.form-progressnya').hide();
     $('#ModalForm').attr({'onsubmit':null});
     $('#ModalForm').submit(function () {
-        $('.form-inputnya').hide();
-        $('.form-progressnya').show();
         Swal.fire({
             title               : 'Perhatian !',
-            text                : 'Mulai Proses Generate Invoice?<br>asdasd',
+            html                : 'Mulai Proses Generate Invoice?<br>Invoice yang sudah dibuat dari hasil generate sebelumnya mungkin akan berubah.<br><small>Jendela tidak dapat ditutup sampai proses selesai</small>',
             icon                : 'warning',
             showCancelButton    : true,
             confirmButtonColor  : '#3085d6',
             cancelButtonColor   : '#d33',
-            confirmButtonText   : 'Hapus',
+            confirmButtonText   : 'Lanjutkan',
             cancelButtonText    : 'Batal',
         }).then((result) => {
             if (result.value) {
+                $('#MyModal').data('bs.modal')._config.backdrop = 'static';
+                $('#MyModal').data('bs.modal')._config.keyboard = false;
+                $('#MyModal .modal-footer .btn').prop({'disabled':true});
+                $('#MyModal .modal-header .close').hide();
+                $('.form-inputnya').hide();
+                $('.form-progressnya').show();
+                $('.progress-bar').css({'width':'100%'}).prop({'aria-valuenow':100}).html('Mohon Tunggu. Sedang mengambil data Customer Aktif.<br>Jangan tutup jendela ini sampai proses selesai!');
                 $.ajax({
-                    url     : url,
+                    url     : '{{ url('admin-tagihan/generate-invoice') }}',
                     type    : 'POST',
                     dataType: 'JSON',
-                    data    : { _token : token, id : id, data_status : status },
+                    data    : $('#ModalForm').serialize(),
                     error   : function (e) {
                         var msg = '';
                         var jsonResponse = e.responseJSON;
@@ -78,16 +83,53 @@
                             });
                             msg += '</ul>';
                         }
-                        showError(e.statusText+'<br>'+msg);
+                        showError(msg);
+                        $('#MyModal').data('bs.modal')._config.backdrop = true;
+                        $('#MyModal').data('bs.modal')._config.keyboard = true;
+                        $('#MyModal .modal-footer .btn').prop({'disabled':false});
+                        $('#MyModal .modal-header .close').show();
+                        $('.form-inputnya').show();
+                        $('.form-progressnya').hide();
                     },
                     success : function (e) {
-                        if (e.code == 1000){
-                            if (typeof table !== 'undefined'){
-                                table._fnDraw(false);
-                            }
-                            showSuccess(e.msg);
-                        } else {
+                        if (e.code < 1000){
                             showError(e.msg);
+                            $('#MyModal').data('bs.modal')._config.backdrop = true;
+                            $('#MyModal').data('bs.modal')._config.keyboard = true;
+                            $('#MyModal .modal-footer .btn').prop({'disabled':false});
+                            $('#MyModal .modal-header .close').show();
+                            $('.form-inputnya').show();
+                            $('.form-progressnya').hide();
+                        } else {
+                            var total = e.params.length;
+                            var percent = 0;
+                            $('.progress-bar').css({'width':percent+'%'}).prop({'aria-valuenow':percent}).html(percent+'%');
+                            $.each(e.params,function (i,v) {
+                                percent = Math.round(((i+1) / total) * 100);
+                                $('.progress-bar').css({'width':percent+'%'}).prop({'aria-valuenow':percent}).html(percent+'%<br>Memproses ');
+                                $.ajax({
+                                    url     : '{{ url('admin-tagihan/generate-invoice-next-step') }}',
+                                    type    : 'POST',
+                                    dataType: 'JSON',
+                                    data    : { _token : '{{ csrf_token() }}', data : v },
+                                    async   : false,
+                                    cache   : false,
+                                    error   : function () {
+
+                                    },
+                                    success : function (e) {
+
+                                    }
+                                });
+                                if (i + 1 >= total ){
+                                    $('#MyModal').data('bs.modal')._config.backdrop = true;
+                                    $('#MyModal').data('bs.modal')._config.keyboard = true;
+                                    $('#MyModal .modal-footer .btn').prop({'disabled':false});
+                                    $('#MyModal .modal-header .close').show();
+                                    $('.form-inputnya').show();
+                                    $('.form-progressnya').hide();
+                                }
+                            });
                         }
                     }
                 });
