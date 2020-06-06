@@ -75,4 +75,18 @@ Route::group(['middleware'=>'auth'],function (){
 
         Route::post('/set-status','CustomerController@setStatus');
     });
+
+    Route::group(['prefix'=>'admin-tagihan'],function (){
+        Route::get('/','TagihanController@index');
+        Route::post('/table','TagihanController@table');
+
+        Route::get('/create','TagihanController@create');
+        Route::post('/create','TagihanController@create');
+
+        Route::get('/update','TagihanController@update');
+        Route::post('/update','TagihanController@update');
+
+        Route::post('/delete','TagihanController@delete');
+        Route::post('/bulk-delete','TagihanController@bulkDelete');
+    });
 });
