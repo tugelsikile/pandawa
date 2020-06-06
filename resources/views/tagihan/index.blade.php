@@ -67,12 +67,10 @@
                     }
                 },
                 {
-                    className   : 'btn btn-sm btn-danger',
-                    text        : '<i class="fa fa-trash-o"></i> Hapus Produk Dipilih',
-                    action      : function (e, dt, node, config) {
-                        @if($privs->D_opt == 1)
-                            bulk_delete({'title':'Hapus Produk Terpilih','href':'{{ url('admin-produk/bulk-delete') }}','data-token':'{{csrf_token()}}'});
-                        @endif
+                    className   : 'btn btn-sm btn-primary',
+                    text        : '<i class="fa fa-plus"></i> Tambah Tagihan Manual',
+                    action      : function (e,dt,node,config) {
+
                     }
                 }
             ],
@@ -82,7 +80,7 @@
                     }
                 },
                 { "data" : "inv_number", render : function (a,b,c) {
-                        return c.fullname+'<br><span class="badge badge-primary">'+ c.inv_number + '</span> <span class="badge badge-success">'+c.cabang.cab_name+'</span>';
+                        return c.fullname+'<br><span class="badge badge-primary">'+ c.inv_number + '</span> <span class="badge badge-success" onclick="$(\'.cab-id\').val('+c.cab_id+');table._fnDraw()">'+c.cabang.cab_name+'</span>';
                     }
                 },
                 { "data" : "inv_date", render : function (a,b,c) {
@@ -97,9 +95,9 @@
                 { "data" : "is_paid", "width" : "120px", render : function (a,b,c) {
                         var html = '';
                         if (c.is_paid == 1){
-                            html = '<a onclick="show_modal(this);return false" title="Batalkan Approval Tagihan" href="{{ url('admin-tagihan/cancel-tagihan?id=') }}'+c.inv_id+'" class="btn btn-block btn-sm btn-success">Sudah Dibayar<br>'+c.tgl_bayar+'</a>'
+                            html = '<a onclick="@if(checkPrivileges('admin-tagihan','approve-paid')->U_opt == 1) show_modal(this); @else showError(\'Forbidden Action\'); @endif return false" title="Batalkan Approval Tagihan" href="@if(checkPrivileges('admin-tagihan','approve-paid')->U_opt == 1){{ url('admin-tagihan/cancel-tagihan?id=') }}'+c.inv_id+'@else javascript:; @endif" class="btn btn-block btn-sm btn-success">Sudah Dibayar<br>'+c.tgl_bayar+'</a>'
                         } else {
-                            html = '<a onclick="show_modal(this);return false" title="Approval Tagihan" href="{{ url('admin-tagihan/approve-tagihan?id=') }}'+c.inv_id+'" class="btn btn-block btn-danger btn-sm">Belum Dibayar</a>'
+                            html = '<a onclick="@if(checkPrivileges('admin-tagihan','approve-paid')->U_opt == 1) show_modal(this); @else showError(\'Forbidden Action\'); @endif return false" title="Approval Tagihan" href="@if(checkPrivileges('admin-tagihan','approve-paid')->U_opt == 1){{ url('admin-tagihan/approve-tagihan?id=') }}'+c.inv_id+'@else javascript:; @endif" class="btn btn-block btn-danger btn-sm">Belum Dibayar</a>'
                         }
                         return html;
                     }

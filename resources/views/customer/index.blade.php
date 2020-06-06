@@ -46,9 +46,9 @@
             },
             buttons         : [
                 {
-                    className : 'btn btn-sm btn-primary',
-                    text: '<i class="fa fa-plus"></i> Tambah Pelanggan',
-                    action : function (e,dt,node,config) {
+                    className   : 'btn btn-sm btn-primary',
+                    text        : '<i class="fa fa-plus"></i> Tambah Pelanggan',
+                    action      : function (e,dt,node,config) {
                         @if($privs->C_opt == 1)
                             show_modal({'href':'{{ url('admin-customer/create') }}','title':'Tambah Pelanggan'});
                         @else
