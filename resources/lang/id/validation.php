@@ -12,6 +12,10 @@ return array(
     | as the size rules. Feel free to tweak each of these messages here.
     |
     */
+    'wordsCount'            => [
+        'min' => "Field :attribute harus diisi",
+        'max' => "Field :attribute harus diisi",
+    ],
     "string"                => "Field :attribute harus kata atau kalimat",
     "accepted"              => "Field :attribute harus disetujui.",
     "active_url"            => "Field :attribute bukan valid URL.",

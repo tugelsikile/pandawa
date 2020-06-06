@@ -3,7 +3,9 @@
 namespace App\Repositories;
 
 use App\Tagihan;
+use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Mockery\Exception;
 
@@ -76,14 +78,67 @@ class TagihanRepositories{
                 ->get();
             $data->map(function($data){
                 $data->nomor = 0;
+                $data->paket    = $data->paketObj;
+                $data->cabang   = $data->cabangObj;
                 $data->harga    = format_rp($data->price_with_tax);
+                if ($data->is_paid==0){
+                    $data->tgl_bayar = null;
+                } else {
+                    $data->tgl_bayar = tglIndo(date('Y-m-d',strtotime($data->paid_date)));
+                }
                 $data->periode  = bulanIndo(date('m',strtotime($data->inv_date))).' '.date('Y',strtotime($data->inv_date));
+                $data->makeHidden('paketObj');
+                $data->makeHidden('cabangObj');
                 return $data;
             });
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
         return $data;
+    }
+    public function getByID(Request $request){
+        try{
+            $data   = Tagihan::where('inv_id',$request->id)->get();
+            $data->map(function ($data){
+                $data->cabang   = $data->cabangObj;
+                $data->customer = $data->customerObj;
+                $data->paket    = $data->paketObj;
+                $data->approved = User::where('id','=',$data->paid_approved_by)->get()->first();
+                $data->makeHidden('cabangObj');
+                $data->makeHidden('customerObj');
+                $data->makeHidden('paketObj');
+                return $data;
+            });
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return $data->first();
+    }
+    public function Cancel(Request $request){
+        try{
+            $data                       = Tagihan::where('inv_id',$request->data_tagihan)->get()->first();
+            $data->is_paid              = 0;
+            $data->paid_cancel_date     = $request->tanggal_pembatalan;
+            $data->cancel_reason        = $request->keterangan_pembatalan;
+            $data->cancel_by            = Auth::user()->id;
+            $data->saveOrFail();
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return $request;
+    }
+    public function Approval(Request $request){
+        try{
+            $data                       = Tagihan::where('inv_id',$request->data_tagihan)->get()->first();
+            $data->notes                = $request->keterangan_approval;
+            $data->is_paid              = 1;
+            $data->paid_date            = $request->tanggal_approval;
+            $data->paid_approved_by     = Auth::user()->id;
+            $data->saveOrFail();
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return $request;
     }
     public function recordsFiltered(Request $request){
         try{

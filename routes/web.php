@@ -84,6 +84,11 @@ Route::group(['middleware'=>'auth'],function (){
         Route::post('/generate-invoice','TagihanController@FormGenerate');
         Route::post('/generate-invoice-next-step','TagihanController@GenInvoiceGetCustomer');
 
+        Route::get('/approve-tagihan','TagihanController@Approval');
+        Route::post('/approve-tagihan','TagihanController@Approval');
+        Route::get('/cancel-tagihan','TagihanController@Cancel');
+        Route::post('/cancel-tagihan','TagihanController@Cancel');
+
         Route::get('/create','TagihanController@create');
         Route::post('/create','TagihanController@create');
 

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Mockery\Exception;
+use App\Providers\ValidatorServiceProvider;
 
 class TagihanValidation{
     public function GenInvoiceGetCustomer(Request $request){
@@ -48,6 +49,36 @@ class TagihanValidation{
             $valid = Validator::make($request->all(),[
                 'bulan_tagihan' => 'required|in:01,02,03,04,05,06,07,08,09,10,11,12',
                 'tahun_tagihan' => 'required|digits:4'
+            ]);
+            if ($valid->fails()){
+                throw new Exception(collect($valid->errors()->all())->join('#'));
+            }
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return $request;
+    }
+    public function Cancel(Request $request){
+        try{
+            $valid = Validator::make($request->all(),[
+                'data_tagihan'          => 'required|string|exists:isp_invoice,inv_id',
+                'tanggal_pembatalan'    => 'required|date_format:Y-m-d',
+                'keterangan_pembatalan' => 'required|string:min:5'
+            ]);
+            if ($valid->fails()){
+                throw new Exception(collect($valid->errors()->all())->join('#'),403);
+            }
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return $request;
+    }
+    public function Approval(Request $request){
+        try{
+            $valid  = Validator::make($request->all(),[
+                'data_tagihan'          => 'required|string|exists:isp_invoice,inv_id',
+                'tanggal_approval'      => 'required|date_format:Y-m-d',
+                'keterangan_approval'   => 'required|string|min:5'
             ]);
             if ($valid->fails()){
                 throw new Exception(collect($valid->errors()->all())->join('#'));

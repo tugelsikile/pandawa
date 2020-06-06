@@ -82,7 +82,7 @@
                     }
                 },
                 { "data" : "inv_number", render : function (a,b,c) {
-                        return '<span class="badge badge-primary">'+ c.inv_number + '</span><br>' + c.fullname;
+                        return c.fullname+'<br><span class="badge badge-primary">'+ c.inv_number + '</span> <span class="badge badge-success">'+c.cabang.cab_name+'</span>';
                     }
                 },
                 { "data" : "inv_date", render : function (a,b,c) {
@@ -90,15 +90,16 @@
                     }
                 },
                 { "data" : "price_with_tax", render : function (a,b,c) {
-                        return 'Rp. '+c.harga;
+                        var nama_paket = !c.paket ? null : c.paket.pac_name;
+                        return '<small class="badge badge-primary">'+nama_paket+'</small><br>Rp. '+c.harga;
                     }
                 },
                 { "data" : "is_paid", "width" : "120px", render : function (a,b,c) {
                         var html = '';
                         if (c.is_paid == 1){
-                            html = '<a class="btn btn-block btn-sm btn-success">Sudah Dibayar</a>'
+                            html = '<a onclick="show_modal(this);return false" title="Batalkan Approval Tagihan" href="{{ url('admin-tagihan/cancel-tagihan?id=') }}'+c.inv_id+'" class="btn btn-block btn-sm btn-success">Sudah Dibayar<br>'+c.tgl_bayar+'</a>'
                         } else {
-                            html = '<a class="btn btn-block btn-danger btn-sm">Belum Dibayar</a>'
+                            html = '<a onclick="show_modal(this);return false" title="Approval Tagihan" href="{{ url('admin-tagihan/approve-tagihan?id=') }}'+c.inv_id+'" class="btn btn-block btn-danger btn-sm">Belum Dibayar</a>'
                         }
                         return html;
                     }

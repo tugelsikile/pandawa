@@ -81,4 +81,44 @@ class TagihanController extends Controller
         }
         return format(1000,'OK',$save);
     }
+    public function Cancel(Request $request){
+        if (!$request->ajax()){ abort(403);} else {
+            if ($request->method()=='POST'){
+                try{
+                    $valid  = $this->tagihanValidation->Cancel($request);
+                    $save   = $this->tagihanRepositories->Cancel($valid);
+                }catch (Exception $exception){
+                    throw new Exception($exception->getMessage());
+                }
+                return format(1000,'Tagihan berhasil dibatalkan',$save);
+            } else {
+                try{
+                    $data   = $this->tagihanRepositories->getByID($request);
+                }catch (Exception $exception){
+                    throw new Exception($exception->getMessage());
+                }
+                return view('tagihan.cancelation',compact('data'));
+            }
+        }
+    }
+    public function Approval(Request $request){
+        if (!$request->ajax()){ abort(403); } else {
+            if ($request->method()=='POST'){
+                try{
+                    $valid  = $this->tagihanValidation->Approval($request);
+                    $save   = $this->tagihanRepositories->Approval($valid);
+                }catch (Exception $exception){
+                    throw new Exception($exception->getMessage());
+                }
+                return format(1000,'Tagihan berhasil disetujui',$save);
+            } else {
+                try{
+                    $data   = $this->tagihanRepositories->getByID($request);
+                }catch (Exception $exception){
+                    throw new Exception($exception->getMessage());
+                }
+                return view('tagihan.approval',compact('data'));
+            }
+        }
+    }
 }
