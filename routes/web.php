@@ -92,9 +92,6 @@ Route::group(['middleware'=>'auth'],function (){
         Route::get('/create','TagihanController@create');
         Route::post('/create','TagihanController@create');
 
-        Route::get('/update','TagihanController@update');
-        Route::post('/update','TagihanController@update');
-
         Route::post('/delete','TagihanController@delete');
         Route::post('/bulk-delete','TagihanController@bulkDelete');
     });

@@ -287,4 +287,14 @@ class CustomerRepositories{
         }
         return $request;
     }
+    public function CustomersCabang(Request $request){
+        try{
+            $data   = Customer::where('cab_id','=',$request->nama_cabang)
+                ->where('status','=',1)
+                ->get();
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return $data;
+    }
 }

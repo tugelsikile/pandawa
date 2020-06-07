@@ -1,5 +1,13 @@
 <?php
 
+function companyInfo(){
+    return \Illuminate\Support\Facades\DB::table('isp_site')
+        ->select(['isp_site.*','isp_region_districts.name AS kec_name','isp_region_regencies.name AS kab_name','isp_region_provinces.name AS prov_name'])
+        ->join('isp_region_districts','isp_site.district_id','=','isp_region_districts.id','left')
+        ->join('isp_region_regencies','isp_region_districts.regency_id','=','isp_region_regencies.id','left')
+        ->join('isp_region_provinces','isp_region_regencies.province_id','=','isp_region_provinces.id','left')
+        ->get()->first();
+}
 function format($code,$msg,$params=false){
     return [
         'code'  => $code,

@@ -17,3 +17,20 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::get('/cetak-loading',function (){
+    return 'Loading ...';
+});
+
+Route::group(['prefix'=>'tagihan'],function (){
+    Route::post('/cetak-laporan','TagihanController@CetakLaporan');
+    Route::post('/cetak-rekap','TagihanController@CetakRekap');
+    Route::get('/cetak-invoice','TagihanController@CetakInvoice');
+});
+
+Route::group(['prefix'=>'lists'],function (){
+    Route::post('/customers','ListController@CustomersCabang');
+    Route::post('/cabang','ListController@cabang');
+    Route::post('/members','ListController@members');
+    Route::post('/produk-cabang','ProdukController@getCabangProduk');
+});

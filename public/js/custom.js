@@ -78,6 +78,61 @@ function submitForm(obj) {
         }
     });
 }
+function listCustomer() {
+    if ($('#nama_cabang')){
+        var cabang_id   = $('#nama_cabang').val();
+        var msg         = '';
+        $.ajax({
+            url     : '/api/lists/customers',
+            type    : 'POST',
+            dataType: 'JSON',
+            data    : { nama_cabang : cabang_id },
+            error   : function (e) {
+                var jsonResponse = e.responseJSON;
+                if (jsonResponse) msg = jsonResponse.message;
+                $('#nama_pelanggan').html('<option value="">'+ msg +'</option>');
+            },
+            success : function (e) {
+                if (e.code == 1000){
+                    $('#nama_pelanggan').html('<option value="">=== Nama Pelanggan ===</option>');
+                    $.each(e.params,function (i,v) {
+                        $('#nama_pelanggan').append('<option value="' + v.cust_id + '">' + v.fullname + '</option>');
+                        if (i + 1 >= e.params.length){
+                            if ($('#nama_produk')){
+                                listProduk();
+                            }
+                        }
+                    });
+                }
+            }
+        });
+    }
+}
+function listProduk() {
+    if ($('#nama_cabang') && $('#nama_produk')){
+        var cabang_id   = $('#nama_cabang').val();
+        var msg         = '';
+        $.ajax({
+            url     : '/api/lists/produk-cabang',
+            dataType: 'JSON',
+            type    : 'POST',
+            data    : { cab_id : cabang_id },
+            error   : function (e) {
+                var jsonResponse = e.responseJSON;
+                if (jsonResponse) msg = jsonResponse.message;
+                $('#nama_produk').html('<option value="">'+ msg +'</option>');
+            },
+            success : function (e) {
+                if (e.code == 1000){
+                    $('#nama_produk').html('<option value="">=== Nama Produk ===</option>');
+                    $.each(e.params,function (i,v) {
+                        $('#nama_produk').append('<option value="' + v.pac_id + '">' + v.pac_name + ' ' + v.price_format + '</option>');
+                    });
+                }
+            }
+        });
+    }
+}
 function setStatusAktif(obj) {
     var id      = $(obj).attr('data-id');
     var status  = $(obj).attr('data-value');
@@ -572,4 +627,37 @@ function previewID() {
             }
         }
     });
+}
+function printNow() {
+    if ($('.is-print').is(':visible')){
+        if ($('#printFrame')){
+            window.frames["printFrame"].focus();
+            window.frames["printFrame"].print();
+        }
+    }
+}
+function printCancel() {
+    if ($('.is-print')){ if ($('.is-print').is(':visible')){ $('.is-print').hide(); } }
+    if ($('.no-print')){ if ($('.no-print').is(':hidden')){ $('.no-print').show(); }}
+    if ($('#printFrame')){ $('#printFrame').attr({'src':'/api/cetak-loading'}); }
+}
+function printDataPost(obj) {
+    var formElement     = $('#'+$(obj).attr('data-form'));
+    var iframeElement   = $('#'+$(obj).attr('data-frame'));
+    if ($(formElement) && $(iframeElement)){
+        formElement.attr({'target':$(obj).attr('data-frame'),'method':'POST','action':$(obj).attr('href')});
+        if ($('.is-print')){ if ($('.is-print').is(':hidden')){$('.is-print').show()}}
+        if ($('.no-print')){if($('.no-print').is(':visible')){$('.no-print').hide()}}
+        formElement.submit();
+    }
+}
+function printData(obj) {
+    var url     = $(obj).attr('href');
+    if (url){
+        if (url.length > 0){
+            if ($('#printFrame')){ $('#printFrame').attr({'src':url}); }
+            if ($('.is-print')){ if ($('.is-print').is(':hidden')){$('.is-print').show()}}
+            if ($('.no-print')){if($('.no-print').is(':visible')){$('.no-print').hide()}}
+        }
+    }
 }

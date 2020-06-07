@@ -29,9 +29,9 @@ class ProdukRepositories{
         }
         return $data;
     }
-    public function getByID($request){
+    public function getByID($pacID){
         try{
-            $data = Produk::where(['pac_id'=>$request,'status'=>1])->get()->first();
+            $data = Produk::where(['pac_id'=>$pacID,'status'=>1])->get()->first();
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }

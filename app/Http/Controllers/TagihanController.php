@@ -102,7 +102,7 @@ class TagihanController extends Controller
         }
     }
     public function Approval(Request $request){
-        if (!$request->ajax()){ abort(403); } else {
+        if (!$request->ajax()){ abort(405); } else {
             if ($request->method()=='POST'){
                 try{
                     $valid  = $this->tagihanValidation->Approval($request);
@@ -119,6 +119,66 @@ class TagihanController extends Controller
                 }
                 return view('tagihan.approval',compact('data'));
             }
+        }
+    }
+    public function create(Request $request){
+        if (!$request->ajax()){ abort(405);} else {
+            if ($request->method()=='POST'){
+                try{
+                    $valid  = $this->tagihanValidation->create($request);
+                    $save   = $this->tagihanRepositories->create($valid);
+                }catch (Exception $exception){
+                    throw new Exception($exception->getMessage());
+                }
+                return format(1000,'Tagihan manual berhasil dibuat',$save);
+            } else {
+                try{
+                    $cabangs    = $this->cabangRepositories->all();
+                }catch (Exception $exception){
+                    throw new Exception($exception->getMessage());
+                }
+                return view('tagihan.create',compact('cabangs'));
+            }
+        }
+    }
+    public function CetakLaporan(Request $request){
+        //dd($request->bulan_tagihan);
+        $data = [];
+        try{
+            $data   = $this->tagihanRepositories->CetakLaporan($request);
+            $companyInfo = companyInfo();
+            $judul_laporan = 'laporan ';
+            strlen($request->bulan_tagihan)>0 ? $judul_laporan .= ' bulan '.bulanIndo($request->bulan_tagihan) : false;
+            strlen($request->tahun_tagihan)>0 ? $judul_laporan .= ' tahun ' . $request->tahun_tagihan : false;
+            strlen($request->nama_cabang)>0 ? $judul_laporan .= '<br>cabang '.$this->cabangRepositories->getByID($request->nama_cabang)->cab_name : false;
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return view('tagihan.cetak-laporan',compact('data','request','judul_laporan','companyInfo'));
+    }
+    public function CetakRekap(Request $request){
+        $data = [];
+        try{
+            $data   = $this->tagihanRepositories->CetakLaporan($request);
+            $companyInfo = companyInfo();
+            $judul_laporan = 'laporan ';
+            strlen($request->bulan_tagihan)>0 ? $judul_laporan .= ' bulan '.bulanIndo($request->bulan_tagihan) : false;
+            strlen($request->tahun_tagihan)>0 ? $judul_laporan .= ' tahun ' . $request->tahun_tagihan : false;
+            strlen($request->nama_cabang)>0 ? $judul_laporan .= '<br>cabang '.$this->cabangRepositories->getByID($request->nama_cabang)->cab_name : false;
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return view('tagihan.cetak-rekap',compact('data','request','judul_laporan','companyInfo'));
+    }
+    public function CetakInvoice(Request $request){
+        if ($request->method()!='GET'){ abort(403); } else {
+            $data = [];
+            try{
+                $companyInfo = companyInfo();
+            }catch (Exception $exception){
+                throw new Exception($exception->getMessage());
+            }
+            return view('tagihan.cetak-invoice',compact('data','companyInfo'));
         }
     }
 }

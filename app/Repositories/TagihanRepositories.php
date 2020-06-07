@@ -10,6 +10,28 @@ use Illuminate\Support\Facades\DB;
 use Mockery\Exception;
 
 class TagihanRepositories{
+    public function create(Request $request){
+        try{
+            $data                       = new Tagihan();
+            $data->inv_number           = $request->npwp == 1 ? genInvNumber($request->bulan_tagihan,$request->tahun_tagihan,1) : genInvNumber($request->bulan_tagihan,$request->tahun_tagihan);
+            $data->cust_id              = $request->nama_pelanggan;
+            $data->cab_id               = $request->nama_cabang;
+            $data->inv_date             = $request->tahun_tagihan.'-'.$request->bulan_tagihan.'-01';
+            $data->due_date             = $request->tahun_tagihan.'-'.$request->bulan_tagihan.'-'.dueDate();
+            $data->is_tax               = $request->npwp;
+            $data->tax_percent          = $request->tax_percent;
+            $data->price                = $request->price;
+            $data->price_with_tax       = $request->price_with_tax;
+            $data->price_tax            = $request->price_with_tax - $request->price;
+            $data->pac_id               = $request->nama_produk;
+            $data->delete_date          = null;
+            $data->paid_date            = null;
+            $data->saveOrFail();
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return $request;
+    }
     public function GenInvoiceGetCustomer(Request $request){
         try{
             $data                   = new Tagihan();
@@ -40,6 +62,24 @@ class TagihanRepositories{
             throw new Exception($exception->getMessage());
         }
         return $year;
+    }
+    public function CetakLaporan(Request $request){
+        try{
+            $where = ['isp_invoice.status'=>1];
+            if (strlen($request->nama_cabang)>0) $where['isp_invoice.cab_id'] = $request->nama_cabang;
+            if (strlen($request->npwp)>0) $where['isp_customer.npwp'] = $request->npwp;
+            if (strlen($request->is_active)>0) $where['isp_customer.is_active'] = $request->is_active;
+            if (strlen($request->status_bayar)>0) $where['is_paid'] = $request->status_bayar;
+            $data = Tagihan::where($where)
+                ->join('isp_customer','isp_invoice.cust_id','=','isp_customer.cust_id','left')
+                ->select(['isp_customer.npwp','isp_customer.fullname','isp_invoice.inv_number','isp_invoice.inv_date','isp_invoice.price','isp_invoice.price_with_tax','isp_invoice.is_paid']);
+            if (strlen($request->bulan_tagihan)>0) $data = $data->whereMonth('inv_date',$request->bulan_tagihan);
+            if (strlen($request->tahun_tagihan)>0) $data = $data->whereYear('inv_date',$request->tahun_tagihan);
+            $data = $data->orderBy('isp_invoice.inv_number','asc')->get()->chunk(20);
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return $data;
     }
     public function table(Request $request){
         try{
@@ -198,14 +238,6 @@ class TagihanRepositories{
             throw new Exception($exception->getMessage());
         }
         return $data;
-    }
-    public function create(Request $request){
-        try{
-
-        }catch (Exception $exception){
-            throw new Exception($exception->getMessage());
-        }
-        return $request;
     }
     public function update(Request $request){
         try{
