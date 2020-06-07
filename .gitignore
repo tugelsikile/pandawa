@@ -6,7 +6,6 @@
 .idea
 public/pandawa
 public/uploads
-public/fonts
 components
 
 .env
