@@ -175,6 +175,7 @@ class TagihanController extends Controller
             $data = [];
             try{
                 $companyInfo = companyInfo();
+                $data   = $this->tagihanRepositories->getByID($request);
             }catch (Exception $exception){
                 throw new Exception($exception->getMessage());
             }
