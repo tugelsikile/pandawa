@@ -46,6 +46,10 @@ Route::group(['middleware'=>'auth'],function (){
         Route::post('/delete','CabangController@delete');
     });
 
+    Route::group(['prefix'=>'cabang-produk'],function (){
+        Route::get('/','CabangProdukController@index');
+    });
+
     Route::group(['prefix'=>'admin-produk'],function (){
         Route::get('/','ProdukController@index');
         Route::post('/table','ProdukController@table');
@@ -74,6 +78,10 @@ Route::group(['middleware'=>'auth'],function (){
         Route::post('/bulk-delete','CustomerController@bulkDelete');
 
         Route::post('/set-status','CustomerController@setStatus');
+    });
+
+    Route::group(['prefix'=>'cabang-customer'],function (){
+        Route::get('/','CabangCustomerController@index');
     });
 
     Route::group(['prefix'=>'admin-tagihan'],function (){

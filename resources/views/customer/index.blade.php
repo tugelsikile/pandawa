@@ -39,7 +39,11 @@
                 "type"  : "POST",
                 "data"  : function (d) {
                     d._token = '{{ csrf_token() }}';
-                    d.cab_id = $('.cab-id').val();
+                    @if(Auth::user()->cab_id)
+                        d.cab_id = '{{ Auth::user()->cab_id }}';
+                    @else
+                        d.cab_id = $('.cab-id').val();
+                    @endif
                     d.is_active = $('.is-active').val();
                     d.npwp = $('.npwp').val();
                 }
