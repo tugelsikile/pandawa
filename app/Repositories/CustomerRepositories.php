@@ -267,7 +267,7 @@ class CustomerRepositories{
     }
     public function bulkDelete(Request $request){
         try{
-            foreach ($request->id as $key => $item){
+            foreach ($request->cust_id as $key => $item){
                 $data = Customer::where('cust_id','=',$item)->get()->first();
                 $data->status = 0;
                 $data->save();

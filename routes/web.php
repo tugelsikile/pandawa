@@ -108,4 +108,17 @@ Route::group(['middleware'=>'auth'],function (){
 
         Route::post('/delete','UserController@delete');
     });
+
+    Route::group(['prefix'=>'barang'],function (){
+        Route::get('/','BarangController@index');
+        Route::post('/table','BarangController@table');
+
+        Route::get('/create','BarangController@create');
+        Route::post('/create','BarangController@create');
+
+        Route::get('/update','BarangController@update');
+        Route::post('/update','BarangController@update');
+
+        Route::post('/delete','BarangController@delete');
+    });
 });
