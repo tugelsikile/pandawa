@@ -95,4 +95,15 @@ Route::group(['middleware'=>'auth'],function (){
         Route::post('/delete','TagihanController@delete');
         Route::post('/bulk-delete','TagihanController@bulkDelete');
     });
+
+    Route::group(['prefix'=>'admin-account'],function (){
+        Route::get('/','UserController@index');
+        Route::post('/table','UserController@table');
+
+        Route::get('/create','UserController@create');
+        Route::post('/create','UserController@create');
+
+        Route::get('/update','UserController@update');
+        Route::post('/update','UserController@update');
+    });
 });

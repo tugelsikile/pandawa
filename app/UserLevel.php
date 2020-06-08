@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class UserLevel extends Model{
     public $table = 'isp_user_level';
+    protected $primaryKey = 'lvl_id';
 
     public function userObj(){
         return $this->hasMany(User::class,'level');

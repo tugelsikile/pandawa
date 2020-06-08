@@ -391,12 +391,24 @@ function showError(msg) {
         icon    : 'fa fa-exclamation-triangle',
         message : msg
     },{
+        onShow  : function () {
+            $('*.toast').css({'opacity':1});
+        },
         type    : 'danger',
         z_index : 99999,
         animate : {
             enter: 'animated fadeInRight',
             exit: 'animated fadeOutRight'
-        }
+        },
+        template:   '<div data-notify="container" class="toast alert-{0}" role="alert" aria-live="assertive" aria-atomic="true">\n' +
+                        '<div class="toast-header">\n' +
+                            '<strong class="mr-auto">{1}</strong>\n' +
+                            '<button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">\n' +
+                                '<span aria-hidden="true">&times;</span>\n' +
+                            '</button>\n' +
+                        '</div>\n' +
+                        '<div class="toast-body">{2}</div>\n' +
+                    '</div>'
     });
 }
 function showSuccess(msg) {
@@ -405,12 +417,25 @@ function showSuccess(msg) {
         icon    : 'fa fa-check-circle',
         message : msg
     },{
+        onShow  : function () {
+            $('*.toast').css({'opacity':1});
+        },
         type    : 'success',
         z_index : 99999,
         animate : {
             enter: 'animated fadeInRight',
             exit: 'animated fadeOutRight'
-        }
+        },
+        template:   '<div data-notify="container" class="toast alert-{0}" role="alert" aria-live="assertive" aria-atomic="true">\n' +
+                        '<div class="toast-header">\n' +
+                            '<span data-notify="icon"></span>\n' +
+                            '<strong data-notify="title" class="mr-auto">{1}</strong>\n' +
+                            '<button data-notify="dismiss" type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">\n' +
+                                '<span aria-hidden="true">&times;</span>\n' +
+                            '</button>\n' +
+                        '</div>\n' +
+                        '<div data-notify="message" class="toast-body">{2}</div>\n' +
+                    '</div>'
     });
 }
 function showInfo(msg) {

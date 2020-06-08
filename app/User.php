@@ -40,5 +40,8 @@ class User extends Authenticatable
     public function userLevelOjb(){
         return $this->belongsTo(UserLevel::class,'level');
     }
+    public function cabangObj(){
+        return $this->belongsTo(Cabang::class,'cab_id');
+    }
 
 }
