@@ -16,6 +16,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
+
 Route::group(['prefix'=>'regional'],function (){
     Route::get('/get-kab','RegionalController@kabupaten');
     Route::get('/get-kec','RegionalController@kecamatan');
