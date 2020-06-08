@@ -400,7 +400,7 @@ function showError(msg) {
             enter: 'animated fadeInRight',
             exit: 'animated fadeOutRight'
         },
-        template:   '<div data-notify="container" class="toast alert-{0}" role="alert" aria-live="assertive" aria-atomic="true">\n' +
+        template:   '<div data-notify="container" class="toast toast-{0}" role="alert" aria-live="assertive" aria-atomic="true">\n' +
                         '<div class="toast-header">\n' +
                             '<strong class="mr-auto">{1}</strong>\n' +
                             '<button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">\n' +
@@ -426,7 +426,7 @@ function showSuccess(msg) {
             enter: 'animated fadeInRight',
             exit: 'animated fadeOutRight'
         },
-        template:   '<div data-notify="container" class="toast alert-{0}" role="alert" aria-live="assertive" aria-atomic="true">\n' +
+        template:   '<div data-notify="container" class="toast toast-{0}" role="alert" aria-live="assertive" aria-atomic="true">\n' +
                         '<div class="toast-header">\n' +
                             '<span data-notify="icon"></span>\n' +
                             '<strong data-notify="title" class="mr-auto">{1}</strong>\n' +
@@ -449,7 +449,17 @@ function showInfo(msg) {
         animate : {
             enter: 'animated fadeInRight',
             exit: 'animated fadeOutRight'
-        }
+        },
+        template:   '<div data-notify="container" class="toast toast-{0}" role="alert" aria-live="assertive" aria-atomic="true">\n' +
+                        '<div class="toast-header">\n' +
+                            '<span data-notify="icon"></span>\n' +
+                            '<strong data-notify="title" class="mr-auto">{1}</strong>\n' +
+                            '<button data-notify="dismiss" type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">\n' +
+                                '<span aria-hidden="true">&times;</span>\n' +
+                            '</button>\n' +
+                        '</div>\n' +
+                        '<div data-notify="message" class="toast-body">{2}</div>\n' +
+                    '</div>'
     });
 }
 function ucWords(str) {

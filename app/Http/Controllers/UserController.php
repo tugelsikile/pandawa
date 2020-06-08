@@ -80,5 +80,35 @@ class UserController extends Controller
             }
         }
     }
-
+    public function update(Request $request){
+        if (!$request->ajax()){ abort(403);} else {
+            if ($request->method()=='POST'){
+                try{
+                    $valid = $this->userValidations->update($request);
+                    $save   = $this->userRepositories->update($valid);
+                }catch (Exception $exception){
+                    throw new Exception($exception->getMessage());
+                }
+                return format(1000,'Pengguna berhasil diupdate',$save);
+            } else {
+                try{
+                    $cabangs = $this->cabangRepositories->all();
+                    $levels = $this->userLevelRepositories->getAll();
+                    $data =$this->userRepositories->getByID($request->id);
+                }catch (Exception $exception){
+                    throw new Exception($exception->getMessage());
+                }
+                return view('users.update',compact('cabangs','levels','data'));
+            }
+        }
+    }
+    public function delete(Request $request){
+        try{
+            $valid = $this->userValidations->delete($request);
+            $save = $this->userRepositories->delete($valid);
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return format(1000,'Pengguna berhasil dihapus',$save);
+    }
 }

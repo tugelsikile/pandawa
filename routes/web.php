@@ -105,5 +105,7 @@ Route::group(['middleware'=>'auth'],function (){
 
         Route::get('/update','UserController@update');
         Route::post('/update','UserController@update');
+
+        Route::post('/delete','UserController@delete');
     });
 });

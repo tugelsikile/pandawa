@@ -1,14 +1,9 @@
 .clearfix{clear: both}
-/*.mb-5{margin-bottom:5px}
-.mb-10{margin-bottom:10px}
-.mb-15{margin-bottom:15px}
-.mt-5{margin-top:5px}
-.mt-10{margin-top:10px}
-.mt-15{margin-top:15px}
-.ml-5{margin-left:5px}
-.ml-10{margin-left:5px}
-.ml-15{margin-left:15px}
-.mr-5{margin-right:5px}
-.mr-10{margin-right:10px}
-.mr-15{margin-right:15px}*/
-.footer{ padding:20px;font-size:10px;margin-top:50px}
+.footer{padding:20px;font-size:10px;margin-top:50px}
+.toast{min-width:400px; width:400px !important}
+.toast-success .toast-header{background:#38c172}
+.toast-success .toast-body{background:rgba(56, 193, 114,.7);}
+.toast-danger .toast-header{background:#e3342f;color:#fff}
+.toast-danger .toast-body{background:rgba(227, 52, 47,.7);color:#fff}
+.toast-info .toast-body{background:#4dc0b5}
+.toast-info .toast-body{background:rgba(77, 192, 181,.7);}

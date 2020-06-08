@@ -92,4 +92,36 @@ class UserRepositories{
         }
         return $request;
     }
+    public function getByID($id){
+        try{
+            $data = User::where('id',$id)->get()->first();
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return  $data;
+    }
+    public function update(Request $request){
+        try{
+            $data   = User::where('id',$request->data_pengguna)->get()->first();
+            $data->cab_id       = $request->nama_cabang;
+            $data->email        = $request->alamat_email;
+            $data->name         = $request->nama_pengguna;
+            if (strlen($request->kata_sandi)>0) $data->password     = Hash::make($request->kata_sandi);
+            $data->level        = $request->level_pengguna;
+            $data->saveOrFail();
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return $request;
+    }
+    public function delete(Request $request){
+        try{
+            $data = User::where('id',$request->id)->get()->first();
+            $data->status = 0;
+            $data->saveOrFail();
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return $request;
+    }
 }
