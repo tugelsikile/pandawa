@@ -8,6 +8,7 @@ use App\{
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Mockery\Exception;
+use Illuminate\Support\Facades\Log;
 
 class CabangRepositories{
     public function all(){
@@ -47,6 +48,7 @@ class CabangRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
+        Log::channel('customLog')->info(['open'=>$request->url(),'user'=>Auth::user(),'params'=>$data]);
         return $data;
     }
     public function numRows(Request $request){
@@ -81,6 +83,7 @@ class CabangRepositories{
         }catch (\Exception $exception){
             throw new \Exception($exception->getMessage());
         }
+        Log::channel('customLog')->info(['open'=>$request->url(),'user'=>Auth::user(),'params'=>$data]);
         return $data;
     }
     public function update(Request $request){
@@ -104,6 +107,7 @@ class CabangRepositories{
         }catch (\Exception $exception){
             throw new \Exception($exception->getMessage());
         }
+        Log::channel('customLog')->info(['open'=>$request->url(),'user'=>Auth::user(),'params'=>$data]);
         return $data;
     }
     public function delete(Request $request){
@@ -114,6 +118,7 @@ class CabangRepositories{
         }catch (\Exception $exception){
             throw new \Exception($exception->getMessage());
         }
+        Log::channel('customLog')->info(['open'=>$request->url(),'user'=>Auth::user(),'params'=>$data]);
         return $data;
     }
     public function getByID($id){

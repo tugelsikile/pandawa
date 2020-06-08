@@ -7,6 +7,7 @@ use App\Customer;
 use App\Produk;
 use Illuminate\Http\Request;
 use Exception;
+use Illuminate\Support\Facades\Log;
 
 class ProdukRepositories{
     public function getCabangProduk(Request $request){
@@ -72,6 +73,7 @@ class ProdukRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
+        Log::channel('customLog')->info(['open'=>$request->url(),'user'=>Auth::user(),'params'=>$data]);
         return $data;
     }
     public function numRowsAll(Request $request){
@@ -109,6 +111,7 @@ class ProdukRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
+        Log::channel('customLog')->info(['open'=>$request->url(),'user'=>Auth::user(),'params'=>$request]);
         return $request;
     }
     public function create(Request $request){
@@ -128,6 +131,7 @@ class ProdukRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
+        Log::channel('customLog')->info(['open'=>$request->url(),'user'=>Auth::user(),'params'=>$data]);
         return $data;
     }
     public function update(Request $request){
@@ -147,6 +151,7 @@ class ProdukRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
+        Log::channel('customLog')->info(['open'=>$request->url(),'user'=>Auth::user(),'params'=>$data]);
         return $request;
     }
     public function delete(Request $request){
@@ -157,6 +162,7 @@ class ProdukRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
+        Log::channel('customLog')->info(['open'=>$request->url(),'user'=>Auth::user(),'params'=>$data]);
         return $request;
     }
 }

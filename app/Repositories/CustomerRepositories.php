@@ -10,6 +10,7 @@ use App\Produk;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Mockery\Exception;
+use Illuminate\Support\Facades\Log;
 
 class CustomerRepositories{
     public function getForGenerate(Request $request){
@@ -49,6 +50,7 @@ class CustomerRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
+        Log::channel('customLog')->info(['open'=>$request->url(),'user'=>Auth::user(),'params'=>$request]);
         return $request;
     }
     public function deletePackageID(Request $request){
@@ -57,6 +59,7 @@ class CustomerRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
+        Log::channel('customLog')->info(['open'=>$request->url(),'user'=>Auth::user(),'params'=>$request]);
         return $request;
     }
     public function recordsTotal(Request $request){
@@ -132,6 +135,7 @@ class CustomerRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
+        Log::channel('customLog')->info(['open'=>$request->url(),'user'=>Auth::user(),'params'=>$data]);
         return $data;
     }
     public function PreviewID($cabID,$kecID=false,$kabID=false,$provID=false){
@@ -201,6 +205,7 @@ class CustomerRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
+        Log::channel('customLog')->info(['open'=>$request->url(),'user'=>Auth::user(),'params'=>$data]);
         return $request;
     }
     public function update(Request $request){
@@ -253,6 +258,7 @@ class CustomerRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
+        Log::channel('customLog')->info(['open'=>$request->url(),'user'=>Auth::user(),'params'=>$data]);
         return $request;
     }
     public function delete(Request $request){
@@ -263,6 +269,7 @@ class CustomerRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
+        Log::channel('customLog')->info(['open'=>$request->url(),'user'=>Auth::user(),'params'=>$data]);
         return $request;
     }
     public function bulkDelete(Request $request){
@@ -275,6 +282,7 @@ class CustomerRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
+        Log::channel('customLog')->info(['open'=>$request->url(),'user'=>Auth::user(),'params'=>$request]);
         return $request;
     }
     public function setStatus(Request $request){
@@ -285,6 +293,7 @@ class CustomerRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
+        Log::channel('customLog')->info(['open'=>$request->url(),'user'=>Auth::user(),'params'=>$data]);
         return $request;
     }
     public function CustomersCabang(Request $request){

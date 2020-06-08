@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Mockery\Exception;
+use Illuminate\Support\Facades\Log;
 
 class TagihanRepositories{
     public function create(Request $request){
@@ -30,6 +31,7 @@ class TagihanRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
+        Log::channel('customLog')->info(['open'=>$request->url(),'user'=>Auth::user(),'params'=>$data]);
         return $request;
     }
     public function GenInvoiceGetCustomer(Request $request){
@@ -134,6 +136,7 @@ class TagihanRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
+        Log::channel('customLog')->info(['open'=>$request->url(),'user'=>Auth::user(),'params'=>$data]);
         return $data;
     }
     public function getByID(Request $request){
@@ -165,6 +168,7 @@ class TagihanRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
+        Log::channel('customLog')->info(['open'=>$request->url(),'user'=>Auth::user(),'params'=>$data]);
         return $request;
     }
     public function Approval(Request $request){
@@ -178,6 +182,7 @@ class TagihanRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
+        Log::channel('customLog')->info(['open'=>$request->url(),'user'=>Auth::user(),'params'=>$data]);
         return $request;
     }
     public function recordsFiltered(Request $request){

@@ -103,6 +103,9 @@ Route::group(['middleware'=>'auth'],function (){
         Route::post('/delete','TagihanController@delete');
         Route::post('/bulk-delete','TagihanController@bulkDelete');
     });
+    Route::group(['prefix'=>'cabang-tagihan'],function (){
+        Route::get('/','CabangTagihanController@index');
+    });
 
     Route::group(['prefix'=>'admin-account'],function (){
         Route::get('/','UserController@index');
@@ -115,6 +118,10 @@ Route::group(['middleware'=>'auth'],function (){
         Route::post('/update','UserController@update');
 
         Route::post('/delete','UserController@delete');
+    });
+
+    Route::group(['prefix'=>'cabang-account'],function (){
+        Route::get('/','CabangUserController@index');
     });
 
     Route::group(['prefix'=>'barang'],function (){

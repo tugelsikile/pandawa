@@ -5,6 +5,7 @@ use App\Barang;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Mockery\Exception;
 
 class BarangRepositories{
@@ -33,6 +34,7 @@ class BarangRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
+        Log::channel('customLog')->info(['open'=>$request->url(),'user'=>Auth::user(),'params'=>$data]);
         return $data;
     }
     public function recordsFiltered(Request $request){
@@ -82,6 +84,7 @@ class BarangRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
+        Log::channel('customLog')->info(['open'=>$request->url(),'user'=>Auth::user(),'params'=>$data]);
         return $request;
     }
     public function update(Request $request){
@@ -98,6 +101,7 @@ class BarangRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
+        Log::channel('customLog')->info(['open'=>$request->url(),'user'=>Auth::user(),'params'=>$data]);
         return $request;
     }
     public function delete(Request $request){
@@ -108,6 +112,7 @@ class BarangRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
+        Log::channel('customLog')->info(['open'=>$request->url(),'user'=>Auth::user(),'params'=>$data]);
         return $request;
     }
 }

@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Hash;
 use Mockery\Exception;
 use Illuminate\Http\Request;
 use App\User;
-
+use Illuminate\Support\Facades\Log;
 
 class UserRepositories{
     public function table(Request $request){
@@ -40,6 +40,7 @@ class UserRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
+        Log::channel('customLog')->info(['open'=>$request->url(),'user'=>Auth::user(),'params'=>$data]);
         return $data;
     }
     public function recordsFiltered(Request $request){
@@ -90,6 +91,7 @@ class UserRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
+        Log::channel('customLog')->info(['open'=>$request->url(),'user'=>Auth::user(),'params'=>$data]);
         return $request;
     }
     public function getByID($id){
@@ -112,6 +114,7 @@ class UserRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
+        Log::channel('customLog')->info(['open'=>$request->url(),'user'=>Auth::user(),'params'=>$data]);
         return $request;
     }
     public function delete(Request $request){
@@ -122,6 +125,7 @@ class UserRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
+        Log::channel('customLog')->info(['open'=>$request->url(),'user'=>Auth::user(),'params'=>$data]);
         return $request;
     }
 }

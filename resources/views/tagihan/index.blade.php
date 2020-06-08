@@ -45,10 +45,14 @@
                 "type"  : "POST",
                 "data"  : function (d) {
                     d._token    = '{{ csrf_token() }}';
-                    d.cab_id    = $('div.toolbar select.cab-id') ? $('div.toolbar select.cab-id').val() : '';
-                    d.is_active = $('div.toolbar select.is-active') ? $('div.toolbar select.is-active').val() : '';
-                    d.npwp      = $('div.toolbar select.npwp') ? $('div.toolbar select.npwp').val() : '';
-                    d.inv_paid  = $('div.toolbar select.inv-paid') ? $('div.toolbar select.inv-paid').val() : '';
+                    @if(Auth::user()->cab_id)
+                        d.cab_id    = '{{ Auth::user()->cab_id }}';
+                    @else
+                        d.cab_id    = $('div.toolbar select.cab-id').val();
+                    @endif
+                    d.is_active = $('div.toolbar select.is-active').val()
+                    d.npwp      = $('div.toolbar select.npwp').val();
+                    d.inv_paid  = $('div.toolbar select.inv-paid').val();
                     if ($('div.toolbar select.inv-month').length == 0){
                         d.inv_month = '{{ date('m') }}';
                     } else {

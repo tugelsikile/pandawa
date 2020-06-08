@@ -38,24 +38,28 @@
                 "type"  : "POST",
                 "data"  : function (d) {
                     d._token = '{{ csrf_token() }}';
-                    d.cab_id = $('div.toolbar select.cab-id').val();
+                    @if(Auth::user()->cab_id)
+                        d.cab_id = '{{ Auth::user()->cab_id }}';
+                    @else
+                        d.cab_id = $('div.toolbar select.cab-id').val();
+                    @endif
                     d.level  = $('div.toolbar select.lvl-id').val();
                 }
             },
             buttons         : [
+                @if($privs->C_opt == 1)
                 {
-                    className : 'btn btn-sm btn-primary',
+                    className : 'btn btn-sm btn-primary @if($privs->C_opt == 0) disabled @endif',
                     text: '<i class="fa fa-plus"></i> Tambah Pengguna',
                     action : function (e,dt,node,config) {
-                        @if($privs)
-                            @if($privs->C_opt == 1)
-                                show_modal({'href':'{{ url('admin-account/create') }}','title':'Tambah Pengguna'});
-                            @endif
+                        @if($privs->C_opt == 1)
+                            show_modal({'href':'{{ url('admin-account/create') }}','title':'Tambah Pengguna'});
                         @else
                             showError('Forbidden Action');
                         @endif
                     }
                 }
+                @endif
             ],
             "columns"   : [
                 { "data" : "name", render : function (a,b,c) {
