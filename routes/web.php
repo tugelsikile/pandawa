@@ -138,4 +138,8 @@ Route::group(['middleware'=>'auth'],function (){
 
         Route::post('/delete','BarangController@delete');
     });
+
+    Route::group(['prefix'=>'setting'],function (){
+        Route::get('/','SettingController@index');
+    });
 });
