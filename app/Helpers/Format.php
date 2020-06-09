@@ -1,7 +1,7 @@
 <?php
 
 function sanitize($req){
-    return collect($req->except('_token','columns','order','search.regex'))->toArray();
+    return collect($req->except('password','_token','columns','order','search.regex'))->toArray();
 }
 
 function companyInfo(){
