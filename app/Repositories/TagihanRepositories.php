@@ -31,8 +31,8 @@ class TagihanRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
-        $logs = Auth::user()->name.' menambahkan data tagihan manual. parameter : '.json_encode($request->all());
-        Log::channel('customLog')->notice($logs);
+        $logs = Auth::user()->name.' menambahkan data tagihan manual.' . $data->inv_number;
+        Log::channel('customLog')->notice($logs,['params'=>sanitize($request)]);
         return $request;
     }
     public function GenInvoiceGetCustomer(Request $request){
@@ -137,8 +137,8 @@ class TagihanRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
-        $logs = Auth::user()->name.' membaca data tagihan. parameter : '.json_encode($request->all());
-        Log::channel('customLog')->info($logs);
+        $logs = Auth::user()->name.' membaca data tagihan.';
+        Log::channel('customLog')->info($logs,['params'=>sanitize($request)]);
         return $data;
     }
     public function getByID(Request $request){
@@ -170,8 +170,8 @@ class TagihanRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
-        $logs = Auth::user()->name.' mengcancel tagihan. parameter : '.json_encode($request->all());
-        Log::channel('customLog')->warning($logs);
+        $logs = Auth::user()->name.' mengcancel tagihan. '.$data->inv_number;
+        Log::channel('customLog')->warning($logs,['params'=>sanitize($request)]);
         return $request;
     }
     public function Approval(Request $request){
@@ -185,8 +185,8 @@ class TagihanRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
-        $logs = Auth::user()->name.' mengapprove tagihan. parameter : '.json_encode($request->all());
-        Log::channel('customLog')->warning($logs);
+        $logs = Auth::user()->name.' mengapprove tagihan. '.$data->inv_number;
+        Log::channel('customLog')->warning($logs,['params'=>sanitize($request)]);
         return $request;
     }
     public function recordsFiltered(Request $request){

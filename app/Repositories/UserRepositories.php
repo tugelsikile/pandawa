@@ -41,8 +41,8 @@ class UserRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
-        $logs = Auth::user()->name.' membaca data pengguna. parameter : '.json_encode($request->all());
-        Log::channel('customLog')->info($logs);
+        $logs = Auth::user()->name.' membaca data pengguna.';
+        Log::channel('customLog')->info($logs,['params'=>sanitize($request)]);
         return $data;
     }
     public function recordsFiltered(Request $request){
@@ -93,8 +93,8 @@ class UserRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
-        $logs = Auth::user()->name.' menambahkan data pengguna. parameter : '.json_encode($request->all());
-        Log::channel('customLog')->notice($logs);
+        $logs = Auth::user()->name.' menambahkan data pengguna '.$data->name;
+        Log::channel('customLog')->notice($logs,['params'=>sanitize($request)]);
         return $request;
     }
     public function getByID($id){
@@ -117,8 +117,8 @@ class UserRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
-        $logs = Auth::user()->name.' merubah data pengguna. parameter : '.json_encode($request->all());
-        Log::channel('customLog')->notice($logs);
+        $logs = Auth::user()->name.' merubah data pengguna '.$data->name;
+        Log::channel('customLog')->notice($logs,['params'=>sanitize($request)]);
         return $request;
     }
     public function delete(Request $request){
@@ -129,8 +129,8 @@ class UserRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
-        $logs = Auth::user()->name.' menghapus data pengguna. parameter : '.json_encode($request->all());
-        Log::channel('customLog')->warning($logs);
+        $logs = Auth::user()->name.' menghapus data pengguna.';
+        Log::channel('customLog')->warning($logs,['params'=>sanitize($request)]);
         return $request;
     }
 }
