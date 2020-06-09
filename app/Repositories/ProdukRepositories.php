@@ -8,6 +8,7 @@ use App\Produk;
 use Illuminate\Http\Request;
 use Exception;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class ProdukRepositories{
     public function getCabangProduk(Request $request){
@@ -73,7 +74,8 @@ class ProdukRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
-        Log::channel('customLog')->info(['open'=>$request->url(),'user'=>Auth::user(),'params'=>$data]);
+        $logs = Auth::user()->name.' membaca data produk. parameter : '.json_encode($request->all());
+        Log::channel('customLog')->info($logs);
         return $data;
     }
     public function numRowsAll(Request $request){
@@ -111,7 +113,8 @@ class ProdukRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
-        Log::channel('customLog')->info(['open'=>$request->url(),'user'=>Auth::user(),'params'=>$request]);
+        $logs = Auth::user()->name.' menghapus banyak data produk. parameter '.json_encode($request->all());
+        Log::channel('customLog')->warning($logs);
         return $request;
     }
     public function create(Request $request){
@@ -131,7 +134,8 @@ class ProdukRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
-        Log::channel('customLog')->info(['open'=>$request->url(),'user'=>Auth::user(),'params'=>$data]);
+        $logs = Auth::user()->name.' menambahkan data produk. parameter : '.json_encode($request->all());
+        Log::channel('customLog')->notice($logs);
         return $data;
     }
     public function update(Request $request){
@@ -151,7 +155,8 @@ class ProdukRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
-        Log::channel('customLog')->info(['open'=>$request->url(),'user'=>Auth::user(),'params'=>$data]);
+        $logs = Auth::user()->name.' merubah data produk. parameter : '.json_encode($request->all());
+        Log::channel('customLog')->notice($logs);
         return $request;
     }
     public function delete(Request $request){
@@ -162,7 +167,8 @@ class ProdukRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
-        Log::channel('customLog')->info(['open'=>$request->url(),'user'=>Auth::user(),'params'=>$data]);
+        $logs = Auth::user()->name.' menghapus data produk. parameter : '.json_encode($request->all());
+        Log::channel('customLog')->warning($logs);
         return $request;
     }
 }

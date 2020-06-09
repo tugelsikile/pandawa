@@ -6,6 +6,7 @@ use Mockery\Exception;
 use Illuminate\Http\Request;
 use App\User;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class UserRepositories{
     public function table(Request $request){
@@ -40,7 +41,8 @@ class UserRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
-        Log::channel('customLog')->info(['open'=>$request->url(),'user'=>Auth::user(),'params'=>$data]);
+        $logs = Auth::user()->name.' membaca data pengguna. parameter : '.json_encode($request->all());
+        Log::channel('customLog')->info($logs);
         return $data;
     }
     public function recordsFiltered(Request $request){
@@ -91,7 +93,8 @@ class UserRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
-        Log::channel('customLog')->info(['open'=>$request->url(),'user'=>Auth::user(),'params'=>$data]);
+        $logs = Auth::user()->name.' menambahkan data pengguna. parameter : '.json_encode($request->all());
+        Log::channel('customLog')->notice($logs);
         return $request;
     }
     public function getByID($id){
@@ -114,7 +117,8 @@ class UserRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
-        Log::channel('customLog')->info(['open'=>$request->url(),'user'=>Auth::user(),'params'=>$data]);
+        $logs = Auth::user()->name.' merubah data pengguna. parameter : '.json_encode($request->all());
+        Log::channel('customLog')->notice($logs);
         return $request;
     }
     public function delete(Request $request){
@@ -125,7 +129,8 @@ class UserRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
-        Log::channel('customLog')->info(['open'=>$request->url(),'user'=>Auth::user(),'params'=>$data]);
+        $logs = Auth::user()->name.' menghapus data pengguna. parameter : '.json_encode($request->all());
+        Log::channel('customLog')->warning($logs);
         return $request;
     }
 }

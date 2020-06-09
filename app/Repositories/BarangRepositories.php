@@ -34,7 +34,8 @@ class BarangRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
-        Log::channel('customLog')->info(['open'=>$request->url(),'user'=>Auth::user(),'params'=>$data]);
+        $logs = Auth::user()->name.' membaca tabel barang. parameter : '.json_encode($request->all());
+        Log::channel('customLog')->info($logs);
         return $data;
     }
     public function recordsFiltered(Request $request){
@@ -84,7 +85,8 @@ class BarangRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
-        Log::channel('customLog')->info(['open'=>$request->url(),'user'=>Auth::user(),'params'=>$data]);
+        $logs = Auth::user()->name.' menambahkan data barang '.$data->nama_barang.'. parameter : '.json_encode($request->all());
+        Log::channel('customLog')->notice($logs);//->info(['message'=>$logs,'params'=>$data]);
         return $request;
     }
     public function update(Request $request){
@@ -101,7 +103,8 @@ class BarangRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
-        Log::channel('customLog')->info(['open'=>$request->url(),'user'=>Auth::user(),'params'=>$data]);
+        $logs = Auth::user()->name.' mengupdate data barang '.$data->nama_barang.'. parameter : '.json_encode($request->all());
+        Log::channel('customLog')->notice(['message'=>$logs,'params'=>$data]);
         return $request;
     }
     public function delete(Request $request){
@@ -112,7 +115,8 @@ class BarangRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
-        Log::channel('customLog')->info(['open'=>$request->url(),'user'=>Auth::user(),'params'=>$data]);
+        $logs = Auth::user()->name.' menghapus data barang '.$data->nama_barang.'. parameter : '.json_encode($request->all());
+        Log::channel('customLog')->warning(['message'=>$logs,'params'=>$data]);
         return $request;
     }
 }

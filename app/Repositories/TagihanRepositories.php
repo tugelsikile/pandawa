@@ -31,7 +31,8 @@ class TagihanRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
-        Log::channel('customLog')->info(['open'=>$request->url(),'user'=>Auth::user(),'params'=>$data]);
+        $logs = Auth::user()->name.' menambahkan data tagihan manual. parameter : '.json_encode($request->all());
+        Log::channel('customLog')->notice($logs);
         return $request;
     }
     public function GenInvoiceGetCustomer(Request $request){
@@ -136,7 +137,8 @@ class TagihanRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
-        Log::channel('customLog')->info(['open'=>$request->url(),'user'=>Auth::user(),'params'=>$data]);
+        $logs = Auth::user()->name.' membaca data tagihan. parameter : '.json_encode($request->all());
+        Log::channel('customLog')->info($logs);
         return $data;
     }
     public function getByID(Request $request){
@@ -168,7 +170,8 @@ class TagihanRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
-        Log::channel('customLog')->info(['open'=>$request->url(),'user'=>Auth::user(),'params'=>$data]);
+        $logs = Auth::user()->name.' mengcancel tagihan. parameter : '.json_encode($request->all());
+        Log::channel('customLog')->warning($logs);
         return $request;
     }
     public function Approval(Request $request){
@@ -182,7 +185,8 @@ class TagihanRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
-        Log::channel('customLog')->info(['open'=>$request->url(),'user'=>Auth::user(),'params'=>$data]);
+        $logs = Auth::user()->name.' mengapprove tagihan. parameter : '.json_encode($request->all());
+        Log::channel('customLog')->warning($logs);
         return $request;
     }
     public function recordsFiltered(Request $request){

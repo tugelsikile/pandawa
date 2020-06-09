@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Mockery\Exception;
 use Illuminate\Support\Facades\Log;
-
+use Illuminate\Support\Facades\Auth;
 class CustomerRepositories{
     public function getForGenerate(Request $request){
         try{
@@ -50,7 +50,8 @@ class CustomerRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
-        Log::channel('customLog')->info(['open'=>$request->url(),'user'=>Auth::user(),'params'=>$request]);
+        $logs = Auth::user()->name.' menghapus data produk. parameter : '.json_encode($request->all());
+        Log::channel('customLog')->warning($logs);
         return $request;
     }
     public function deletePackageID(Request $request){
@@ -59,7 +60,8 @@ class CustomerRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
-        Log::channel('customLog')->info(['open'=>$request->url(),'user'=>Auth::user(),'params'=>$request]);
+        $logs = Auth::user()->name.' menghapus data produk. parameter : '.json_encode($request->all());
+        Log::channel('customLog')->warning($logs);
         return $request;
     }
     public function recordsTotal(Request $request){
@@ -135,7 +137,8 @@ class CustomerRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
-        Log::channel('customLog')->info(['open'=>$request->url(),'user'=>Auth::user(),'params'=>$data]);
+        $logs = Auth::user()->name.' membaca data customer. parameter : '.json_encode($request->all());
+        Log::channel('customLog')->info($logs);
         return $data;
     }
     public function PreviewID($cabID,$kecID=false,$kabID=false,$provID=false){
@@ -205,7 +208,8 @@ class CustomerRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
-        Log::channel('customLog')->info(['open'=>$request->url(),'user'=>Auth::user(),'params'=>$data]);
+        $logs = Auth::user()->name.' menambahkan data customer. parameter : '.json_encode($request->all());
+        Log::channel('customLog')->notice($logs);
         return $request;
     }
     public function update(Request $request){
@@ -258,7 +262,8 @@ class CustomerRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
-        Log::channel('customLog')->info(['open'=>$request->url(),'user'=>Auth::user(),'params'=>$data]);
+        $logs = Auth::user()->name.' merubah data customer. parameter : '.json_encode($request->all());
+        Log::channel('customLog')->notice($logs);
         return $request;
     }
     public function delete(Request $request){
@@ -269,7 +274,8 @@ class CustomerRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
-        Log::channel('customLog')->info(['open'=>$request->url(),'user'=>Auth::user(),'params'=>$data]);
+        $logs = Auth::user()->name.' menghapus data customer. parameter : '.json_encode($request->all());
+        Log::channel('customLog')->warning($logs);
         return $request;
     }
     public function bulkDelete(Request $request){
@@ -282,7 +288,8 @@ class CustomerRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
-        Log::channel('customLog')->info(['open'=>$request->url(),'user'=>Auth::user(),'params'=>$request]);
+        $logs = Auth::user()->name.' menghapus banyak data customer. parameter : '.json_encode($request->all());
+        Log::channel('customLog')->warning($logs);
         return $request;
     }
     public function setStatus(Request $request){
@@ -293,7 +300,8 @@ class CustomerRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
-        Log::channel('customLog')->info(['open'=>$request->url(),'user'=>Auth::user(),'params'=>$data]);
+        $logs = Auth::user()->name.' mengupdate status customer. parameter : '.json_encode($request->all());
+        Log::channel('customLog')->warning($logs);
         return $request;
     }
     public function CustomersCabang(Request $request){
