@@ -696,3 +696,12 @@ function printData(obj) {
         }
     }
 }
+function settingPage(obj){
+    var url = $(obj).attr('href');
+    if (url.length>0 && $('#setting-container').length>0){
+        $('#setting-container').html('Loading ...');
+        $('#setting-container').load(url,function () {
+
+        });
+    }
+}

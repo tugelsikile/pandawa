@@ -141,5 +141,6 @@ Route::group(['middleware'=>'auth'],function (){
 
     Route::group(['prefix'=>'setting'],function (){
         Route::get('/','SettingController@index');
+        Route::get('/data-perusahaan','SettingController@dataPerusahaan');
     });
 });

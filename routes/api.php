@@ -34,3 +34,7 @@ Route::group(['prefix'=>'lists'],function (){
     Route::post('/members','ListController@members');
     Route::post('/produk-cabang','ProdukController@getCabangProduk');
 });
+
+Route::group(['prefix'=>'regional'],function (){
+
+});

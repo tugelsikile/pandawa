@@ -10,16 +10,19 @@
                         Menu
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="{{ url('setting/data-perusahaan') }}">Data Perusahaan</a>
-                        <a class="dropdown-item" href="{{ url('setting/data-bank') }}">Data Akun Bank</a>
-                        <a class="dropdown-item" href="{{ url('setting/template-invoice') }}">Template Nomor Invoice</a>
-                        <a class="dropdown-item" href="{{ url('setting/template-email') }}">Template Email</a>
-                        <a class="dropdown-item" href="{{ url('setting/email') }}">Setting Email</a>
-                        <a class="dropdown-item" href="{{ url('setting/application-logs') }}">Application Logs</a>
+                        <a onclick="settingPage(this);return false" class="dropdown-item" href="{{ url('setting/data-perusahaan') }}">Data Perusahaan</a>
+                        <a onclick="settingPage(this);return false" class="dropdown-item" href="{{ url('setting/data-bank') }}">Data Akun Bank</a>
+                        <a onclick="settingPage(this);return false" class="dropdown-item" href="{{ url('setting/template-invoice') }}">Template Nomor Invoice</a>
+                        <a onclick="settingPage(this);return false" class="dropdown-item" href="{{ url('setting/template-email') }}">Template Email</a>
+                        <a onclick="settingPage(this);return false" class="dropdown-item" href="{{ url('setting/email') }}">Setting Email</a>
+                        <a onclick="settingPage(this);return false" class="dropdown-item" href="{{ url('setting/application-logs') }}">Application Logs</a>
                     </div>
                 </div>
             </div>
-            <div class="card-body"></div>
+            <div class="card-body" id="setting-container"></div>
         </div>
     </div>
+    <script>
+        settingPage({'href':'{{ url('setting/data-perusahaan') }}'})
+    </script>
 @endsection
