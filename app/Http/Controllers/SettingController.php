@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\BankAccount;
 use Illuminate\Http\Request;
 use App\Repositories\{
     UserLevelRepositories, UserMenuRepositories, UserPriviledgesRepositories, RegionalRepositories
@@ -10,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Mockery\Exception;
+use Illuminate\Support\Facades\Log;
 
 class SettingController extends Controller
 {
@@ -74,6 +76,8 @@ class SettingController extends Controller
                 }catch (Exception $exception){
                     throw new Exception($exception->getMessage());
                 }
+                $logs = Auth::user()->name.' membaca data perusahaan.';
+                Log::channel('customLog')->info($logs,['params'=>sanitize($request)]);
                 return format(1000,'Data berhasil dirubah',$data);
             } else {
                 try{
@@ -85,4 +89,134 @@ class SettingController extends Controller
             }
         }
     }
+    public function dataBank(Request $request){
+        if (!$request->ajax()) abort(403);
+        return view('setting.data-bank');
+    }
+    public function dataBankTabel(Request $request){
+        if (!$request->ajax()) abort(403);
+        if ($request->method()!='POST') abort(403);
+        $response = [ 'draw' => $request->post('draw'), 'data' => [], 'recordsFiltered' => 0, 'recordsTotal' => 0 ];
+        try{
+            $keyword    = $request->post('search')['value'];
+            $start      = $request->post('start');
+            $length     = $request->post('length');
+            $orderby    = $request->post('order')[0]['column'];
+            $orderby    = $request->post('columns')[$orderby]['data'];
+            $orderdir   = $request->post('order')[0]['dir'];
+            $response['data'] = DB::table('isp_bank_account')
+                ->where(['status'=>1])
+                ->where(function ($q) use ($keyword){
+                    $q->where('bank_name','like',"%$keyword%");
+                    $q->orWhere('bank_cabang','like',"%$keyword%");
+                    $q->orWhere('bank_fullname','like',"%$keyword%");
+                    $q->orWhere('bank_rekening','like',"%$keyword%");
+                })->orderBy($orderby,$orderdir)->limit($length)->offset($start)->get();
+            $response['recordsTotal'] = $response['recordsFiltered'] = $response['data']->count();
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        $logs = Auth::user()->name.' membaca data bank.';
+        Log::channel('customLog')->info($logs,['params'=>sanitize($request)]);
+        return $response;
+    }
+    public function statusBank(Request $request){
+        if (!$request->ajax()) abort(403);
+        if ($request->method()!='POST') abort(403);
+        try{
+            $valid = Validator::make($request->all(),[
+                'id' => 'required|numeric|exists:isp_bank_account,bank_id'
+            ]);
+            if ($valid->fails()){
+                throw new Exception(collect($valid->errors()->all())->join('#'));
+            }
+            DB::table('isp_bank_account')->where('bank_id',$request->id)->update(['status_active'=>$request->data_status]);
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        $logs = Auth::user()->name.' merubah status aktif bank.';
+        Log::channel('customLog')->info($logs,['params'=>sanitize($request)]);
+        return format(1000,'Status Account Bank berhasil dirubah');
+    }
+    public function createBank(Request $request){
+        if (!$request->ajax()) abort(403);
+        if ($request->method()=='POST'){
+            try{
+                $valid = Validator::make($request->all(),[
+                    'nama_bank' => 'required|string',
+                    'cabang_bank' => 'required|string',
+                    'nama_pemilik_rekening' => 'required|string',
+                    'nomor_rekening' => 'required|string'
+                ]);
+                if ($valid->fails()){
+                    throw new Exception(collect($valid->errors()->all())->join('#'));
+                }
+                $data = new BankAccount();
+                $data->bank_name    = $request->nama_bank;
+                $data->bank_cabang  = $request->cabang_bank;
+                $data->bank_fullname= $request->nama_pemilik_rekening;
+                $data->bank_rekening= $request->nomor_rekening;
+                $data->saveOrFail();
+            }catch (Exception $exception){
+                throw new Exception($exception->getMessage());
+            }
+            $logs = Auth::user()->name.' menambahkan data bank.';
+            Log::channel('customLog')->notice($logs,['params'=>sanitize($request)]);
+            return format(1000,'Bank berhasil ditambahkan',$data);
+        } else {
+            return view('setting.create-bank');
+        }
+    }
+    public function updateBank(Request $request){
+        if (!$request->ajax()) abort(403);
+        if ($request->method()=='POST'){
+            try{
+                $valid = Validator::make($request->all(),[
+                    'data_bank' => 'required|string|exists:isp_bank_account,bank_id',
+                    'nama_bank' => 'required|string',
+                    'cabang_bank' => 'required|string',
+                    'nama_pemilik_rekening' => 'required|string',
+                    'nomor_rekening' => 'required|string'
+                ]);
+                if ($valid->fails()){
+                    throw new Exception(collect($valid->errors()->all())->join('#'));
+                }
+                $data = BankAccount::where('bank_id',$request->data_bank)->first();
+                $data->bank_name    = $request->nama_bank;
+                $data->bank_cabang  = $request->cabang_bank;
+                $data->bank_fullname= $request->nama_pemilik_rekening;
+                $data->bank_rekening= $request->nomor_rekening;
+                $data->saveOrFail();
+            }catch (Exception $exception){
+                throw new Exception($exception->getMessage());
+            }
+            $logs = Auth::user()->name.' merubah data bank.';
+            Log::channel('customLog')->notice($logs,['params'=>sanitize($request)]);
+            return format(1000,'Data Bank berhasil dirubah',$data);
+        } else {
+            try{
+                $data = BankAccount::where('bank_id',$request->id)->first();
+            }catch (Exception $exception){ throw new Exception($exception->getMessage());}
+            return view('setting.update-bank',compact('data'));
+        }
+    }
+    public function deleteBank(Request $request){
+        if (!$request->ajax()) abort(403);
+        if ($request->method()!='POST') abort(403);
+        try{
+            $valid  = Validator::make($request->all(),[
+                'id' => 'required|numeric|exists:isp_bank_account,bank_id'
+            ]);
+            if ($valid->fails()){
+                throw new Exception(collect($valid->errors()->all())->join('#'));
+            }
+            BankAccount::where('bank_id',$request->id)->update(['status'=>0]);
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        $logs = Auth::user()->name.' menghapus data bank.';
+        Log::channel('customLog')->warning($logs,['params'=>sanitize($request)]);
+        return format(1000,'data bank berhasil dihapus');
+    }
+
 }

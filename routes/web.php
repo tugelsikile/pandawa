@@ -143,5 +143,16 @@ Route::group(['middleware'=>'auth'],function (){
         Route::get('/','SettingController@index');
         Route::get('/data-perusahaan','SettingController@dataPerusahaan');
         Route::post('/data-perusahaan','SettingController@dataPerusahaan');
+
+        Route::get('/data-bank','SettingController@dataBank');
+        Route::post('/data-bank-tabel','SettingController@dataBankTabel');
+        Route::post('/set-status-bank','SettingController@statusBank');
+        Route::get('/create-bank','SettingController@createBank');
+        Route::post('/create-bank','SettingController@createBank');
+        Route::get('/update-bank','SettingController@updateBank');
+        Route::post('/update-bank','SettingController@updateBank');
+        Route::post('/delete-bank','SettingController@deleteBank');
+
+        Route::get('/application-logs','\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
     });
 });

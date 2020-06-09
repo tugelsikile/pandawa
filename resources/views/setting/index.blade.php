@@ -15,7 +15,7 @@
                         <a onclick="settingPage(this);return false" class="dropdown-item" href="{{ url('setting/template-invoice') }}">Template Nomor Invoice</a>
                         <a onclick="settingPage(this);return false" class="dropdown-item" href="{{ url('setting/template-email') }}">Template Email</a>
                         <a onclick="settingPage(this);return false" class="dropdown-item" href="{{ url('setting/email') }}">Setting Email</a>
-                        <a onclick="settingPage(this);return false" class="dropdown-item" href="{{ url('setting/application-logs') }}">Application Logs</a>
+                        <a target="_blank" class="dropdown-item" href="{{ url('setting/application-logs') }}">Application Logs</a>
                     </div>
                 </div>
             </div>
