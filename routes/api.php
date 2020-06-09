@@ -36,5 +36,8 @@ Route::group(['prefix'=>'lists'],function (){
 });
 
 Route::group(['prefix'=>'regional'],function (){
-
+    Route::post('/provinsi','ListController@Provinsi');
+    Route::post('/kabupaten','ListController@Kabupaten');
+    Route::post('/kecamatan','ListController@Kecamatan');
+    Route::post('/desa','ListController@Desa');
 });
