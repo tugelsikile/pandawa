@@ -1,5 +1,9 @@
 <?php
 
+function sanitize($req){
+    return collect($req->except('_token','columns','order','search.regex'))->toArray();
+}
+
 function companyInfo(){
     return \Illuminate\Support\Facades\DB::table('isp_site')
         ->select(['isp_site.*','isp_region_districts.name AS kec_name','isp_region_regencies.name AS kab_name','isp_region_provinces.name AS prov_name'])

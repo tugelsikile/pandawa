@@ -48,8 +48,8 @@ class CabangRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
-        $logs = Auth::user()->name.' membaca data cabang. parameter : '.json_encode($request->all());
-        Log::channel('customLog')->info($logs);
+        $logs = Auth::user()->name.' membaca data cabang';
+        Log::channel('customLog')->info($logs,['params'=>sanitize($request)]);
         return $data;
     }
     public function numRows(Request $request){
@@ -84,8 +84,8 @@ class CabangRepositories{
         }catch (\Exception $exception){
             throw new \Exception($exception->getMessage());
         }
-        $logs = Auth::user()->name.' menambahkan data cabang '.$data->cab_name.'. parameter : '.json_encode($request->all());
-        Log::channel('customLog')->notice($logs);
+        $logs = Auth::user()->name.' menambahkan data cabang '.$data->cab_name;
+        Log::channel('customLog')->notice($logs,['params'=>sanitize($request)]);
         return $data;
     }
     public function update(Request $request){
@@ -109,8 +109,8 @@ class CabangRepositories{
         }catch (\Exception $exception){
             throw new \Exception($exception->getMessage());
         }
-        $logs = Auth::user()->name.' merubah data cabang '.$data->cab_name.'. parameter : '.json_encode($request->all());
-        Log::channel('customLog')->notice($logs);
+        $logs = Auth::user()->name.' merubah data cabang '.$data->cab_name;
+        Log::channel('customLog')->notice($logs,['params'=>sanitize($request)]);
         return $data;
     }
     public function delete(Request $request){
@@ -121,8 +121,8 @@ class CabangRepositories{
         }catch (\Exception $exception){
             throw new \Exception($exception->getMessage());
         }
-        $logs = Auth::user()->name.' menghapus data cabang '.$data->cab_name.'. parameter : '.json_encode($request->all());
-        Log::channel('customLog')->warning($logs);
+        $logs = Auth::user()->name.' menghapus data cabang '.$data->cab_name;
+        Log::channel('customLog')->warning($logs,['params'=>sanitize($request)]);
         return $data;
     }
     public function getByID($id){

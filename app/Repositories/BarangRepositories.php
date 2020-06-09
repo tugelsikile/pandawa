@@ -34,8 +34,8 @@ class BarangRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
-        $logs = Auth::user()->name.' membaca tabel barang. parameter : '.json_encode($request->all());
-        Log::channel('customLog')->info($logs);
+        $logs = Auth::user()->name.' membaca tabel barang.';
+        Log::channel('customLog')->info($logs,['params'=>sanitize($request)]);
         return $data;
     }
     public function recordsFiltered(Request $request){
@@ -85,8 +85,8 @@ class BarangRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
-        $logs = Auth::user()->name.' menambahkan data barang '.$data->nama_barang.'. parameter : '.json_encode($request->all());
-        Log::channel('customLog')->notice($logs);//->info(['message'=>$logs,'params'=>$data]);
+        $logs = Auth::user()->name.' menambahkan data barang '.$data->nama_barang.'.';
+        Log::channel('customLog')->notice($logs,['params'=>sanitize($request)]);
         return $request;
     }
     public function update(Request $request){
@@ -103,8 +103,8 @@ class BarangRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
-        $logs = Auth::user()->name.' mengupdate data barang '.$data->nama_barang.'. parameter : '.json_encode($request->all());
-        Log::channel('customLog')->notice(['message'=>$logs,'params'=>$data]);
+        $logs = Auth::user()->name.' mengupdate data barang '.$data->nama_barang;
+        Log::channel('customLog')->notice($logs,['params'=>sanitize($request)]);
         return $request;
     }
     public function delete(Request $request){
@@ -115,8 +115,8 @@ class BarangRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
-        $logs = Auth::user()->name.' menghapus data barang '.$data->nama_barang.'. parameter : '.json_encode($request->all());
-        Log::channel('customLog')->warning(['message'=>$logs,'params'=>$data]);
+        $logs = Auth::user()->name.' menghapus data barang '.$data->nama_barang;
+        Log::channel('customLog')->warning($logs,['params'=>sanitize($request)]);
         return $request;
     }
 }
