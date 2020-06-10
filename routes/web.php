@@ -87,6 +87,8 @@ Route::group(['middleware'=>'auth'],function (){
     });
 
     Route::group(['prefix'=>'admin-tagihan'],function (){
+        Route::post('/informasi','TagihanController@InformasiTagihan');
+
         Route::get('/','TagihanController@index');
         Route::post('/table','TagihanController@table');
 

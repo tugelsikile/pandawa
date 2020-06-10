@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Repositories\{ CustomerRepositories, CabangRepositories, TagihanRepositories, UserMenuRepositories, UserPriviledgesRepositories };
+use App\Tagihan;
 use App\Validations\TagihanValidation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -181,5 +182,64 @@ class TagihanController extends Controller
             }
             return view('tagihan.cetak-invoice',compact('data','companyInfo'));
         }
+    }
+    public function InformasiTagihan(Request $request){
+        $params = ['total'=>0,'dibayar'=>0,'tunggak'=>0];
+        try{
+
+            $where = ['isp_customer.status'=>1,'isp_invoice.status'=>1];
+            $total  = Tagihan::where($where)
+                ->join('isp_customer','isp_invoice.cust_id','=','isp_customer.cust_id','left');
+            $dibayar  = Tagihan::where($where)
+                ->where(['isp_invoice.is_paid'=>1])
+                ->join('isp_customer','isp_invoice.cust_id','=','isp_customer.cust_id','left');
+            $tunggak = Tagihan::where($where)
+                ->where(['isp_invoice.is_paid'=>0])
+                ->join('isp_customer','isp_invoice.cust_id','=','isp_customer.cust_id','left');
+            //cabang
+            if (Auth::user()->cab_id){
+                $total = $total->where(['isp_invoice.cab_id'=>Auth::user()->cab_id]);
+                $dibayar = $dibayar->where(['isp_invoice.cab_id'=>Auth::user()->cab_id]);
+                $tunggak = $tunggak->where(['isp_invoice.cab_id'=>Auth::user()->cab_id]);
+            } elseif ($request->cab_id){
+                $total = $total->where(['isp_invoice.cab_id'=>$request->cab_id]);
+                $dibayar = $dibayar->where(['isp_invoice.cab_id'=>$request->cab_id]);
+                $tunggak = $tunggak->where(['isp_invoice.cab_id'=>$request->cab_id]);
+            }
+            //bulan
+            if ($request->bulan){
+                $total = $total->whereMonth('inv_date',$request->bulan);
+                $dibayar = $dibayar->whereMonth('inv_date',$request->bulan);
+                $tunggak = $tunggak->whereMonth('inv_date',$request->bulan);
+            }
+            //tahun
+            if ($request->tahun){
+                $total = $total->whereYear('inv_date',$request->tahun);
+                $dibayar = $dibayar->whereYear('inv_date',$request->tahun);
+                $tunggak = $tunggak->whereYear('inv_date',$request->tahun);
+            }
+            //npwp
+            if (strlen($request->npwp)>0){
+                $total = $total->where(['isp_customer.npwp'=>$request->npwp]);
+                $dibayar = $dibayar->where(['isp_customer.npwp'=>$request->npwp]);
+                $tunggak = $tunggak->where(['isp_customer.npwp'=>$request->npwp]);
+            }
+            //pelanggan aktif
+            if (strlen($request->is_active)>0){
+                $total = $total->where(['isp_customer.is_active'=>$request->is_active]);
+                $dibayar = $dibayar->where(['isp_customer.is_active'=>$request->is_active]);
+                $tunggak = $tunggak->where(['isp_customer.is_active'=>$request->is_active]);
+            }
+
+            $total = $total->sum('price_with_tax');
+            $dibayar = $dibayar->sum('price_with_tax');
+            $tunggak = $tunggak->sum('price_with_tax');
+            $params['total'] = format_rp(round($total));
+            $params['dibayar'] = format_rp(round($dibayar));
+            $params['tunggak'] = format_rp(round($tunggak));
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return format(1000,'OK',$params);
     }
 }

@@ -39,5 +39,4 @@ Route::group(['prefix'=>'regional'],function (){
     Route::post('/kecamatan','ListController@Kecamatan');
     Route::post('/desa','ListController@Desa');
 });
-
 Route::post('preview-template-invoice','TemplateController@PreviewNomorInvoice');

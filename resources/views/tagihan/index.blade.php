@@ -2,6 +2,56 @@
 
 @section('content')
     <div class="container">
+        <div class="row kartu-tagihan mb-3">
+            <div class="col-sm-3">
+                <div class="toast" data-autohide="false" style="width:100% !important;min-width:100% !important;">
+                    <div class="toast-header">
+                        <i class="fa fa-desktop mr-2"></i>
+                        <strong class="mr-auto">Total Tagihan</strong>
+                        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="toast-body">
+                        Rp. <strong class="tagihan-total">0</strong>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="toast" data-autohide="false" style="width:100% !important;min-width:100% !important;">
+                    <div class="toast-header">
+                        <span class="fa-stack mr-2">
+                          <i class="fa fa-desktop fa-stack-1x"></i>
+                          <i class="fa fa-check fa-stack-1x text-success"></i>
+                        </span>
+                        <strong class="mr-auto">Tagihan Dibayar</strong>
+                        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="toast-body">
+                        Rp. <strong class="tagihan-dibayar">0</strong>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="toast" data-autohide="false" style="width:100% !important;min-width:100% !important;">
+                    <div class="toast-header">
+                        <span class="fa-stack mr-2">
+                          <i class="fa fa-desktop fa-stack-1x"></i>
+                          <i class="fa fa-check fa-stack-1x text-danger"></i>
+                        </span>
+                        <strong class="mr-auto">Tunggakan Tagihan</strong>
+                        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="toast-body">
+                        Rp. <strong class="tagihan-tunggak">0</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="card">
             <div class="card-header">Tagihan</div>
             <div class="card-body is-print" style="display: none">
@@ -30,6 +80,19 @@
         </div>
     </div>
     <script>
+        $('.toast').toast('show');
+        function cariInfoTagihan() {
+            var bulan   = $('.inv-month').val();
+            var tahun   = $('.inv-year').val();
+            var npwp    = $('.npwp').val();
+            var cab_id  = $('.cab-id').val();
+            var is_active = $('.is-active').val();
+            var is_paid = $('.inv-paid').val();
+            var token   = '{{ csrf_token() }}';
+            var url     = '{{ url('admin-tagihan/informasi') }}'
+            tagihanInformasi(url,token,bulan,tahun,cab_id,npwp,is_active,is_paid);
+        }
+        cariInfoTagihan();
         var table = $('#dataTable').dataTable({
             "dom"           : '<"mb-2 toolbar clearfix"B><"row"<"col-sm-8"l><"col-sm-4"f>>rt<"row"<"col-sm-6"i><"col-sm-6"p>>',
             "lengthMenu"    : [[30, 60, 120, 240, 580], [30, 60, 120, 240, 580]],
@@ -135,7 +198,7 @@
         });
         $('div.toolbar .dt-buttons').append('' +
             '<div class="float-right d-none d-md-block col-sm-3 pr-0">' +
-                '<select name="nama_cabang" onchange="table._fnDraw()" class="mb-2 cab-id custom-select custom-select-sm form-control form-control-sm">' +
+                '<select name="nama_cabang" onchange="table._fnDraw();cariInfoTagihan();" class="mb-2 cab-id custom-select custom-select-sm form-control form-control-sm">' +
                     @if(strlen(Auth::user()->cab_id)==0)
                         '<option value="">=== Semua Cabang ===</option>' +
                     @endif
@@ -148,25 +211,25 @@
                 /*'<select onchange="table._fnDraw()" class="mb-2 cust-id custom-select custom-select-sm form-control form-control-sm">' +
                     '<option value="">=== Semua Pelanggan ===</option>' +
                 '</select>' +*/
-                '<select name="npwp" onchange="table._fnDraw()" class="mb-2 npwp custom-select custom-select-sm form-control form-control-sm">' +
+                '<select name="npwp" onchange="table._fnDraw();cariInfoTagihan();" class="mb-2 npwp custom-select custom-select-sm form-control form-control-sm">' +
                     '<option value="">=== Status NPWP ===</option>' +
                     '<option value="1">Punya NPWP</option>' +
                     '<option value="0">Tidak Punya NPWP</option>' +
                 '</select>' +
-                '<select name="is_active" onchange="table._fnDraw()" class="mb-2 is-active custom-select custom-select-sm form-control form-control-sm">' +
+                '<select name="is_active" onchange="table._fnDraw();cariInfoTagihan();" class="mb-2 is-active custom-select custom-select-sm form-control form-control-sm">' +
                     '<option value="">=== Status Aktif ===</option>' +
                     '<option value="1">Pelanggan Aktif</option>' +
                     '<option value="0">Pelanggan Non Aktif</option>' +
                 '</select>' +
             '</div>' +
             '<div class="float-right d-none d-md-block col-sm-3 pr-0">' +
-                '<select name="bulan_tagihan" onchange="table._fnDraw()" class="mb-2 inv-month custom-select custom-select-sm form-control form-control-sm">' +
+                '<select name="bulan_tagihan" onchange="table._fnDraw();cariInfoTagihan();" class="mb-2 inv-month custom-select custom-select-sm form-control form-control-sm">' +
                     '<option value="">=== Bulan Tagihan ===</option>' +
                     @foreach(ArrayBulan() as $key => $bulan)
                         '<option @if($bulan['value']==date('m')) selected @endif value="{{ $bulan['value'] }}">{{ $bulan['name'] }}</option>' +
                     @endforeach
                 '</select>' +
-                '<select name="tahun_tagihan" onchange="table._fnDraw()" class="mb-2 inv-year custom-select custom-select-sm form-control form-control-sm">' +
+                '<select name="tahun_tagihan" onchange="table._fnDraw();cariInfoTagihan();" class="mb-2 inv-year custom-select custom-select-sm form-control form-control-sm">' +
                     '<option value="">=== Tahun Tagihan ===</option>' +
                     @if(strlen($minTahun)>0)
                         @for($tahun = $minTahun; $tahun <= date('Y'); $tahun++)
@@ -174,7 +237,7 @@
                         @endfor
                     @endif
                 '</select>' +
-                '<select name="status_bayar" onchange="table._fnDraw()" class="mb-2 inv-paid custom-select custom-select-sm form-control form-control-sm">' +
+                '<select name="status_bayar" onchange="table._fnDraw();cariInfoTagihan();" class="mb-2 inv-paid custom-select custom-select-sm form-control form-control-sm">' +
                     '<option value="">=== Status Pembayaran ===</option>' +
                     '<option value="1">Sudah Dibayar</option>' +
                     '<option value="0">Belum Dibayar</option>' +

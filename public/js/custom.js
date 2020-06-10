@@ -705,3 +705,22 @@ function settingPage(obj){
         });
     }
 }
+function tagihanInformasi(url,token,bulan,tahun,cabang,npwp,active,paid){
+    if (tahun == 'undefined') tahun = null;
+    if (bulan == 'undefined') bulan = null;
+    $('.tagihan-total,.tagihan-dibayar,.tagihan-tunggak').html('<i class="fa fa-spin fa-circle-o-notch"></i> Loading...');
+    $.ajax({
+        url     : url,
+        type    : 'POST',
+        dataType: 'JSON',
+        data    : { _token : token, bulan : bulan, tahun : tahun, cab_id : cabang, npwp : npwp, is_active : active, paid : paid },
+        error   : function (e) {
+            $('.tagihan-total,.tagihan-dibayar,.tagihan-tunggak').html('Eyoy bos');
+        },
+        success : function (e) {
+            $('.tagihan-total').html(e.params.total);
+            $('.tagihan-dibayar').html(e.params.dibayar);
+            $('.tagihan-tunggak').html(e.params.tunggak);
+        }
+    })
+}
