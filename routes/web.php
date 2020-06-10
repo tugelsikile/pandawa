@@ -46,6 +46,9 @@ Route::group(['middleware'=>'auth'],function (){
         Route::get('/update','CabangController@update');
         Route::post('/update','CabangController@update');
         Route::post('/delete','CabangController@delete');
+
+        Route::get('/performa-tagihan','CabangController@PerformaTagihan');
+        Route::post('/performa-tagihan','CabangController@PerformaTagihan');
     });
 
     Route::group(['prefix'=>'cabang-produk'],function (){

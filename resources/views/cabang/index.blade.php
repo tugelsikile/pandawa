@@ -41,17 +41,15 @@
                 }
             },
             buttons         : [
+                @if($privs->C_opt == 1)
                 {
                     className : 'btn btn-sm btn-primary',
                     text: '<i class="fa fa-plus"></i> Tambah Cabang',
                     action : function (e,dt,node,config) {
-                        @if($privs->C_opt == 1)
-                            show_modal({'href':'{{ url('admin-cabang/create') }}','title':'Tambah Cabang'});
-                        @else
-                            showError('Forbidden Action');
-                        @endif
+                        show_modal({'href':'{{ url('admin-cabang/create') }}','title':'Tambah Cabang'});
                     }
                 }
+                @endif
             ],
             "columns"   : [
                 { "data" : "cab_name", render : function (a,b,c) {
@@ -60,6 +58,7 @@
                             '<div class="dropdown show float-right">' +
                                 '<a class="btn btn-secondary btn-sm dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></a>' +
                                 '<div class="dropdown-menu" aria-labelledby="dropdownMenuLink">' +
+                                    '<a class="dropdown-item" href="{{ url('admin-cabang/performa-tagihan?id=') }}'+c.cab_id+'"><i class="fa fa-line-chart"></i> Performa Tagihan</a>' +
                                 @if($privs->U_opt == 1)
                                     '<a class="dropdown-item" onclick="show_modal(this);return false" title="Rubah Data Cabang" href="{{ url('admin-cabang/update?id=') }}'+c.cab_id+'"><i class="fa fa-pencil"></i> Rubah Data</a>' +
                                 @endif

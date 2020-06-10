@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Desa;
+use Illuminate\Support\Facades\DB;
 use Mockery\Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -111,6 +112,65 @@ class CabangController extends Controller
                 throw new \Exception($exception->getMessage());
             }
             return format(1000,'Cabang berhasil dihapus',$save);
+        }
+    }
+    public function PerformaTagihan(Request $request){
+        if($request->method()!='POST'){
+            try{
+                $curMenu = $this->curMenu;
+                $privs   = $this->priviledges->checkPrivs(Auth::user()->level,$this->curMenu);
+
+                $menus = $this->menuRepositories->getMenu(Auth::user()->level);
+                if (Auth::user()->cab_id){
+                    $cabangs = $this->cabangRepositories->getByID(Auth::user()->cab_id);
+                } else {
+                    $cabangs = $this->cabangRepositories->all();
+                }
+            }catch (Exception $exception){
+                throw new Exception($exception->getMessage());
+            }
+            return view('cabang.performa-tagihan',compact('cabangs','curMenu','menus','privs'));
+        } else {
+            if (!$request->ajax()) abort(403);
+            $response = ['data'=>[],'draw'=>$request->draw,'recordsFiltered'=>0,'recordsTotal'=>0];
+            try{
+                $invoices = DB::table('isp_invoice')
+                    ->select(['is_paid','inv_id','inv_number','inv_date','cust_id','cab_id'])
+                    ->where('is_paid','<',1)
+                    ->where('status','>',0);
+                if (strlen($request->cab_id)>0) $invoices = $invoices->where('cab_id','=',$request->cab_id);
+                $invoices = $invoices->get();
+                $data = [];
+                if ($invoices->count()>0){
+                    $n = 0;
+                    $cari = [];
+                    foreach ($invoices as $invoice){
+                        if ($invoice->is_paid < 1){
+                            if (!isset($cari[$invoice->cust_id])) {
+                                $cari[$invoice->cust_id] = 0;
+                            } else {
+                                $cari[$invoice->cust_id]++;
+                            }
+                            if ($cari[$invoice->cust_id]>1){
+                                $data[$n] = $invoice;
+                                $n++;
+                            }
+                        }
+                    }
+                }
+                $data = collect($data);
+                $data->map(function ($data){
+                    $data->customer = DB::table('isp_customer')->select(['fullname','cust_id','kode'])->where('cust_id','=',$data->cust_id)->get()->first();
+                    $data->cabang   = $this->cabangRepositories->getByID($data->cab_id)->cab_name;
+                    return $data;
+                });
+                $response['data'] = $data;
+                $response['recordsFiltered'] = $data->count();
+                $response['recordsTotal'] = $data->count();
+            }catch (Exception $exception){
+                throw new Exception($exception->getMessage());
+            }
+            return $response;
         }
     }
 }

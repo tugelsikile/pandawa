@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Customer;
 use App\Tagihan;
 use App\User;
 use Illuminate\Http\Request;
@@ -16,7 +17,7 @@ class TagihanRepositories{
             $data                       = new Tagihan();
             $data->inv_number           = $request->npwp == 1 ? genInvNumber($request->bulan_tagihan,$request->tahun_tagihan,1) : genInvNumber($request->bulan_tagihan,$request->tahun_tagihan);
             $data->cust_id              = $request->nama_pelanggan;
-            $data->cab_id               = $request->nama_cabang;
+            $data->cab_id               = Customer::where('cust_id',$data->cust_id)->get()->first()->cab_id;
             $data->inv_date             = $request->tahun_tagihan.'-'.$request->bulan_tagihan.'-01';
             $data->due_date             = $request->tahun_tagihan.'-'.$request->bulan_tagihan.'-'.dueDate();
             $data->is_tax               = $request->npwp;
@@ -40,7 +41,7 @@ class TagihanRepositories{
             $data                   = new Tagihan();
             $data->inv_number       = $request->npwp == 1 ? genInvNumber($request->bulan_tagihan,$request->tahun_tagihan,1) : genInvNumber($request->bulan_tagihan,$request->tahun_tagihan);
             $data->cust_id          = $request->data_pelanggan;
-            $data->cab_id           = $request->nama_cabang;
+            $data->cab_id           = Customer::where('cust_id',$data->cust_id)->get()->first()->cab_id;
             $data->inv_date         = $request->tahun_tagihan.'-'.$request->bulan_tagihan.'-01';
             $data->due_date         = $request->tahun_tagihan.'-'.$request->bulan_tagihan.'-'.dueDate();
             $data->is_tax           = $request->npwp;
