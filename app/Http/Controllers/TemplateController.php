@@ -32,6 +32,50 @@ class TemplateController extends Controller
         $tax_price = $tax_price + $harga;
         return format(1000,'OK','Rp. '.format_rp($tax_price));
     }
+    public function PreviewNomorInvoice(Request $request){
+        if (!$request->ajax()) abort(403);
+        if ($request->method()!='POST') abort(403);
+        try{
+            $template   = $request->string;
+            $padding    = $request->padding;
+            $kodenya    = null;
+            $explode    = explode('|',$template);
+            $register   = ['date','month','year','num','DATE','MONTH','YEAR'];
+            foreach ($explode as $key => $string){
+                $strpos     = strpos($string,'{');
+                $kodenya    .= substr($string,0,$strpos);
+                if (preg_match_all("/{(.*?)}/",$string,$m)){
+                    foreach ($m[1] as $i => $format){
+                        if (!in_array($format,$register)){
+                            $kodenya .= $format;
+                        } else {
+                            if ($format == 'date'){
+                                $kodenya .= date('d');
+                            } elseif ($format == 'month'){
+                                $kodenya .= date('m');
+                            } elseif ($format == 'year') {
+                                $kodenya .= date('Y');
+                            } elseif ($format == 'DATE') {
+                                $kodenya .= romawi((int)date('d'));
+                            } elseif ($format == 'MONTH') {
+                                $kodenya .= romawi((int)date('m'));
+                            } elseif ($format == 'YEAR'){
+                                $kodenya .= romawi((int)date('Y'));
+                            } else {
+                                $kodenya .= str_pad(1,$padding,'0',STR_PAD_LEFT);
+                            }
+                        }
+                    }
+                } else {
+                    $kodenya .= $string;
+                }
+            }
+            if (strlen($kodenya)>255) $kodenya = 'Nomor Invoice terlalu panjang';
+        }catch (\Mockery\Exception $exception){
+            throw new \Mockery\Exception($exception->getMessage());
+        }
+        return format(1000,'OK',$kodenya);
+    }
     public function PreviewCustomerID(Request $request){
         try{
             $data       = $this->cabangRepository->getByID($request->cab_id);

@@ -218,5 +218,28 @@ class SettingController extends Controller
         Log::channel('customLog')->warning($logs,['params'=>sanitize($request)]);
         return format(1000,'data bank berhasil dihapus');
     }
+    public function templateInvoice(Request $request){
+        if (!$request->ajax()) abort(403);
+        $data = DB::table('isp_template_id')->get();
+        return view('setting.template-invoice',compact('data'));
+    }
+    public function templateUpdate(Request $request){
+        if (!$request->ajax()) abort(403);
+        if ($request->method()!='POST') abort(403);
+        try{
+            $valid = Validator::make($request->all(),[
+                'idnya' => 'required|numeric|exists:isp_template_id,idnya',
+                'isi_template' => 'required|string|min:4',
+                'panjang_nol' => 'required|numeric|min:1'
+            ]);
+            if ($valid->fails()){
+                throw new Exception(collect($valid->errors()->all())->join('#'));
+            }
+            $save = DB::table('isp_template_id')->where('idnya',$request->idnya)->update(['id_string'=>$request->isi_template,'str_pad'=>$request->panjang_nol]);
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return format(1000,'Template berhasil dirubah',$save);
+    }
 
 }

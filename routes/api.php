@@ -18,9 +18,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/cetak-loading',function (){
-    return 'Loading ...';
-});
+Route::get('/cetak-loading',function (){return 'Loading ...';});
 
 Route::group(['prefix'=>'tagihan'],function (){
     Route::post('/cetak-laporan','TagihanController@CetakLaporan');
@@ -41,3 +39,5 @@ Route::group(['prefix'=>'regional'],function (){
     Route::post('/kecamatan','ListController@Kecamatan');
     Route::post('/desa','ListController@Desa');
 });
+
+Route::post('preview-template-invoice','TemplateController@PreviewNomorInvoice');

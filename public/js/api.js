@@ -85,3 +85,18 @@ function Desa(villageID){
         }
     });
 }
+function previewNomorInvoice(string,pad,targetElement) {
+    $('#'+targetElement).val('Loading...');
+    $.ajax({
+        url     : '/api/preview-template-invoice',
+        type    : 'POST',
+        dataType: 'JSON',
+        data    : { string : string, padding : pad },
+        error   : function (e) {
+            $('#'+targetElement).val('Error');
+        },
+        success : function (e) {
+            $('#'+targetElement).val(e.params);
+        }
+    })
+}

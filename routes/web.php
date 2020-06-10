@@ -153,6 +153,9 @@ Route::group(['middleware'=>'auth'],function (){
         Route::post('/update-bank','SettingController@updateBank');
         Route::post('/delete-bank','SettingController@deleteBank');
 
-        Route::get('/application-logs','\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
+        Route::get('/template-invoice','SettingController@templateInvoice');
+        Route::post('/template-update','SettingController@templateUpdate');
+
+        Route::get('/application-logs','\Rap2hpoutre\LaravelLogViewer\LogViewerController@index')->middleware('auth');
     });
 });
