@@ -56,6 +56,8 @@ class TagihanRepositories{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
+        $logs = Auth::user()->name.' menambahkan data tagihan otomatis.' . $data->inv_number;
+        Log::channel('customLog')->notice($logs,['params'=>sanitize($request)]);
         return $request;
     }
     public function minYear(Request $request){

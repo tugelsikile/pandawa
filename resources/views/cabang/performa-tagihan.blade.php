@@ -30,11 +30,10 @@
             return months[month_index];
         }
         var table = $('#dataTable').dataTable({
-            "dom"           : '<"mb-2 toolbar clearfix"B><"row"<"col-sm-8"><"col-sm-4"f>>rt<"row"<"col-sm-6"i><"col-sm-6">>',
+            "dom"           : '<"mb-2 toolbar clearfix"B><"row"<"col-sm-8"><"col-sm-4"f>>rt<"row"<"col-sm-6"><"col-sm-6">>',
             "lengthMenu"    : [[30, 60, 120, 240, 580], [30, 60, 120, 240, 580]],
             "order"         : [[ 0, "asc" ]],
             "responsive"    : true,
-            "deferRender"   : true,
             "fixedHeader"   : true,
             "searchDelay"   : 2000,
             "processing"    : true,
@@ -48,28 +47,41 @@
                 }
             },
             buttons         : [
-
+                {
+                    className : 'btn btn-sm btn-primary',
+                    text: '<i class="fa fa-print"></i> Cetak Data',
+                    action : function (e,dt,node,config) {
+                        show_modal({'href':'{{ url('admin-cabang/cetak-performa-tagihan') }}','title':'Cetak Data'});
+                    }
+                },
+                {
+                    className   : 'btn btn-sm btn-primary',
+                    text        : '<i class="fa fa-download"></i> Download Excel',
+                    action      : function () {
+                        
+                    }
+                }
             ],
             "columns"   : [
-                { "data" : "inv_id", render : function (a,b,c) {
-                     return c.customer.fullname+'<br><span class="badge badge-secondary">'+c.customer.kode+'</span>';
+                { "data" : "fullname", render : function (a,b,c) {
+                     return '<span class="badge badge-secondary mr-2">'+c.kode+'</span>'+c.fullname;
                     }
                 },
-                { "data" : "cab_id", "orderable" : false, render : function (a,b,c) {
-                        return c.cabang;
+                { "data" : "fullname", "width" : "200px", "orderable" : false, render : function (a,b,c) {
+                    return '<span class="badge badge-secondary">'+ c.cabang != null ? c.cabang.cab_name : '-' + '</span>';
                     }
                 },
-                { "data" : "inv_date", "orderable" : false, render : function (a,b,c) {
+                { "data" : "fullname", "width" : "200px", "orderable" : false, render : function (a,b,c) {
                     var bulan = '';
-                    $.each(c.bulan,function (i,v) {
+                    $.each(c.tagihan,function (i,v) {
                         v.inv_date != null ? bulan += '<span class="badge badge-secondary">'+bulanIndo(v.inv_date)+'</span> ' : null;
                     });
                     return bulan;
                     }
                 },
-                { "data" : "inv_date", "orderable" : false, render : function (a,b,c) {
+                { "data" : "fullname", "width" : "200px", "orderable" : false, render : function (a,b,c) {
                     var html = 0;
-                    $.each(c.bulan,function (i,v) {
+                    $.each(c.tagihan,function (i,v) {
                         html = html + parseInt(v.price_with_tax);
                     });
                     html = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(html);
