@@ -129,44 +129,66 @@ class CabangController extends Controller
             }catch (Exception $exception){
                 throw new Exception($exception->getMessage());
             }
-            return view('cabang.performa-tagihan',compact('cabangs','curMenu','menus','privs'));
+            return view('cabang.performa-tagihan',compact('request','cabangs','curMenu','menus','privs'));
         } else {
             if (!$request->ajax()) abort(403);
             $response = ['data'=>[],'draw'=>$request->draw,'recordsFiltered'=>0,'recordsTotal'=>0];
             try{
+                $keyword    = $request->post('search')['value'];
+                $orderdir   = $request->post('order')[0]['dir'];
+                DB::connection()->enableQueryLog();
                 $invoices = DB::table('isp_invoice')
-                    ->select(['is_paid','inv_id','inv_number','inv_date','cust_id','cab_id'])
-                    ->where('is_paid','<',1)
-                    ->where('status','>',0);
-                if (strlen($request->cab_id)>0) $invoices = $invoices->where('cab_id','=',$request->cab_id);
+                    ->join('isp_customer','isp_invoice.cust_id','=','isp_customer.cust_id','left')
+                    ->select(['isp_invoice.is_paid','isp_invoice.inv_id','isp_invoice.inv_number','isp_invoice.inv_date','isp_invoice.cust_id','isp_invoice.cab_id'])
+                    ->where('isp_invoice.is_paid','<',1)
+                    ->where('isp_invoice.status','=',1)
+                    ->where('isp_customer.status','=',1)
+                    ->where('isp_customer.is_active','=',1)
+                    ->where(function ($q) use ($keyword){
+                        $q->where('isp_invoice.inv_number','like',"%$keyword%");
+                        $q->orWhere('isp_customer.fullname','like',"%$keyword%");
+                    })->orderBy('isp_customer.fullname',$orderdir);
+                if (strlen($request->cab_id)>0) $invoices = $invoices->where('isp_invoice.cab_id','=',$request->cab_id);
                 $invoices = $invoices->get();
+                //dd($queries = DB::getQueryLog());
+                //dd($invoices);
                 $data = [];
                 if ($invoices->count()>0){
                     $n = 0;
-                    $cari = [];
+                    $cari = collect([]);
                     foreach ($invoices as $invoice){
                         if ($invoice->is_paid < 1){
-                            if (!isset($cari[$invoice->cust_id])) {
-                                $cari[$invoice->cust_id] = 0;
+                            if ($cari->get($invoice->cust_id)==null){
+                                $cari->put($invoice->cust_id,1);
                             } else {
-                                $cari[$invoice->cust_id]++;
+                                $cari->put($invoice->cust_id,2);
                             }
-                            if ($cari[$invoice->cust_id]>1){
-                                $data[$n] = $invoice;
+                            if ($cari->get($invoice->cust_id)==2){
+                                $data[$n]   = $invoice;
                                 $n++;
                             }
+                            /*if (!isset($cari[$invoice->cust_id])) {
+                                $cari[$invoice->cust_id] = 1;
+                            } else {
+                                $cari[$invoice->cust_id] = $cari[$invoice->cust_id] + 1;
+                            }
+                            if ($cari[$invoice->cust_id]>=2){
+                                $data[$n] = $invoice;
+                                $n++;
+                            }*/
                         }
                     }
                 }
-                $data = collect($data);
+                $data = collect($data)->unique('cust_id');
+                //dd($data);
                 $data->map(function ($data){
                     $data->customer = DB::table('isp_customer')->select(['fullname','cust_id','kode'])->where('cust_id','=',$data->cust_id)->get()->first();
-                    $data->cabang   = $this->cabangRepositories->getByID($data->cab_id)->cab_name;
+                    $data->cabang   = $data->cab_id == null ? null : DB::table('isp_cabang')->select('cab_name')->where('cab_id','=',$data->cab_id)->get()->first()->cab_name;//$this->cabangRepositories->getByID($data->cab_id)->cab_name;
+                    $data->bulan    = DB::table('isp_invoice')->select(['inv_date','price_with_tax'])->where(['cust_id'=>$data->cust_id,'status'=>1,'is_paid'=>0])->get();
                     return $data;
                 });
                 $response['data'] = $data;
-                $response['recordsFiltered'] = $data->count();
-                $response['recordsTotal'] = $data->count();
+                dd($response);
             }catch (Exception $exception){
                 throw new Exception($exception->getMessage());
             }
