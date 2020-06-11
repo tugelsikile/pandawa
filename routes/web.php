@@ -49,6 +49,8 @@ Route::group(['middleware'=>'auth'],function (){
 
         Route::get('/performa-tagihan','CabangController@PerformaTagihan');
         Route::post('/performa-tagihan','CabangController@PerformaTagihan');
+        Route::post('/cetak-performa-tagihan','CabangController@CetakPerformaTagihan');
+        Route::get('/download-performa-tagihan','CabangController@DownloadPerformaTagihan');
     });
 
     Route::group(['prefix'=>'cabang-produk'],function (){

@@ -48,8 +48,15 @@
                     action : function (e,dt,node,config) {
                         show_modal({'href':'{{ url('admin-cabang/create') }}','title':'Tambah Cabang'});
                     }
-                }
+                },
                 @endif
+                {
+                    className   : 'btn btn-sm btn-outline-primary',
+                    text        : '<i class="fa fa-line-chart"></i> Performa Tagihan Cabang',
+                    action      : function () {
+                        window.location.href = '{{ url('admin-cabang/performa-tagihan') }}'
+                    }
+                }
             ],
             "columns"   : [
                 { "data" : "cab_name", render : function (a,b,c) {

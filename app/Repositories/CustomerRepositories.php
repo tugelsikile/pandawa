@@ -296,6 +296,11 @@ class CustomerRepositories{
         try{
             $data = Customer::where('cust_id','=',$request->id)->get()->first();
             $data->is_active = $request->data_status;
+            if ($request->data_status == 1){
+                $data->inactive_date = null;
+            } else {
+                $data->inactive_date = date('Y-m-d');
+            }
             $data->save();
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());

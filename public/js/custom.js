@@ -724,3 +724,24 @@ function tagihanInformasi(url,token,bulan,tahun,cabang,npwp,active,paid){
         }
     })
 }
+function bulanIndo(string) {
+    if (string != null){
+        var arr = string.split("-");
+        var months = [ "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December" ];
+        var month_index =  parseInt(arr[1],10) - 1;
+        return months[month_index];
+    }
+}
+function tanggalIndo(string) {
+    if (string != null){
+        var arr = string.split('-');
+        return arr[2];
+    }
+}
+function tahunIndo(string) {
+    if (string != null){
+        var arr = string.split('-');
+        return arr[0];
+    }
+}

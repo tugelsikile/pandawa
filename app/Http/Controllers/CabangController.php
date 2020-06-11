@@ -2,6 +2,11 @@
 
 namespace App\Http\Controllers;
 
+require base_path().'/vendor/autoload.php';
+
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
 use App\Desa;
 use Illuminate\Support\Facades\DB;
 use Mockery\Exception;
@@ -150,6 +155,7 @@ class CabangController extends Controller
                         ->where('cust_id','=',$customer->cust_id)
                         ->where(['is_paid'=>0,'status'=>1])
                         ->where('inv_date','<>',null)
+                        ->whereMonth('inv_date','<',date('m'))
                         ->get();
                     if ($jmlTag->count()>=2){
                         $customer->tagihan = $jmlTag;
@@ -166,6 +172,82 @@ class CabangController extends Controller
                 throw new Exception($exception->getMessage());
             }
             return $response;
+        }
+    }
+    public function CetakPerformaTagihan(Request $request){
+        if ($request->ajax()){ abort(403); } else {
+            if ($request->method()!='POST'){ abort(403); } else {
+                try{
+                    $cab_id     = $request->post('nama_cabang');
+                    $customers  = DB::table('isp_customer')
+                        ->select(['cust_id','fullname','cab_id','kode'])
+                        ->where(['status'=>1,'is_active'=>1])
+                        ->orderBy('cab_id','asc')->orderBy('fullname','asc');
+                    if (strlen($cab_id)>0) $customers = $customers->where('cab_id','=',$cab_id);
+                    $customers  = $customers->get();
+                    $customers->map(function ($customer,$index) use ($customers){
+                        $jmlTag = DB::table('isp_invoice')
+                            ->select(['inv_date','price_with_tax'])
+                            ->where('cust_id','=',$customer->cust_id)
+                            ->where(['is_paid'=>0,'status'=>1])
+                            ->where('inv_date','<>',null)
+                            ->whereMonth('inv_date','<',date('m'))
+                            ->get();
+                        if ($jmlTag->count()>=2){
+                            $customer->tagihan = $jmlTag;
+                            $customer->cabang  = DB::table('isp_cabang')->select('cab_name')->where('cab_id',$customer->cab_id)->get()->first();
+                            return $customer;
+                        } else {
+                            $customers->forget($index);
+                        }
+                    });
+                    $customers = $customers->values()->chunk(33);
+                }catch (Exception $exception){
+                    throw new Exception($exception->getMessage());
+                }
+                return view('cabang.cetak-performa-tagihan',compact('customers'));
+            }
+        }
+    }
+    public function DownloadPerformaTagihan(Request $request){
+        if ($request->ajax()){ abort(403); } else {
+            if ($request->method()=='POST'){ abort(403); } else {
+                try{
+                    $cab_id     = $request->id;
+                    $customers  = DB::table('isp_customer')
+                        ->select(['cust_id','fullname','cab_id','kode'])
+                        ->where(['status'=>1,'is_active'=>1])
+                        ->orderBy('cab_id','asc')->orderBy('fullname','asc');
+                    if (strlen($cab_id)>0) $customers = $customers->where('cab_id','=',$cab_id);
+                    $customers  = $customers->get();
+                    $customers->map(function ($customer,$index) use ($customers){
+                        $jmlTag = DB::table('isp_invoice')
+                            ->select(['inv_date','price_with_tax'])
+                            ->where('cust_id','=',$customer->cust_id)
+                            ->where(['is_paid'=>0,'status'=>1])
+                            ->where('inv_date','<>',null)
+                            ->whereMonth('inv_date','<',date('m'))
+                            ->get();
+                        if ($jmlTag->count()>=2){
+                            $customer->tagihan = $jmlTag;
+                            $customer->cabang  = DB::table('isp_cabang')->select('cab_name')->where('cab_id',$customer->cab_id)->get()->first();
+                            return $customer;
+                        } else {
+                            $customers->forget($index);
+                        }
+                    });
+                    $customers = $customers->values()->chunk(33);
+                }catch (Exception $exception){
+                    throw new Exception($exception->getMessage());
+                }
+                $spreadsheet = new Spreadsheet();
+                $sheet = $spreadsheet->getActiveSheet();
+                $sheet->setCellValue('A1', 'Hello World !');
+
+                $writer = new Xlsx($spreadsheet);
+                $writer->save('hello world.xlsx');
+                return view('cabang.cetak-performa-tagihan',compact('customers'));
+            }
         }
     }
 }

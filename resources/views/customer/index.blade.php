@@ -107,9 +107,9 @@
                 },
                 { "data" : "is_active", "width" : "50px", "className" : "text-center", render : function (a,b,c) {
                         if (c.is_active == 1){
-                            btn_aktif = '<a @if($privs->U_opt == 1) onclick="setStatusAktif(this);return false" data-token="{{ csrf_token() }}" data-value="0" data-id="'+c.cust_id+'" title="Non Aktifkan Pelanggan" href="{{ url('admin-customer/set-status') }}" @endif class="btn-sm btn btn-block btn-success">Aktif</a>';
+                            btn_aktif = '<a @if($privs->U_opt == 1) onclick="setStatusAktif(this);return false" data-token="{{ csrf_token() }}" data-value="0" data-id="'+c.cust_id+'" title="Non Aktifkan Pelanggan" href="{{ url('admin-customer/set-status') }}" @endif class="btn-sm btn btn-block btn-success">Aktif<br>'+tanggalIndo(c.from_date)+' '+bulanIndo(c.from_date)+' '+tahunIndo(c.from_date)+'</a>';
                         } else {
-                            btn_aktif = '<a @if($privs->U_opt == 1) onclick="setStatusAktif(this);return false" data-token="{{ csrf_token() }}" data-value="1" data-id="'+c.cust_id+'" title="Aktifkan Pelanggan" href="{{ url('admin-customer/set-status') }}" @endif class="btn-sm btn btn-block btn-danger">Non Aktif</a>';
+                            btn_aktif = '<a @if($privs->U_opt == 1) onclick="setStatusAktif(this);return false" data-token="{{ csrf_token() }}" data-value="1" data-id="'+c.cust_id+'" title="Aktifkan Pelanggan" href="{{ url('admin-customer/set-status') }}" @endif class="btn-sm btn btn-block btn-danger">Non Aktif<br>'+tanggalIndo(c.inactive_date)+' '+bulanIndo(c.inactive_date)+' '+tahunIndo(c.inactive_date)+'</a>';
                         }
                         return btn_aktif;
                     }

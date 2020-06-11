@@ -6,29 +6,32 @@
             <div class="card-header">
                 Performa Tagihan Cabang
             </div>
-            <div class="card-body">
-                <table class="table table-bordered" id="dataTable" style="width: 100%">
-                    <thead>
-                    <tr>
-                        <th class="min-mobile">Nama Pelanggan</th>
-                        <th class="min-desktop">Cabang</th>
-                        <th class="min-desktop">Tunggakan (Bulan)</th>
-                        <th class="min-desktop">Besar Tunggakan (Total)</th>
-                    </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
+            <div class="card-body is-print" style="display: none">
+                <div class="toolbar mb-2">
+                    <a onclick="printNow();return false" href="javascript:;" class="btn btn-sm btn-outline-primary btn-print"><i class="fa fa-print"></i> Cetak</a>
+                    <a onclick="printCancel();return false" href="javascript:;" class="btn btn-sm btn-outline-primary btn-cancel-print"><i class="fa fa-close"></i> Tutup</a>
+                </div>
+                <iframe src="{{ url('api/cetak-loading') }}" name="printFrame" id="printFrame" style="height:600px;border:solid 1px #ccc;width:100%;padding:10px"></iframe>
+            </div>
+            <div class="card-body no-print">
+                <form id="FormTable">
+                    @csrf
+                    <table class="table table-bordered" id="dataTable" style="width: 100%">
+                        <thead>
+                        <tr>
+                            <th class="min-mobile">Nama Pelanggan</th>
+                            <th class="min-desktop">Cabang</th>
+                            <th class="min-desktop">Tunggakan (Bulan)</th>
+                            <th class="min-desktop">Besar Tunggakan (Total)</th>
+                        </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </form>
             </div>
         </div>
     </div>
     <script>
-        function bulanIndo(string) {
-            var arr = string.split("-");
-            var months = [ "January", "February", "March", "April", "May", "June",
-                "July", "August", "September", "October", "November", "December" ];
-            var month_index =  parseInt(arr[1],10) - 1;
-            return months[month_index];
-        }
         var table = $('#dataTable').dataTable({
             "dom"           : '<"mb-2 toolbar clearfix"B><"row"<"col-sm-8"><"col-sm-4"f>>rt<"row"<"col-sm-6"><"col-sm-6">>',
             "lengthMenu"    : [[30, 60, 120, 240, 580], [30, 60, 120, 240, 580]],
@@ -51,14 +54,15 @@
                     className : 'btn btn-sm btn-primary',
                     text: '<i class="fa fa-print"></i> Cetak Data',
                     action : function (e,dt,node,config) {
-                        show_modal({'href':'{{ url('admin-cabang/cetak-performa-tagihan') }}','title':'Cetak Data'});
+                        printDataPost({'href':'{{ url('admin-cabang/cetak-performa-tagihan') }}','data-frame':'printFrame','data-form':'FormTable'});
                     }
                 },
                 {
                     className   : 'btn btn-sm btn-primary',
                     text        : '<i class="fa fa-download"></i> Download Excel',
                     action      : function () {
-                        
+                        var url = '{{ url('admin-cabang/download-performa-tagihan') }}?id=' + $('.cab-id').val();
+                        window.open(url,'_blank');
                     }
                 }
             ],
