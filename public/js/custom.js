@@ -37,6 +37,20 @@ function show_modal(obj) {
         });
     }
 }
+function parseError(jsonstring) {
+    var msg = '';
+    var jsonResponse = jsonstring.responseJSON;
+    if (jsonResponse){
+        jsonResponse = jsonResponse.message;
+        jsonResponse = jsonResponse.split('#');
+        msg = '<ul>';
+        $.each(jsonResponse,function (i,v) {
+            msg += '<li>'+v+'</li>';
+        });
+        msg += '</ul>';
+    }
+    return msg;
+}
 function submitForm(obj) {
     var method  = $(obj).attr('method');
     var url     = $(obj).attr('action');
@@ -50,18 +64,8 @@ function submitForm(obj) {
         error   : function (e) {
             $('#MyModal .modal-footer .btn-submit').prop({'disabled':false}).html(btnSave);
             $('#MyModal .modal-footer .btn-close').prop({'disabled':false}).html(btnClose);
-            var msg = '';
-            var jsonResponse = e.responseJSON;
-            if (jsonResponse){
-                jsonResponse = jsonResponse.message;
-                jsonResponse = jsonResponse.split('#');
-                msg = '<ul>';
-                $.each(jsonResponse,function (i,v) {
-                    msg += '<li>'+v+'</li>';
-                });
-                msg += '</ul>';
-            }
-            showError(e.statusText+'<br>'+msg);
+            var msg = parseError(e);
+            showError(msg);
         },
         success : function (e) {
             if (e.code == 1000){
@@ -156,18 +160,8 @@ function setStatusAktif(obj) {
                 dataType: 'JSON',
                 data    : { _token : token, id : id, data_status : status },
                 error   : function (e) {
-                    var msg = '';
-                    var jsonResponse = e.responseJSON;
-                    if (jsonResponse){
-                        jsonResponse = jsonResponse.message;
-                        jsonResponse = jsonResponse.split('#');
-                        msg = '<ul>';
-                        $.each(jsonResponse,function (i,v) {
-                            msg += '<li>'+v+'</li>';
-                        });
-                        msg += '</ul>';
-                    }
-                    showError(e.statusText+'<br>'+msg);
+                    var msg = parseError(e);
+                    showError(msg);
                 },
                 success : function (e) {
                     if (e.code == 1000){
@@ -205,18 +199,8 @@ function delete_data(obj) {
                 dataType: 'JSON',
                 data    : { _token : token, id : id },
                 error   : function (e) {
-                    var msg = '';
-                    var jsonResponse = e.responseJSON;
-                    if (jsonResponse){
-                        jsonResponse = jsonResponse.message;
-                        jsonResponse = jsonResponse.split('#');
-                        msg = '<ul>';
-                        $.each(jsonResponse,function (i,v) {
-                            msg += '<li>'+v+'</li>';
-                        });
-                        msg += '</ul>';
-                    }
-                    showError(e.statusText+'<br>'+msg);
+                    var msg = parseError(e)
+                    showError(msg);
                 },
                 success : function (e) {
                     if (e.code == 1000){
@@ -260,18 +244,8 @@ function bulk_delete(obj) {
                     dataType: 'JSON',
                     data    : $('#FormTable').serialize()+'&_token='+token,
                     error   : function (e) {
-                        var msg = '';
-                        var jsonResponse = e.responseJSON;
-                        if (jsonResponse){
-                            jsonResponse = jsonResponse.message;
-                            jsonResponse = jsonResponse.split('#');
-                            msg = '<ul>';
-                            $.each(jsonResponse,function (i,v) {
-                                msg += '<li>'+v+'</li>';
-                            });
-                            msg += '</ul>';
-                        }
-                        showError(e.statusText+'<br>'+msg);
+                        var msg = parseError(e);
+                        showError(msg);
                     },
                     success : function (e) {
                         if (e.code == 1000){

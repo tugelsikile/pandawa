@@ -82,18 +82,66 @@
     <script>
         $('.toast').toast('show');
         function cariInfoTagihan() {
-            var bulan   = $('.inv-month').val();
-            var tahun   = $('.inv-year').val();
-            var npwp    = $('.npwp').val();
-            var cab_id  = $('.cab-id').val();
-            var is_active = $('.is-active').val();
-            var is_paid = $('.inv-paid').val();
+            var bulan   = $('div.toolbar select.inv-month').length === 0 ? '{{ date('m') }}' : $('div.toolbar select.inv-month').val();
+            var tahun   = $('div.toolbar select.inv-year').length === 0 ? '{{ date('Y') }}' : $('div.toolbar select.inv-year').val();
+            var npwp    = $('div.toolbar select.npwp').length === 0 ? '' : $('div.toolbar select.npwp').val();
+            var cab_id  = $('div.toolbar select.cab-id').length === 0 ? '' : $('div.toolbar select.cab-id').val();
+            var is_active = $('div.toolbar select.is-active').length === 0 ? '' : $('div.toolbar select.is-active').val();
+            var is_paid = $('div.toolbar select.inv-paid').length === 0 ? '' : $('div.toolbar select.inv-paid').val();
             var token   = '{{ csrf_token() }}';
             var url     = '{{ url('admin-tagihan/informasi') }}'
             tagihanInformasi(url,token,bulan,tahun,cab_id,npwp,is_active,is_paid);
         }
-        cariInfoTagihan();
         var table = $('#dataTable').dataTable({
+            "drawCallback": function( settings ) {
+                cariInfoTagihan();
+                if ($('div.toolbar .dt-buttons .float-right').length == 0){
+                    $('div.toolbar .dt-buttons').append('' +
+                        '<div class="float-right d-none d-md-block col-sm-3 pr-0">' +
+                            '<select name="nama_cabang" onchange="table._fnDraw();" class="mb-2 cab-id custom-select custom-select-sm form-control form-control-sm">' +
+                                @if(strlen(Auth::user()->cab_id)==0)
+                                    '<option value="">=== Semua Cabang ===</option>' +
+                                @endif
+                                @if($cabangs)
+                                    @foreach($cabangs as $key => $cabang)
+                                        '<option value="{{$cabang->cab_id}}">{{$cabang->cab_name}}</option>' +
+                                    @endforeach
+                                @endif
+                            '</select>' +
+                            '<select name="npwp" onchange="table._fnDraw();" class="mb-2 npwp custom-select custom-select-sm form-control form-control-sm">' +
+                                '<option value="">=== Status NPWP ===</option>' +
+                                '<option value="1">Punya NPWP</option>' +
+                                '<option value="0">Tidak Punya NPWP</option>' +
+                            '</select>' +
+                            '<select name="is_active" onchange="table._fnDraw();" class="mb-2 is-active custom-select custom-select-sm form-control form-control-sm">' +
+                                '<option value="">=== Status Aktif ===</option>' +
+                                '<option value="1">Pelanggan Aktif</option>' +
+                                '<option value="0">Pelanggan Non Aktif</option>' +
+                            '</select>' +
+                        '</div>' +
+                        '<div class="float-right d-none d-md-block col-sm-3 pr-0">' +
+                            '<select name="bulan_tagihan" onchange="table._fnDraw();" class="mb-2 inv-month custom-select custom-select-sm form-control form-control-sm">' +
+                                '<option value="">=== Bulan Tagihan ===</option>' +
+                                @foreach(ArrayBulan() as $key => $bulan)
+                                    '<option @if($bulan['value']==date('m')) selected @endif value="{{ $bulan['value'] }}">{{ $bulan['name'] }}</option>' +
+                                @endforeach
+                            '</select>' +
+                            '<select name="tahun_tagihan" onchange="table._fnDraw();" class="mb-2 inv-year custom-select custom-select-sm form-control form-control-sm">' +
+                                '<option value="">=== Tahun Tagihan ===</option>' +
+                                @if(strlen($minTahun)>0)
+                                    @for($tahun = $minTahun; $tahun <= date('Y'); $tahun++)
+                                        '<option @if($tahun == date('Y')) selected @endif value="{{ $tahun }}">{{ $tahun }}</option>' +
+                                    @endfor
+                                @endif
+                            '</select>' +
+                            '<select name="status_bayar" onchange="table._fnDraw();" class="mb-2 inv-paid custom-select custom-select-sm form-control form-control-sm">' +
+                                '<option value="">=== Status Pembayaran ===</option>' +
+                                '<option value="1">Sudah Dibayar</option>' +
+                                '<option value="0">Belum Dibayar</option>' +
+                            '</select>' +
+                        '</div>');
+                }
+            },
             "dom"           : '<"mb-2 toolbar clearfix"B><"row"<"col-sm-8"l><"col-sm-4"f>>rt<"row"<"col-sm-6"i><"col-sm-6"p>>',
             "lengthMenu"    : [[30, 60, 120, 240, 580], [30, 60, 120, 240, 580]],
             "order"         : [[ 1, "asc" ]],
@@ -111,21 +159,23 @@
                     @if(Auth::user()->cab_id)
                         d.cab_id    = '{{ Auth::user()->cab_id }}';
                     @else
-                        d.cab_id    = $('div.toolbar select.cab-id').val();
+                        d.cab_id    = $('div.toolbar select.cab-id') ? $('div.toolbar select.cab-id').val() : null;
                     @endif
-                    d.is_active = $('div.toolbar select.is-active').val()
-                    d.npwp      = $('div.toolbar select.npwp').val();
-                    d.inv_paid  = $('div.toolbar select.inv-paid').val();
-                    if ($('div.toolbar select.inv-month').length == 0){
+                    d.is_active = $('div.toolbar select.is-active') ? $('div.toolbar select.is-active').val() : null;
+                    d.npwp      = $('div.toolbar select.npwp') ? $('div.toolbar select.npwp').val() : null;
+                    d.inv_paid  = $('div.toolbar select.inv-paid') ? $('div.toolbar select.inv-paid').val() : null;
+                    if ($('div.toolbar select.inv-month').length===0){
                         d.inv_month = '{{ date('m') }}';
                     } else {
                         d.inv_month = $('div.toolbar select.inv-month').val();
                     }
-                    if ($('div.toolbar select.inv-year').length == 0){
+                    if ($('div.toolbar select.inv-year').length===0){
                         d.inv_year = '{{ date('Y') }}';
                     } else {
                         d.inv_year = $('div.toolbar select.inv-year').val();
                     }
+                    console.log($('div.toolbar select.inv-month'))
+                    console.log($('div.toolbar select.inv-year'))
                 }
             },
             buttons         : [
@@ -196,53 +246,6 @@
                 }
             ]
         });
-        $('div.toolbar .dt-buttons').append('' +
-            '<div class="float-right d-none d-md-block col-sm-3 pr-0">' +
-                '<select name="nama_cabang" onchange="table._fnDraw();cariInfoTagihan();" class="mb-2 cab-id custom-select custom-select-sm form-control form-control-sm">' +
-                    @if(strlen(Auth::user()->cab_id)==0)
-                        '<option value="">=== Semua Cabang ===</option>' +
-                    @endif
-                    @if($cabangs)
-                        @foreach($cabangs as $key => $cabang)
-                            '<option value="{{$cabang->cab_id}}">{{$cabang->cab_name}}</option>' +
-                        @endforeach
-                    @endif
-                '</select>' +
-                /*'<select onchange="table._fnDraw()" class="mb-2 cust-id custom-select custom-select-sm form-control form-control-sm">' +
-                    '<option value="">=== Semua Pelanggan ===</option>' +
-                '</select>' +*/
-                '<select name="npwp" onchange="table._fnDraw();cariInfoTagihan();" class="mb-2 npwp custom-select custom-select-sm form-control form-control-sm">' +
-                    '<option value="">=== Status NPWP ===</option>' +
-                    '<option value="1">Punya NPWP</option>' +
-                    '<option value="0">Tidak Punya NPWP</option>' +
-                '</select>' +
-                '<select name="is_active" onchange="table._fnDraw();cariInfoTagihan();" class="mb-2 is-active custom-select custom-select-sm form-control form-control-sm">' +
-                    '<option value="">=== Status Aktif ===</option>' +
-                    '<option value="1">Pelanggan Aktif</option>' +
-                    '<option value="0">Pelanggan Non Aktif</option>' +
-                '</select>' +
-            '</div>' +
-            '<div class="float-right d-none d-md-block col-sm-3 pr-0">' +
-                '<select name="bulan_tagihan" onchange="table._fnDraw();cariInfoTagihan();" class="mb-2 inv-month custom-select custom-select-sm form-control form-control-sm">' +
-                    '<option value="">=== Bulan Tagihan ===</option>' +
-                    @foreach(ArrayBulan() as $key => $bulan)
-                        '<option @if($bulan['value']==date('m')) selected @endif value="{{ $bulan['value'] }}">{{ $bulan['name'] }}</option>' +
-                    @endforeach
-                '</select>' +
-                '<select name="tahun_tagihan" onchange="table._fnDraw();cariInfoTagihan();" class="mb-2 inv-year custom-select custom-select-sm form-control form-control-sm">' +
-                    '<option value="">=== Tahun Tagihan ===</option>' +
-                    @if(strlen($minTahun)>0)
-                        @for($tahun = $minTahun; $tahun <= date('Y'); $tahun++)
-                            '<option @if($tahun == date('Y')) selected @endif value="{{ $tahun }}">{{ $tahun }}</option>' +
-                        @endfor
-                    @endif
-                '</select>' +
-                '<select name="status_bayar" onchange="table._fnDraw();cariInfoTagihan();" class="mb-2 inv-paid custom-select custom-select-sm form-control form-control-sm">' +
-                    '<option value="">=== Status Pembayaran ===</option>' +
-                    '<option value="1">Sudah Dibayar</option>' +
-                    '<option value="0">Belum Dibayar</option>' +
-                '</select>' +
-            '</div>');
     </script>
 
 @endsection

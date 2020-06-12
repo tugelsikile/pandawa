@@ -186,16 +186,27 @@ class TagihanController extends Controller
     public function InformasiTagihan(Request $request){
         $params = ['total'=>0,'dibayar'=>0,'tunggak'=>0];
         try{
-
             $where = ['isp_customer.status'=>1,'isp_invoice.status'=>1];
             $total  = Tagihan::where($where)
-                ->join('isp_customer','isp_invoice.cust_id','=','isp_customer.cust_id','left');
+                ->join('isp_customer','isp_invoice.cust_id','=','isp_customer.cust_id','left')
+                ->whereNotNull('isp_invoice.cab_id')
+                ->where('isp_invoice.cab_id','<>','')
+                ->whereNotNull('isp_invoice.cust_id')
+                ->where('isp_invoice.cust_id','<>','');
             $dibayar  = Tagihan::where($where)
                 ->where(['isp_invoice.is_paid'=>1])
-                ->join('isp_customer','isp_invoice.cust_id','=','isp_customer.cust_id','left');
+                ->join('isp_customer','isp_invoice.cust_id','=','isp_customer.cust_id','left')
+                ->whereNotNull('isp_invoice.cab_id')
+                ->where('isp_invoice.cab_id','<>','')
+                ->whereNotNull('isp_invoice.cust_id')
+                ->where('isp_invoice.cust_id','<>','');
             $tunggak = Tagihan::where($where)
                 ->where(['isp_invoice.is_paid'=>0])
-                ->join('isp_customer','isp_invoice.cust_id','=','isp_customer.cust_id','left');
+                ->join('isp_customer','isp_invoice.cust_id','=','isp_customer.cust_id','left')
+                ->whereNotNull('isp_invoice.cab_id')
+                ->where('isp_invoice.cab_id','<>','')
+                ->whereNotNull('isp_invoice.cust_id')
+                ->where('isp_invoice.cust_id','<>','');
             //cabang
             if (Auth::user()->cab_id){
                 $total = $total->where(['isp_invoice.cab_id'=>Auth::user()->cab_id]);
