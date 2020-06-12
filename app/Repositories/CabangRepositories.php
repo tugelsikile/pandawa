@@ -127,10 +127,13 @@ class CabangRepositories{
     }
     public function getByID($id){
         try{
-            $data   = Cabang::find($id);
-            $data->districts = Kecamatan::where('id',$data->district_id)->get()->first();
-            $data->regencies = Kabupaten::where('id',$data->districts->regency_id)->get()->first();
-            $data->provinces = Provinces::where('id',$data->regencies->province_id)->get()->first();
+            $data   = Cabang::where('cab_id',$id)->get();
+            $data->map(function ($data){
+                $data->districts = Kecamatan::where('id',$data->district_id)->get()->first();
+                $data->regencies = Kabupaten::where('id',$data->districts->regency_id)->get()->first();
+                $data->provinces = Provinces::where('id',$data->regencies->province_id)->get()->first();
+                return $data;
+            });
         }catch (\Exception $exception){
             throw new \Exception($exception->getMessage());
         }

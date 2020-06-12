@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 require base_path().'/vendor/autoload.php';
 
+use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 use App\Desa;
 use Illuminate\Support\Facades\DB;
@@ -236,16 +236,55 @@ class CabangController extends Controller
                             $customers->forget($index);
                         }
                     });
-                    $customers = $customers->values()->chunk(33);
+                    // Mulai PHPSpreadsheet
+                    if ($customers->count()==0) {
+                        return 'Tidak ada data';
+                    } else {
+                        $sourceFile     = resource_path('format/performa-tagihan-cabang.xlsx');
+                        $fileName       = 'tunggakan-tagihan-cabang';
+                        $nama_cabang    = 'Semua Cabang';
+                        if (strlen($cab_id)>0) {
+                            $nama_cabang    = $this->cabangRepositories->getByID($cab_id)->first()->cab_name;
+                            $fileName .= '-'.str_replace(' ','-',$nama_cabang);
+                        }
+
+                        $reader         = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
+                        $spreadsheet    = $reader->load($sourceFile);
+                        $worksheet      = $spreadsheet->setActiveSheetIndex(0);
+
+                        $worksheet->setCellValue('A2',companyInfo()->company_name01)
+                            ->setCellValue('C3',': '.$nama_cabang)
+                            ->setCellValue('C4',': '.tglIndo(date('Y-m-d')));
+
+                        $row    = 9;
+                        foreach ($customers as $keyCustomer => $customer){
+                            $worksheet->setCellValue('B'.$row,"'".$customer->kode)
+                                ->setCellValue('C'.$row,$customer->fullname)
+                                ->setCellValue('D'.$row,!$customer->cabang ? null : $customer->cabang->cab_name);
+                            if ($customer->tagihan->count()>0){
+                                $column = 5;
+                                foreach ($customer->tagihan as $keyTagihan => $tagihan){
+                                    $worksheet->setCellValue(toStr($column).$row,bulanIndo(date('m',strtotime($tagihan->inv_date))));
+                                    $column++;
+                                    $worksheet->setCellValue(toStr($column).$row,(int)$tagihan->price_with_tax);
+                                    $column++;
+                                }
+                            }
+                            $row++;
+                        }
+
+                        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                        header('Content-Disposition: attachment;filename="'.$fileName.'.xlsx"');
+                        header('Cache-Control: max-age=0');
+
+                        $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+                        $writer->save('php://output');
+                    }
+                    //end PHPSpreadsheet
                 }catch (Exception $exception){
                     throw new Exception($exception->getMessage());
                 }
-                $spreadsheet = new Spreadsheet();
-                $sheet = $spreadsheet->getActiveSheet();
-                $sheet->setCellValue('A1', 'Hello World !');
-
-                $writer = new Xlsx($spreadsheet);
-                $writer->save('hello world.xlsx');
+                return false;
             }
         }
     }
