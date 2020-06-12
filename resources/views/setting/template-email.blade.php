@@ -38,28 +38,31 @@
         @csrf
         <input type="hidden" name="data_template" value="{{ $data[0]->tmp_id }}">
         <div class="form-group row">
-            <label class="col-sm-2 col-form-label" for="judul_email">Judul Email</label>
+            <label class="col-sm-2 col-form-label" for="invoice_judul_email">Judul Email</label>
             <div class="col-sm-10">
-                <input type="text" value="{{ $data[0]->mail_subject }}" name="judul_email" id="judul_email" class="form-control">
+                <input type="text" value="{{ $data[0]->mail_subject }}" name="judul_email" id="invoice_judul_email" class="form-control">
             </div>
         </div>
         <div class="form-group row">
-            <label class="col-sm-2 col-form-label" for="nama_pengirim">Nama Pengirim</label>
+            <label class="col-sm-2 col-form-label" for="invoice_nama_pengirim">Nama Pengirim</label>
             <div class="col-sm-4">
-                <input type="text" value="{{ $data[0]->sender_name }}" name="nama_pengirim" id="nama_pengirim" class="form-control">
+                <input type="text" value="{{ $data[0]->sender_name }}" name="nama_pengirim" id="invoice_nama_pengirim" class="form-control">
             </div>
-            <label class="col-sm-2 col-form-label" for="email_pengirim">Email Pengirim</label>
+            <label class="col-sm-2 col-form-label" for="invoice_email_pengirim">Email Pengirim</label>
             <div class="col-sm-4">
-                <input type="text" value="{{ $data[0]->mail_sender }}" name="email_pengirim" id="email_pengirim" class="form-control">
+                <input type="text" value="{{ $data[0]->mail_sender }}" name="email_pengirim" id="invoice_email_pengirim" class="form-control">
             </div>
         </div>
         <div class="form-group row">
-            <label class="col-sm-2 col-form-label" for="body_email">Body Email</label>
+            <label class="col-sm-2 col-form-label" for="invoice_body_email">Body Email</label>
             <div class="col-sm-10">
-                <textarea name="body_email" id="body_email" class="form-control">{{ $data[0]->mail_body }}</textarea>
+                <textarea name="body_email" id="invoice_body_email" class="form-control">{{ $data[0]->mail_body }}</textarea>
             </div>
         </div>
     </form>
+    <script>
+        $('#invoice_body_email').summernote();
+    </script>
 </div>
 
 <hr>

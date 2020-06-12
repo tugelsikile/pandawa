@@ -25,7 +25,6 @@
     },
     "dependencies": {
         "animate.css": "^4.1.0",
-        "bootstrap-wysiwyg-4": "0.0.2",
         "datatables.net": "^1.10.21",
         "datatables.net-bs4": "^1.10.21",
         "datatables.net-buttons": "^1.6.2",
@@ -35,6 +34,7 @@
         "datatables.net-responsive": "^2.2.5",
         "datatables.net-responsive-bs4": "^2.2.5",
         "select2-bootstrap-theme": "0.1.0-beta.10",
+        "summernote": "^0.8.18",
         "sweetalert2": "^9.10.12"
     }
 }

@@ -17,6 +17,8 @@ require('../../node_modules/datatables.net-fixedheader-bs4/js/fixedHeader.bootst
 require('../../vendor/select2/select2/dist/js/select2.full.min');
 require('../../vendor/mouse0270/bootstrap-growl/dist/bootstrap-notify.min');
 require('../../vendor/eternicode/bootstrap-datepicker/dist/js/bootstrap-datepicker.min');
+require('../../node_modules/summernote/dist/summernote');
+require('../../node_modules/summernote/dist/summernote-bs4.min');
 
 window.Vue = require('vue');
 
