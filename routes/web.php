@@ -163,6 +163,8 @@ Route::group(['middleware'=>['auth','systemAccess']],function (){
         Route::get('/template-invoice','SettingController@templateInvoice');
         Route::post('/template-update','SettingController@templateUpdate');
 
+        Route::get('/template-email','SettingController@TemplateEmail');
+
         Route::get('/application-logs','\Rap2hpoutre\LaravelLogViewer\LogViewerController@index')->middleware('auth');
     });
 });

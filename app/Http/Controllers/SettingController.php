@@ -241,5 +241,14 @@ class SettingController extends Controller
         }
         return format(1000,'Template berhasil dirubah',$save);
     }
+    public function TemplateEmail(Request $request){
+        if (!$request->ajax()) abort(403);
+        if ($request->method()=='POST'){
+
+        } else {
+            $data = DB::table('isp_mail_template')->get();
+            return view('setting.template-email',compact('data'));
+        }
+    }
 
 }
