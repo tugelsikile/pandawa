@@ -28,7 +28,7 @@ Route::post('preview-id-pelanggan','TemplateController@PreviewCustomerID');
 Route::post('preview-harga','TemplateController@PreviewHarga');
 
 Auth::routes();
-Route::group(['middleware'=>'auth'],function (){
+Route::group(['middleware'=>['auth','systemAccess']],function (){
     Route::get('/home', 'HomeController@index')->name('home');
 
     Route::group(['prefix'=>'lists'],function (){
