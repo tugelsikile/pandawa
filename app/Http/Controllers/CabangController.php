@@ -246,7 +246,6 @@ class CabangController extends Controller
 
                 $writer = new Xlsx($spreadsheet);
                 $writer->save('hello world.xlsx');
-                return view('cabang.cetak-performa-tagihan',compact('customers'));
             }
         }
     }

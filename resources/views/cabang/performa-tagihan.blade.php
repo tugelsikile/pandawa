@@ -92,7 +92,10 @@
                     return html;
                     }
                 }
-            ]
+            ],
+            "drawCallback": function( settings ) {
+                console.log(settings)
+            }
         });
         $('div.toolbar .dt-buttons').append('' +
             '<div class="float-right d-none d-md-block col-sm-3 pr-0">' +
