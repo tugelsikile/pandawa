@@ -184,5 +184,7 @@ Route::group(['middleware'=>['auth','systemAccess']],function (){
         Route::post('/update','HakAksesController@update');
 
         Route::post('/delete','HakAksesController@delete');
+
+        Route::get('/halaman-dan-fungsi','HakAksesController@Pages');
     });
 });

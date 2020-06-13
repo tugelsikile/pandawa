@@ -112,4 +112,16 @@ class HakAksesController extends Controller
         }
         return format(1000,'Level Pengguna berhasil diupdate',$save);
     }
+    public function Pages(Request $request){
+        if ($request->method()!='POST'){
+            try{
+                $curMenu    = $this->curMenu;
+                $privs      = $this->UserPriviledgesRepository->checkPrivs(Auth::user()->level,$this->curMenu);
+                $menus      = $this->UserMenuRepository->getMenu(Auth::user()->level);
+            }catch (Exception $exception){
+                throw new Exception($exception->getMessage());
+            }
+            return view('hak-akses.halaman',compact('curMenu','privs','menus'));
+        }
+    }
 }

@@ -3,7 +3,7 @@
 @section('content')
     <div class="container">
         <div class="card">
-            <div class="card-header">Hak Akses Pengguna</div>
+            <div class="card-header">Halaman</div>
             <div class="card-body">
                 <form id="FormTable">
                     <table class="table table-bordered" id="dataTable" style="width: 100%">
@@ -54,7 +54,7 @@
                 @if($privs->D_opt == 1)
                 {
                     className   : 'btn btn-sm btn-primary',
-                    text        : '<i class="fa fa-file-text"></i> Data Halaman dan Fungsi',
+                    text        : '<i class="fa fa-pencil"></i> Data Halaman dan Fungsi',
                     action      : function (e,dt,node,config) {
                         window.location.href = '{{ url('admin-access/halaman-dan-fungsi') }}'
                     }
