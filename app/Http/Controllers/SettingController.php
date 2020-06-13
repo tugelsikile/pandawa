@@ -3,12 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\BankAccount;
+use App\EmailSetting;
+use App\EmailTemplate;
 use Illuminate\Http\Request;
 use App\Repositories\{
     UserLevelRepositories, UserMenuRepositories, UserPriviledgesRepositories, RegionalRepositories
 };
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Mockery\Exception;
 use Illuminate\Support\Facades\Log;
@@ -244,11 +247,92 @@ class SettingController extends Controller
     public function TemplateEmail(Request $request){
         if (!$request->ajax()) abort(403);
         if ($request->method()=='POST'){
-
+            try{
+                $valid  = Validator::make($request->all(),[
+                    'data_template'     => 'required|string|exists:isp_mail_template,tmp_id',
+                    'judul_email'       => 'required|string|min:5',
+                    'nama_pengirim'     => 'required|string|min:5',
+                    'email_pengirim'    => 'required|email',
+                    'body_email'        => 'required|string|min:20'
+                ]);
+                if ($valid->fails()){
+                    throw new Exception(collect($valid->errors()->all())->join('#'));
+                }
+                $save = EmailTemplate::where('tmp_id','=',$request->data_template)->first();
+                $save->mail_subject     = $request->judul_email;
+                $save->mail_body        = $request->body_email;
+                $save->mail_sender      = $request->email_pengirim;
+                $save->sender_name      = $request->nama_pengirim;
+                dd($save);
+                $save->saveOrFail();
+            }catch (Exception $exception){
+                throw new Exception($exception->getMessage());
+            }
+            return format(1000,'Template email berhasil diupdate',$save);
         } else {
-            $data = DB::table('isp_mail_template')->get();
+            $data = EmailTemplate::all()->sortBy('tmp_id');
             return view('setting.template-email',compact('data'));
         }
+    }
+    public function SettingEmail(Request $request){
+        if (!$request->ajax()) abort(403);
+        if ($request->method()=='POST'){
+            try{
+                $valid = Validator::make($request->all(),[
+                    'data_setting'      => 'required|string|exists:isp_mail_setting,ms_id',
+                    'smtp_host_name'    => 'required|string',
+                    'smtp_port'         => 'required|numeric|min:1',
+                ]);
+                if ($valid->fails()){
+                    throw new Exception(collect($valid->errors()->all())->join('#'));
+                }
+                $save = EmailSetting::where('ms_id',$request->data_setting)->update([
+                    'mail_host'         => $request->smtp_host_name,
+                    'mail_port'         => $request->smtp_port,
+                    'mail_user'         => $request->smtp_username,
+                    'mail_pass'         => $request->smtp_password
+                ]);
+            }catch (Exception $exception){
+                throw new Exception($exception->getMessage());
+            }
+            return format(1000,'Setting email berhasil disimpan',$save);
+        } else {
+            try{
+                $data = EmailSetting::all()->first();
+            }catch (Exception $exception){
+                throw new Exception($exception->getMessage());
+            }
+            return view('setting.email',compact('data'));
+        }
+    }
+    public function EmailTest(Request $request){
+        if (!$request->ajax()) abort(403);
+        if ($request->method()!='POST') abort(403);
+        try{
+            $valid = Validator::make($request->all(),[
+                'smtp_host_name'    => 'required|string',
+                'smtp_port'         => 'required|numeric|min:1',
+                'email_tujuan'      => 'required|email',
+                'nama_pengirim'     => 'required|string|min:3',
+                'email_pengirim'    => 'required|email',
+                'judul_email'       => 'required|string',
+                'isi_email'         => 'required|string|min:10'
+            ]);
+            if ($valid->fails()){
+                throw new Exception(collect($valid->errors()->all())->join('#'));
+            }
+            $mailer = Mail::send('setting.mail-testing',[
+                'name' => $request->nama_pengirim,
+                'email' => $request->email_pengirim,
+                'title' => $request->judul_email,
+                'content' => $request->isi_email
+            ],function ($message) use ($request){
+                $message->to($request->email_tujuan)->subject($request->judul_email);
+            });
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return format(1000,'OK',$mailer);
     }
 
 }

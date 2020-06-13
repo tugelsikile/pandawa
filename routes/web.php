@@ -164,6 +164,11 @@ Route::group(['middleware'=>['auth','systemAccess']],function (){
         Route::post('/template-update','SettingController@templateUpdate');
 
         Route::get('/template-email','SettingController@TemplateEmail');
+        Route::post('/template-email','SettingController@TemplateEmail');
+
+        Route::get('/email','SettingController@SettingEmail');
+        Route::post('/email','SettingController@SettingEmail');
+        Route::post('/email-test','SettingController@EmailTest');
 
         Route::get('/application-logs','\Rap2hpoutre\LaravelLogViewer\LogViewerController@index')->middleware('auth');
     });
