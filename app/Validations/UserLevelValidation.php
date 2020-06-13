@@ -41,5 +41,17 @@ class UserLevelValidation{
         }
         return $request;
     }
-    public function delete(Request $request){}
+    public function delete(Request $request){
+        try{
+            $valid  = Validator::make($request->all(),[
+                'id' => 'required|string|exists:isp_user_level,lvl_id'
+            ]);
+            if ($valid->fails()){
+                throw new Exception(collect($valid->errors()->all())->join('#'));
+            }
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return $request;
+    }
 }

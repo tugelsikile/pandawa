@@ -109,4 +109,12 @@ class UserLevelRepositories{
         }
         return $request;
     }
+    public function delete(Request $request){
+        try{
+            UserLevel::where('lvl_id',$request->id)->delete();
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return $request;
+    }
 }

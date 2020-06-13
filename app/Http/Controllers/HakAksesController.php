@@ -101,4 +101,15 @@ class HakAksesController extends Controller
             return view('hak-akses.update',compact('controllers','data','priviledges'));
         }
     }
+    public function delete(Request $request){
+        if (!$request->ajax()) abort(403);
+        if ($request->method()!='POST') abort(403);
+        try{
+            $valid  = $this->UserLevelValidation->delete($request);
+            $save   = $this->UserLevelRepository->delete($valid);
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return format(1000,'Level Pengguna berhasil diupdate',$save);
+    }
 }
