@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Functions;
 use App\UserLevel;
+use App\UserPriviledges;
 use Illuminate\Support\Facades\DB;
 use Mockery\Exception;
 use Illuminate\Http\Request;
@@ -60,14 +61,47 @@ class UserLevelRepositories{
     }
     public function create(Request $request){
         try{
-            dd(Functions::all()->with('controllerObj'));
+            $functions = Functions::all();
             DB::beginTransaction();
             $data   = new UserLevel();
             $data->lvl_name = $request->nama_hak_akses;
             $data->saveOrFail();
             $lvl_id = $data->lvl_id;
+            foreach ($functions as $key => $function){
+                $privileges = new UserPriviledges();
+                $privileges->lvl_id     = $lvl_id;
+                $privileges->ctrl_id    = $function->ctrl_id;
+                $privileges->func_id    = $function->func_id;
+                $privileges->R_opt      = isset($request->R_opt[$function->func_id]) ? 1 : 0;
+                $privileges->C_opt      = isset($request->C_opt[$function->func_id]) ? 1 : 0;
+                $privileges->U_opt      = isset($request->U_opt[$function->func_id]) ? 1 : 0;
+                $privileges->D_opt      = isset($request->D_opt[$function->func_id]) ? 1 : 0;
+                $privileges->saveOrFail();
+            }
+            DB::commit();
+        }catch (Exception $exception){
+            DB::rollBack();
+            throw new Exception($exception->getMessage());
+        }
+        return $request;
+    }
+    public function update(Request $request){
+        try{
             $functions = Functions::all();
-
+            DB::beginTransaction();
+            $data   = UserLevel::where('lvl_id',$request->data_level_pengguna)->get()->first();
+            $data->lvl_name = $request->nama_hak_akses;
+            $data->saveOrFail();
+            foreach ($functions as $key => $function){
+                $privileges             = UserPriviledges::where('func_id','=',$function->func_id)
+                    ->where('lvl_id','=',$request->data_level_pengguna)
+                    ->get()->first();
+                $privileges->R_opt      = isset($request->R_opt[$function->func_id]) ? 1 : 0;
+                $privileges->C_opt      = isset($request->C_opt[$function->func_id]) ? 1 : 0;
+                $privileges->U_opt      = isset($request->U_opt[$function->func_id]) ? 1 : 0;
+                $privileges->D_opt      = isset($request->D_opt[$function->func_id]) ? 1 : 0;
+                $privileges->saveOrFail();
+            }
             DB::commit();
         }catch (Exception $exception){
             DB::rollBack();

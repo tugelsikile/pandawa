@@ -75,4 +75,30 @@ class HakAksesController extends Controller
             return view('hak-akses.create',compact('controllers'));
         }
     }
+    public function update(Request $request){
+        if (!$request->ajax()) abort(403);
+        if ($request->method()=='POST'){
+            try{
+                $valid  = $this->UserLevelValidation->update($request);
+                $save   = $this->UserLevelRepository->update($valid);
+            }catch (Exception $exception){
+                throw new Exception($exception->getMessage());
+            }
+            return format(1000,'Hak akses berhasil dibuat',$save);
+        } else {
+            try{
+                $data       = $this->UserLevelRepository->getBy(['lvl_id'=>$request->id])->first();
+                $priviledges    = $this->UserPriviledgesRepository->getAllBy(['lvl_id'=>$request->id]);
+                $controllers = \App\Controller::all();
+                $controllers->map(function ($controller){
+                    $controller->functions   = $controller->functionObj;
+                    $controller->makeHidden('functionObj');
+                    return $controller;
+                });
+            }catch (Exception $exception){
+                throw new Exception($exception->getMessage());
+            }
+            return view('hak-akses.update',compact('controllers','data','priviledges'));
+        }
+    }
 }

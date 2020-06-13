@@ -2,9 +2,13 @@
 
 namespace App\Repositories;
 
+use App\UserPriviledges;
 use Illuminate\Support\Facades\DB;
 
 class UserPriviledgesRepositories{
+    public function getAllBy($param){
+        return UserPriviledges::where($param)->get();
+    }
     public function checkPrivs($level,$url){
         $url = str_replace('-','_',$url);
         //DB::enableQueryLog();
