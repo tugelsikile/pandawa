@@ -172,4 +172,17 @@ Route::group(['middleware'=>['auth','systemAccess']],function (){
 
         Route::get('/application-logs','\Rap2hpoutre\LaravelLogViewer\LogViewerController@index')->middleware('auth');
     });
+
+    Route::group(['prefix'=>'admin-access'],function (){
+        Route::get('/','HakAksesController@index');
+        Route::post('/table','HakAksesController@table');
+
+        Route::get('/create','HakAksesController@create');
+        Route::post('/create','HakAksesController@create');
+
+        Route::get('/update','HakAksesController@update');
+        Route::post('/update','HakAksesController@update');
+
+        Route::post('/delete','HakAksesController@delete');
+    });
 });

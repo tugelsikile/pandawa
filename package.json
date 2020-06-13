@@ -25,6 +25,7 @@
     },
     "dependencies": {
         "animate.css": "^4.1.0",
+        "bootstrap4-toggle": "^3.6.1",
         "datatables.net": "^1.10.21",
         "datatables.net-bs4": "^1.10.21",
         "datatables.net-buttons": "^1.6.2",
