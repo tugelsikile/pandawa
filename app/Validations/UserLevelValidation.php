@@ -54,4 +54,17 @@ class UserLevelValidation{
         }
         return $request;
     }
+    public function deletePage(Request $request){
+        try{
+            $valid  = Validator::make($request->all(),[
+                'id' => 'required|string|exists:isp_functions,func_id',
+            ]);
+            if ($valid->fails()){
+                throw new Exception(collect($valid->errors()->all())->join('#'));
+            }
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return $request;
+    }
 }

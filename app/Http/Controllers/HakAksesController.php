@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Repositories\{
-    UserMenuRepositories, UserPriviledgesRepositories, UserLevelRepositories
+    FunctionRepository, UserMenuRepositories, UserPriviledgesRepositories, UserLevelRepositories
 };
 use App\Validations\UserLevelValidation;
 use Mockery\Exception;
@@ -16,15 +16,18 @@ class HakAksesController extends Controller
     protected $UserPriviledgesRepository;
     protected $UserLevelRepository;
     protected $UserLevelValidation;
+    protected $FunctionRepository;
     public $curMenu = 'admin-access';
 
     public function __construct(
+        FunctionRepository $functionRepository,
         UserLevelValidation $userLevelValidation,
         UserLevelRepositories $userLevelRepositories,
         UserMenuRepositories $UserMenuRepository,
         UserPriviledgesRepositories $UserPriviledgesRepository
     )
     {
+        $this->FunctionRepository = $functionRepository;
         $this->UserMenuRepository = $UserMenuRepository;
         $this->UserPriviledgesRepository = $UserPriviledgesRepository;
         $this->UserLevelRepository = $userLevelRepositories;
@@ -112,6 +115,17 @@ class HakAksesController extends Controller
         }
         return format(1000,'Level Pengguna berhasil diupdate',$save);
     }
+    public function deletePage(Request $request){
+        if (!$request->ajax()) abort(403);
+        if ($request->method()!='POST') abort(403);
+        try{
+            $valid  = $this->UserLevelValidation->deletePage($request);
+            $save   = $this->FunctionRepository->deletePage($valid);
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return format(1000,'Halaman berhasil dihapus',$save);
+    }
     public function Pages(Request $request){
         if ($request->method()!='POST'){
             try{
@@ -122,6 +136,15 @@ class HakAksesController extends Controller
                 throw new Exception($exception->getMessage());
             }
             return view('hak-akses.halaman',compact('curMenu','privs','menus'));
+        } else {
+            if (!$request->ajax()) abort(403);
+            $response = ['draw'=>$request->draw,'data'=>[],'recordsFiltered'=>0,'recordsTotal'=>0];
+            try{
+                $response['data'] = $this->FunctionRepository->getAll($request);
+            }catch (Exception $exception){
+                throw new Exception($exception->getMessage());
+            }
+            return $response;
         }
     }
 }
