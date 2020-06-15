@@ -189,4 +189,9 @@ Route::group(['middleware'=>['auth','systemAccess']],function (){
         Route::get('/halaman-dan-fungsi','HakAksesController@Pages');
         Route::post('/halaman-dan-fungsi','HakAksesController@Pages');
     });
+
+    Route::group(['prefix'=>'admin-kas'],function (){
+        Route::get('/','KasController@index')->name('admin-kas');
+        Route::post('/table','KasController@table')->name('admin-kas.table');
+    });
 });

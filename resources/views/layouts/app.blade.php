@@ -44,9 +44,21 @@
                     @if(Auth::check())
                         @if($menus)
                             @foreach($menus as $key => $menu)
-                                <li class="nav-item @if($curMenu == $menu->ctrl_url) active @endif">
-                                    <a class="nav-link" href="{{ url($menu->ctrl_url) }}">{{ $menu->ctrl_label }}</a>
-                                </li>
+                                @if($menu->ctrl_url == 'admin-kas')
+                                    <li class="nav-item dropdown @if($curMenu == $menu->ctrl_url) active @endif">
+                                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            {{ $menu->ctrl_label }}
+                                        </a>
+                                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                            <a class="dropdown-item" href="{{ url($menu->ctrl_url) }}">Data {{ $menu->ctrl_label }}</a>
+                                            <a class="dropdown-item" href="{{ url('admin-kas/pengeluaran-rutin') }}">Pengeluaran Rutin</a>
+                                        </div>
+                                    </li>
+                                @else
+                                    <li class="nav-item @if($curMenu == $menu->ctrl_url) active @endif">
+                                        <a class="nav-link" href="{{ url($menu->ctrl_url) }}">{{ $menu->ctrl_label }}</a>
+                                    </li>
+                                @endif
                             @endforeach
                         @endif
                     @endif
