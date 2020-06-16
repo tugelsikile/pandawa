@@ -20,7 +20,7 @@ class CreateIspKasRecursiveTable extends Migration
             $table->date('start_date')->default(date('Y-m-d'))->nullable();
             $table->date('end_date')->default(date('Y-m-d'))->nullable();
             $table->bigInteger('ammount',false,false);
-            $table->enum('active',['aktif','non aktif'])->default('aktif');
+            $table->enum('is_active',['aktif','non aktif'])->default('aktif');
             $table->text('created_by')->nullable();
             $table->text('updated_by')->nullable();
             $table->timestamps();

@@ -62,7 +62,35 @@
             ],
             "order": [[ groupColumn, 'asc' ]],
             "columns"   : [
-                { "data" : "informasi" },
+                { "data" : "informasi", render : function (a,b,c,d) {
+                        var html = '';
+                        var informasi = '';
+                        if (c.created_by === 'automated'){
+                            informasi = c.informasi
+                        } else {
+                            informasi = c.kas_date+'<br><span class="badge badge-secondary">'+c.nomor_bukti+'</span> '+c.informasi
+                            html = '' +
+                            @if($privs->U_opt == 1 || $privs->D_opt == 1)
+                                '<div class="dropdown show float-right">' +
+                                    '<a class="btn btn-secondary btn-sm dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></a>' +
+                                    '<div class="dropdown-menu" aria-labelledby="dropdownMenuLink">' +
+                                    @if($privs->U_opt == 1)
+                                        '<a class="dropdown-item" onclick="show_modal(this);return false" title="Rubah Data Kas" href="{{ url('admin-kas/update?id=') }}'+c.id+'"><i class="fa fa-pencil"></i> Rubah Data</a>' +
+                                    @endif
+                                    @if($privs->D_opt == 1)
+                                        '<a class="dropdown-item" data-token="{{ csrf_token() }}" title="Hapus Data Kas" data-id="'+c.id+'" onclick="delete_data(this);return false" href="{{ url('admin-kas/delete') }}"><i class="fa fa-trash-o"></i> Hapus Data</a>' +
+                                    @endif
+                                    '</div>' +
+                                '</div>' +
+                            @endif
+                            '';
+                        }
+                        if (c.kategori === 'saldo awal'){
+                            html = '<a title="Rubah Saldo Awal" onclick="show_modal(this);return false" href="{{ url('admin-kas/update-saldo-awal') }}?id='+c.id+'" class="btn btn-primary btn-sm float-right"><i class="fa fa-pencil"></i></a>';
+                        }
+                        return html + informasi;
+                    }
+                },
                 { "data" : "kategori", "width" : "120px" },
                 { "data" : "ammount", "width" : "120px", render: $.fn.dataTable.render.number( '.', ',', 0, 'Rp. ' ) }
             ],

@@ -193,5 +193,21 @@ Route::group(['middleware'=>['auth','systemAccess']],function (){
     Route::group(['prefix'=>'admin-kas'],function (){
         Route::get('/','KasController@index')->name('admin-kas');
         Route::post('/table','KasController@table')->name('admin-kas.table');
+        Route::get('/create','KasController@create')->name('admin-kas.create');
+        Route::post('/create','KasController@create')->name('admin-kas.create');
+        Route::get('/update','KasController@update')->name('admin-kas.update');
+        Route::post('/update','KasController@update')->name('admin-kas.update');
+        Route::post('/delete','KasController@delete')->name('admin-kas.delete');
+        Route::get('/update-saldo-awal','KasController@UpdateSaldoAwal')->name('admin-kas.update-saldo-awal');
+        Route::post('/update-saldo-awal','KasController@UpdateSaldoAwal')->name('admin-kas.update-saldo-awal');
+
+        Route::get('/pengeluaran-rutin','KasController@RecursiveOutput')->name('admin-kas.pengeluaran-rutin');
+        Route::post('/pengeluaran-rutin','KasController@RecursiveOutput')->name('admin-kas.pengeluaran-rutin');
+
+        Route::get('/create-pengeluaran-rutin','KasController@RecursiveOutputCreate')->name('admin-kas.create-pengeluaran-rutin');
+        Route::post('/create-pengeluaran-rutin','KasController@RecursiveOutputCreate')->name('admin-kas.create-pengeluaran-rutin');
+
+        Route::get('/update-pengeluaran-rutin','KasController@RecursiveOutputUpdate')->name('admin-kas.update-pengeluaran-rutin');
+        Route::post('/update-pengeluaran-rutin','KasController@RecursiveOutputUpdate')->name('admin-kas.update-pengeluaran-rutin');
     });
 });

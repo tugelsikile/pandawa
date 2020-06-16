@@ -25,6 +25,9 @@ class CreateIspKasTable extends Migration
             $table->bigInteger('priority',false,true)->default(2);
             $table->bigInteger('cab_id',false,false)->nullable();
             $table->string('tags')->nullable();
+            $table->date('kas_date')->nullable();
+            $table->string('nomor_bukti')->nullable();
+            $table->tinyInteger('locked',false,true)->default(0);
             $table->timestamps();
         });
     }
