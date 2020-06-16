@@ -11,8 +11,7 @@
                         <tr>
                             <th class="min-mobile">Uraian</th>
                             <th>Jenis</th>
-                            <th>Jumlah</th>
-                            <th class="min-mobile">Saldo</th>
+                            <th class="min-mobile">Jumlah</th>
                         </tr>
                         </thead>
                         <tbody></tbody>
@@ -22,11 +21,10 @@
         </div>
     </div>
     <script>
+        var groupColumn = 1;
         var table = $('#dataTable').dataTable({
             "dom"           : '<"mb-2 toolbar"B><"row clearfix"<"col-sm-8"l><"col-sm-4"f>>rt<"row"<"col-sm-6"><"col-sm-6"p>>',
             "lengthMenu"    : [[30, 60, 120, 240, 580], [30, 60, 120, 240, 580]],
-            "order"         : [[ 1, "asc" ]],
-            /*"searchDelay"   : 2000,*/
             "ordering"      : false,
             "paging"        : false,
             "filter"        : false,
@@ -44,24 +42,6 @@
                     d.tahun     = $('div.toolbar select.year').length !== 0 ? $('div.toolbar select.year').val() : '{{ date('Y') }}';
                 }
             },
-            "drawCallback" : function () {
-                if ($('div.toolbar .dt-buttons .float-right').length == 0){
-                    $('div.toolbar .dt-buttons').append('' +
-                        '<div class="float-right d-none d-md-block col-sm-3 pr-0">' +
-                            '<select onchange="table._fnDraw()" class="month mb-2 custom-select custom-select-sm form-control form-control-sm">' +
-                                @foreach(ArrayBulan() as $key => $bulan)
-                                    '<option @if($bulan['value']==date('m')) selected @endif value="{{ $bulan['value'] }}">{{ $bulan['name'] }}</option>' +
-                                @endforeach
-                            '</select>' +
-                            '<select onchange="table._fnDraw()" class="year mb-2 custom-select custom-select-sm form-control form-control-sm">' +
-                                @for($tahun = MinTahun(); $tahun <= date('Y'); $tahun++)
-                                    '<option value="{{ $tahun }}">{{ $tahun }}</option>' +
-                                @endfor
-                            '</select>' +
-                        '</div>' +
-                        '');
-                }
-            },
             buttons         : [
                 @if($privs->C_opt == 1)
                 {
@@ -77,12 +57,44 @@
                 },
                 @endif
             ],
+            "columnDefs": [
+                { "visible": false, "targets": groupColumn }
+            ],
+            "order": [[ groupColumn, 'asc' ]],
             "columns"   : [
                 { "data" : "informasi" },
                 { "data" : "kategori", "width" : "120px" },
-                { "data" : "ammount", "width" : "120px" },
-                { "data" : "saldo", "width" : "120px" }
-            ]
+                { "data" : "ammount", "width" : "120px", render: $.fn.dataTable.render.number( '.', ',', 0, 'Rp. ' ) }
+            ],
+            "drawCallback" : function (settings) {
+                if ($('div.toolbar .dt-buttons .float-right').length == 0){
+                    $('div.toolbar .dt-buttons').append('' +
+                        '<div class="float-right d-none d-md-block col-sm-3 pr-0">' +
+                        '<select onchange="table._fnDraw()" class="month mb-2 custom-select custom-select-sm form-control form-control-sm">' +
+                            @foreach(ArrayBulan() as $key => $bulan)
+                                '<option @if($bulan['value']==date('m')) selected @endif value="{{ $bulan['value'] }}">{{ $bulan['name'] }}</option>' +
+                            @endforeach
+                                '</select>' +
+                        '<select onchange="table._fnDraw()" class="year mb-2 custom-select custom-select-sm form-control form-control-sm">' +
+                            @for($tahun = MinTahun(); $tahun <= date('Y'); $tahun++)
+                                '<option value="{{ $tahun }}">{{ $tahun }}</option>' +
+                            @endfor
+                                '</select>' +
+                        '</div>' +
+                        '');
+                }
+                var api = this.api();
+                var rows = api.rows( {page:'current'} ).nodes();
+                var last=null;
+                api.column(groupColumn, {page:'current'} ).data().each( function ( group, i ) {
+                    if ( last !== group ) {
+                        $(rows).eq( i ).before(
+                            '<tr class="group" bgcolor="#ccc"><td colspan="3" style="text-transform: capitalize;font-weight:bold">'+group+'</td></tr>'
+                        );
+                        last = group;
+                    }
+                });
+            }
         });
     </script>
 

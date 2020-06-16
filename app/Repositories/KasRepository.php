@@ -91,20 +91,23 @@ class KasRepository{
                         $kasLunas->bulan    = $request->bulan;
                         $kasLunas->tahun    = $request->tahun;
                         $kasLunas->kategori = 'pemasukan';
-                        $kasLunas->ammount  = $lunas;
-                        $info = 'Tagihan Lunas ';
-                        $info .= $cabang->mitra == 1 ? 'Mitra ' : 'Cabang ';
-                        $info .= $cabang->cab_name;
-                        $kasLunas->informasi= $info;
-                        $kasLunas->priority = 10 + $keyCabang;
+                        $kasLunas->priority = 10;
                         $kasLunas->tags     = 'tagihan lunas';
                         $kasLunas->cab_id   = $cabang->cab_id;
                         $kasLunas->created_by = auth()->user();
                     } else {
                         $kasLunas = $kasLunas->first();
-                        $kasLunas->ammount  = $lunas;
                         $kasLunas->updated_by = auth()->user();
                     }
+                    //hitung sharing profit
+                    $persen_share       = $cabang->share_percent;
+                    $share_profit       = ( $lunas * $persen_share ) / 100;
+                    $kasLunas->ammount  = $share_profit;
+                    $info = 'Sharing ';
+                    $info .= $cabang->mitra == 1 ? 'Mitra ' : 'Cabang ';
+                    $info .= $cabang->cab_name;
+                    $info .= ' ('.$cabang->share_percent.'% &times; Rp. '.format_rp($lunas).' = Rp. '.format_rp($share_profit).' )';
+                    $kasLunas->informasi= $info;
                     $kasLunas->saveOrFail();
 
                     $tunggak = Tagihan::select(['isp_invoice.price_with_tax'])
@@ -120,11 +123,11 @@ class KasRepository{
                         $kasTunggak->tahun    = $request->tahun;
                         $kasTunggak->kategori = 'piutang';
                         $kasTunggak->ammount  = $tunggak;
-                        $info = 'Tagihan Lunas ';
+                        $info = 'Tunggakan Tagihan ';
                         $info .= $cabang->mitra == 1 ? 'Mitra ' : 'Cabang ';
                         $info .= $cabang->cab_name;
                         $kasTunggak->informasi= $info;
-                        $kasTunggak->priority = 10 + $keyCabang;
+                        $kasTunggak->priority = 11;
                         $kasTunggak->tags     = 'tagihan tunggak';
                         $kasTunggak->cab_id   = $cabang->cab_id;
                         $kasTunggak->created_by = auth()->user();
@@ -151,39 +154,42 @@ class KasRepository{
                     $q->where('kategori','like',"%$keyword%");
                     $q->orWhere('informasi','like',"%$keyword%");
                 })
-                ->orderBy('priority','asc')->orderBy('kategori','asc')->get();
+                ->orderBy('priority','asc')->get();
             $lastSaldo  = 0;
             $exclude    = ['piutang','saldo akhir'];
             if ($data->count()>0){
                 foreach ($data as $key => $val){
                     if (!in_array($val->kategori,$exclude)){
                         $lastSaldo      = $lastSaldo + $val->ammount;
-                        $data[$key]->saldo = $lastSaldo;
-                    } else {
-                        $data[$key]->saldo = $lastSaldo;
-                    }
-                    //update saldo akhir bulan ini
-                    if ($val->kategori === 'saldo akhir'){
-                        $saldoAkhirBulan    = Kas::where(['kategori'=>'saldo akhir','tahun'=>$tahun,'bulan'=>$bulan])->get();
-                        if ($saldoAkhirBulan->count()>0) {
-                            $saldoAkhirBulan = $saldoAkhirBulan->first();
-                            $saldoAkhirBulan->ammount  = $lastSaldo;
-                            $saldoAkhirBulan->saveOrFail();
-                        }
-                        //update saldo awal bulan depan
-                        $bulan = $bulan + 1;
-                        if ($bulan > 12){
-                            $bulan = '01'; $tahun = $tahun + 1;
-                        }
-                        $nextMonth = Kas::where(['kategori'=>'saldo akhir','tahun'=>$tahun,'bulan'=>$bulan])->get();
-                        if ($nextMonth->count()>0){
-                            $nextMonth  = $nextMonth->first();
-                            $nextMonth->ammount = $lastSaldo;
-                            $nextMonth->saveOrFail();
-                        }
+                    } elseif ($val->kategori === 'pengeluaran'){
+                        $lastSaldo      = $lastSaldo - $val->ammount;
                     }
                 }
             }
+            //update saldo akhir bulan ini
+            $saldoAkhirBulan    = Kas::where(['kategori'=>'saldo akhir','tahun'=>$tahun,'bulan'=>$bulan])->get();
+            if ($saldoAkhirBulan->count()>0) {
+                $saldoAkhirBulan = $saldoAkhirBulan->first();
+                $saldoAkhirBulan->ammount  = $lastSaldo;
+                $saldoAkhirBulan->saveOrFail();
+            }
+            //update saldo awal bulan depan
+            $bulan = $bulan + 1;
+            if ($bulan > 12){
+                $bulan = '01'; $tahun = $tahun + 1;
+            }
+            $nextMonth = Kas::where(['kategori'=>'saldo awal','tahun'=>$tahun,'bulan'=>$bulan])->get();
+            if ($nextMonth->count()>0){
+                $nextMonth  = $nextMonth->first();
+                $nextMonth->ammount = $lastSaldo;
+                $nextMonth->saveOrFail();
+            }
+            //set ammount akhir bulan untuk return ke datatable
+            isset($data[$data->count()-1]) ? $data[$data->count()-1]->ammount = $lastSaldo : null;
+
+            $data = $data->sortBy('kategori')->sortBy('priority');
+            $data = $data->values();
+
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
