@@ -125,4 +125,7 @@ class CustomerController extends Controller
         }
         return format(1000,'Status Customer berhasil diupdate',$set);
     }
+    public function detail(Request $request){
+        
+    }
 }

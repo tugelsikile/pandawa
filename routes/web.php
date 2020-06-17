@@ -85,6 +85,8 @@ Route::group(['middleware'=>['auth','systemAccess']],function (){
         Route::post('/bulk-delete','CustomerController@bulkDelete');
 
         Route::post('/set-status','CustomerController@setStatus');
+
+        Route::get('/detail','CustomerController@detail')->name('admin-customer.detail');
     });
 
     Route::group(['prefix'=>'cabang-customer'],function (){

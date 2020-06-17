@@ -81,6 +81,7 @@
                             '<div class="dropdown show float-right">' +
                                 '<a class="btn btn-secondary btn-sm dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></a>' +
                                 '<div class="dropdown-menu" aria-labelledby="dropdownMenuLink">' +
+                                    '<a class="dropdown-item" href="{{ url('admin-customer/detail?id=') }}'+c.cust_id+'"><i class="fa fa-user-circle"></i> Detail Pelanggan</a>' +
                                 @if($privs->U_opt == 1)
                                     '<a class="dropdown-item" onclick="show_modal(this);return false" title="Rubah Data Customer" href="{{ url('admin-customer/update?id=') }}'+c.cust_id+'"><i class="fa fa-pencil"></i> Rubah Data</a>' +
                                 @endif
