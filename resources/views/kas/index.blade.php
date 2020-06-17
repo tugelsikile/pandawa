@@ -2,6 +2,78 @@
 
 @section('content')
     <div class="container">
+        <div class="row kartu-tagihan mb-3">
+            <div class="col-sm-3">
+                <div class="toast" data-autohide="false" style="width:100% !important;min-width:100% !important;" onclick="$('html,body').animate({scrollTop : $('#saldo-awal').offset().top - 70},'slow')">
+                    <div class="toast-header">
+                        <i class="fa fa-desktop mr-2"></i>
+                        <strong class="mr-auto">Saldo Awal Bulan</strong>
+                        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="toast-body">
+                        Rp. <strong class="saldo-awal">0</strong>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="toast" data-autohide="false" style="width:100% !important;min-width:100% !important;" onclick="$('html,body').animate({scrollTop : $('#pemasukan').offset().top - 70},'slow')">
+                    <div class="toast-header">
+                        <i class="fa fa-desktop mr-2"></i>
+                        <strong class="mr-auto">Pemasukan</strong>
+                        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="toast-body">
+                        Rp. <strong class="total-pendapatan">0</strong>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="toast" data-autohide="false" style="width:100% !important;min-width:100% !important;" onclick="$('html,body').animate({scrollTop : $('#pengeluaran').offset().top - 70},'slow')">
+                    <div class="toast-header">
+                        <i class="fa fa-desktop mr-2"></i>
+                        <strong class="mr-auto">Pengeluaran</strong>
+                        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="toast-body">
+                        Rp. <strong class="total-pengeluaran">0</strong>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="toast" data-autohide="false" style="width:100% !important;min-width:100% !important;" onclick="$('html,body').animate({scrollTop : $('#piutang').offset().top - 70},'slow')">
+                    <div class="toast-header">
+                        <i class="fa fa-desktop mr-2"></i>
+                        <strong class="mr-auto">Piutang</strong>
+                        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="toast-body">
+                        Rp. <strong class="total-piutang">0</strong>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="toast" data-autohide="false" style="width:100% !important;min-width:100% !important;" onclick="$('html,body').animate({scrollTop : $('#saldo-akhir').offset().top - 70},'slow')">
+                    <div class="toast-header">
+                        <i class="fa fa-desktop mr-2"></i>
+                        <strong class="mr-auto">Saldo Akhir Bulan</strong>
+                        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="toast-body">
+                        Rp. <strong class="saldo-akhir">0</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="card">
             <div class="card-header">Kas Keuangan</div>
             <div class="card-body">
@@ -21,6 +93,7 @@
         </div>
     </div>
     <script>
+        $('.toast').toast('show');
         var groupColumn = 1;
         var table = $('#dataTable').dataTable({
             "dom"           : '<"mb-2 toolbar"B><"row clearfix"<"col-sm-8"l><"col-sm-4"f>>rt<"row"<"col-sm-6"><"col-sm-6"p>>',
@@ -94,7 +167,13 @@
                 { "data" : "kategori", "width" : "120px" },
                 { "data" : "ammount", "width" : "120px", render: $.fn.dataTable.render.number( '.', ',', 0, 'Rp. ' ) }
             ],
-            "drawCallback" : function (settings) {
+            "drawCallback" : function (settings,aa,bb,cc) {
+                var metaSaldo = settings.jqXHR.responseJSON;
+                $('.saldo-awal').html(metaSaldo.saldo_awal);
+                $('.saldo-akhir').html(metaSaldo.saldo_akhir);
+                $('.total-pendapatan').html(metaSaldo.pendapatan);
+                $('.total-pengeluaran').html(metaSaldo.pengeluaran);
+                $('.total-piutang').html(metaSaldo.piutang);
                 if ($('div.toolbar .dt-buttons .float-right').length == 0){
                     $('div.toolbar .dt-buttons').append('' +
                         '<div class="float-right d-none d-md-block col-sm-3 pr-0">' +
@@ -117,7 +196,7 @@
                 api.column(groupColumn, {page:'current'} ).data().each( function ( group, i ) {
                     if ( last !== group ) {
                         $(rows).eq( i ).before(
-                            '<tr class="group" bgcolor="#ccc"><td colspan="3" style="text-transform: capitalize;font-weight:bold">'+group+'</td></tr>'
+                            '<tr class="group" bgcolor="#ccc"><td colspan="3" style="text-transform: capitalize;font-weight:bold"><a id="'+group.replace(' ','-')+'"></a>'+group+'</td></tr>'
                         );
                         last = group;
                     }

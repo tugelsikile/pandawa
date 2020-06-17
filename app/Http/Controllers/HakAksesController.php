@@ -87,7 +87,7 @@ class HakAksesController extends Controller
             }catch (Exception $exception){
                 throw new Exception($exception->getMessage());
             }
-            return format(1000,'Hak akses berhasil dibuat',$save);
+            return format(1000,'Hak akses berhasil diupdate',$save);
         } else {
             try{
                 $data       = $this->UserLevelRepository->getBy(['lvl_id'=>$request->id])->first();
@@ -141,6 +141,7 @@ class HakAksesController extends Controller
             $response = ['draw'=>$request->draw,'data'=>[],'recordsFiltered'=>0,'recordsTotal'=>0];
             try{
                 $response['data'] = $this->FunctionRepository->getAll($request);
+                $response['recordsFiltered'] = $response['recordsTotal'] = $response['data']->count();
             }catch (Exception $exception){
                 throw new Exception($exception->getMessage());
             }

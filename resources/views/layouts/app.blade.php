@@ -97,7 +97,14 @@
         @yield('content')
     </main>
 
-    <div class="footer">PT. Dharma Sarana Solusindo</div>
+    <div class="footer">
+        {{ companyInfo()->site_name }}
+        <div class="float-right text-right">
+            App Version : {{ config('app.version') }}<br>
+            DB Version : {{ appVersion() }}<br>
+            Framework Version : {{ app()::VERSION }}
+        </div>
+    </div>
 </div>
 </body>
 </html>

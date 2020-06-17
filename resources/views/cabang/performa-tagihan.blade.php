@@ -46,7 +46,28 @@
                 "type"  : "POST",
                 "data"  : function (d) {
                     d._token = '{{ csrf_token() }}';
-                    d.cab_id = $('.cab-id').val();
+                    @if(strlen(auth()->user()->cab_id)===0)
+                        d.cab_id = $('.cab-id').length === 0 ? '' : $('.cab-id').val();
+                    @else
+                        d.cab_id = '{{ auth()->user()->cab_id }}';
+                    @endif
+                }
+            },
+            "drawCallback" : function () {
+                if ($('div.toolbar .float-right').length === 0){
+                    $('div.toolbar .dt-buttons').append('' +
+                        '<div class="float-right d-none d-md-block col-sm-3 pr-0">' +
+                            '<select name="nama_cabang" onchange="table._fnDraw();" class="mb-2 cab-id custom-select custom-select-sm form-control form-control-sm">' +
+                            @if(strlen(Auth::user()->cab_id)==0)
+                                '<option value="">=== Semua Cabang ===</option>' +
+                            @endif
+                            @if($cabangs)
+                                @foreach($cabangs as $key => $cabang)
+                                '<option @if($request->id == $cabang->cab_id) selected @endif value="{{$cabang->cab_id}}">{{$cabang->cab_name}}</option>' +
+                                @endforeach
+                            @endif
+                            '</select>' +
+                        '</div>');
                 }
             },
             buttons         : [
@@ -92,24 +113,9 @@
                     return html;
                     }
                 }
-            ],
-            "drawCallback": function( settings ) {
-                console.log(settings)
-            }
+            ]
         });
-        $('div.toolbar .dt-buttons').append('' +
-            '<div class="float-right d-none d-md-block col-sm-3 pr-0">' +
-                '<select name="nama_cabang" onchange="table._fnDraw();" class="mb-2 cab-id custom-select custom-select-sm form-control form-control-sm">' +
-                @if(strlen(Auth::user()->cab_id)==0)
-                    '<option value="">=== Semua Cabang ===</option>' +
-                @endif
-                @if($cabangs)
-                    @foreach($cabangs as $key => $cabang)
-                        '<option @if($request->id == $cabang->cab_id) selected @endif value="{{$cabang->cab_id}}">{{$cabang->cab_name}}</option>' +
-                    @endforeach
-                @endif
-                '</select>' +
-            '</div>');
+
     </script>
 
 @endsection

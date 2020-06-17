@@ -22,6 +22,7 @@ class KasRepository{
         try{
             $curBulan   = (int)date('m');
             $curTahun   = (int)date('Y');
+            $saldo_awal = 0;
             if ((int)$request->bulan <= $curBulan && (int)$request->tahun <= $curTahun){
                 $bulan  = $request->bulan - 1;
                 $tahun  = $request->tahun;
@@ -53,6 +54,7 @@ class KasRepository{
                     }
                     $saldoAwalBulan->informasi= 'Saldo Awal Bulan ' . bulanIndo($request->bulan) . ' '.$request->tahun;
                 }
+                $saldo_awal = $saldoAwalBulan->ammount;
                 $saldoAwalBulan->saveOrFail();
 
                 $saldoAkhirBulan = Kas::where(['kategori'=>'saldo akhir','bulan'=>$request->bulan,'tahun'=>$request->tahun])->get();
@@ -79,7 +81,7 @@ class KasRepository{
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
-        return $request;
+        return $request->merge(['saldo_awal'=>$saldo_awal]);
     }
     private function pendapatanDanPiutangCabang(Request $request){
         try{
@@ -101,7 +103,7 @@ class KasRepository{
 
                         })*/
                         ->get()->sum('price_with_tax');
-                    if ($lunas > 0){
+                    if ($lunas>0){
                         $kasLunas = Kas::where(['bulan'=>$bulan,'tahun'=>$tahun,'cab_id'=>$cabang->cab_id,'kategori'=>'pemasukan','tags'=>'tagihan lunas'])->get();
                         if ($kasLunas->count()===0){
                             $kasLunas = new Kas();
@@ -185,17 +187,25 @@ class KasRepository{
                 ->orderBy('priority','asc')->get();
             $lastSaldo  = 0;
             $exclude    = ['piutang','saldo akhir'];
+            $pendapatan = $pengeluaran = $saldo_akhir = 0;
+            $piutang = $data->where('kategori','=','piutang')->sum('ammount');
+            //dd($piutang);
             if ($data->count()>0){
                 foreach ($data as $key => $val){
                     if (!in_array($val->kategori,$exclude)){
                         if ($val->kategori === 'pengeluaran'){
+                            $pengeluaran    = $pengeluaran - $val->ammount;
                             $lastSaldo      = $lastSaldo - $val->ammount;
                         } else {
+                            if ($val->kategori === 'pemasukan') {
+                                $pendapatan = $pendapatan + $val->ammount;
+                            }
                             $lastSaldo      = $lastSaldo + $val->ammount;
                         }
                     }
                 }
             }
+            $saldo_akhir = $lastSaldo;
             //update saldo akhir bulan ini
             $saldoAkhirBulan    = Kas::where(['kategori'=>'saldo akhir','tahun'=>$tahun,'bulan'=>$bulan])->get();
             if ($saldoAkhirBulan->count()>0) {
@@ -219,7 +229,7 @@ class KasRepository{
 
             $data = $data->sortBy('kategori')->sortBy('priority');
             $data = $data->values();
-
+            $data = ['data'=>$data,'saldo_awal'=>$request->saldo_awal,'saldo_akhir'=>$saldo_akhir,'pendapatan'=>$pendapatan,'pengeluaran'=>$pengeluaran,'piutang'=>$piutang];
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }

@@ -95,12 +95,15 @@ class UserLevelRepositories{
             foreach ($functions as $key => $function){
                 $privileges             = UserPriviledges::where('func_id','=',$function->func_id)
                     ->where('lvl_id','=',$request->data_level_pengguna)
-                    ->get()->first();
-                $privileges->R_opt      = isset($request->R_opt[$function->func_id]) ? 1 : 0;
-                $privileges->C_opt      = isset($request->C_opt[$function->func_id]) ? 1 : 0;
-                $privileges->U_opt      = isset($request->U_opt[$function->func_id]) ? 1 : 0;
-                $privileges->D_opt      = isset($request->D_opt[$function->func_id]) ? 1 : 0;
-                $privileges->saveOrFail();
+                    ->get();
+                if ($privileges->count()>0){
+                    $privileges             = $privileges->first();
+                    $privileges->R_opt      = isset($request->R_opt[$function->func_id]) ? 1 : 0;
+                    $privileges->C_opt      = isset($request->C_opt[$function->func_id]) ? 1 : 0;
+                    $privileges->U_opt      = isset($request->U_opt[$function->func_id]) ? 1 : 0;
+                    $privileges->D_opt      = isset($request->D_opt[$function->func_id]) ? 1 : 0;
+                    $privileges->saveOrFail();
+                }
             }
             DB::commit();
         }catch (Exception $exception){

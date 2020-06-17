@@ -49,11 +49,17 @@ class KasController extends Controller
     public function table(Request $request){
         if (!$request->ajax()) abort(403);
         if ($request->method()!='POST') abort(403);
-        $response = [ 'draw' => $request->post('draw'), 'data' => [], 'recordsFiltered' => 0, 'recordsTotal' => 0 ];
+        $response = [ 'saldo_awal' => 0, 'draw' => $request->post('draw'), 'data' => [], 'recordsFiltered' => 0, 'recordsTotal' => 0 ];
         try{
             $checkSaldoAwal = $this->kasRepository->saldoAwal($request);
             $checkTagihan   = $this->kasRepository->tagihanCabang($checkSaldoAwal);
-            $response['data'] = $this->kasRepository->tabelKas($checkTagihan);
+            $data           = $this->kasRepository->tabelKas($checkTagihan);
+            $response['data'] = $data['data'];
+            $response['saldo_awal'] = format_rp($data['saldo_awal']);
+            $response['saldo_akhir'] = format_rp($data['saldo_akhir']);
+            $response['pendapatan'] = format_rp($data['pendapatan']);
+            $response['pengeluaran'] = format_rp($data['pengeluaran']);
+            $response['piutang'] = format_rp($data['piutang']);
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
