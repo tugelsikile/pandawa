@@ -37,6 +37,16 @@ class CustomerRepositories{
     public function getByID($id){
         try{
             $data   = Customer::where('cust_id',$id)->get()->first();
+            $data->cabang   = $data->cabangObj;
+            $data->desa     = $data->desa;
+            $data->kecamatan= $data->kecamatan;
+            $data->kabupaten= $data->kabupaten;
+            $data->provinsi = $data->provinsi;
+            $data->pasang_desa = $data->pasang_desa;
+            $data->pasang_kecamatan = $data->pasang_kecamatan;
+            $data->pasang_kabupaten = $data->pasang_kabupaten;
+            $data->pasang_provinsi = $data->pasang_provinsi;
+            $data->produk   = $data->produk;
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }

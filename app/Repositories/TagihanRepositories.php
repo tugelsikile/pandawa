@@ -287,4 +287,12 @@ class TagihanRepositories{
         }
         return $request;
     }
+    public function tagihanByCustomer($request){
+        try{
+            $data   = Tagihan::where($request)->get();
+        }catch (\Matrix\Exception $exception){
+            throw new \Matrix\Exception($exception->getMessage());
+        }
+        return $data;
+    }
 }
