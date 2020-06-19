@@ -11,10 +11,13 @@ class Customer extends Model
     public $timestamps = false;
 
     public function cabangObj(){
-        return $this->belongsTo(Cabang::class,'cab_id')->where('status','=',1);
+        return $this->hasOne(Cabang::class,'cab_id')->where('status','=',1);
     }
     public function paketObj(){
         return $this->belongsTo(Produk::class,'pac_id','pac_id')->where('status','=',1);
+    }
+    public function tagihanObj(){
+        return $this->hasMany(Tagihan::class,'cust_id','cust_id')->where('status','=',1);
     }
     public function desa(){
         return $this->hasOne(Desa::class,'id','village_id');
