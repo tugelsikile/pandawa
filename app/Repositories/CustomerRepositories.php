@@ -13,6 +13,21 @@ use Mockery\Exception;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 class CustomerRepositories{
+    public function getAll(Request $request){
+        try{
+            $data   = Customer::where(['status'=>1]);
+            if ($request->id) $data = $data->where('kode',$request->id);
+            $data   = $data->get();
+            $data->map(function($data){
+                $data->cabang   = $data->cabangObj;
+                $data->makeHidden(['pac_id','cust_id','cab_id','cabangObj']);
+                return $data;
+            });
+        }catch (\Matrix\Exception $exception){
+            throw new \Matrix\Exception($exception->getMessage());
+        }
+        return $data;
+    }
     public function getForGenerate(Request $request){
         try{
             $invDate = $request->tahun_tagihan.'-'.$request->bulan_tagihan.'-01';

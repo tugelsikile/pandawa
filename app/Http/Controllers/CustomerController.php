@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Provinces;
+use App\Validations\ApiValidation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Repositories\{
@@ -20,9 +21,11 @@ class CustomerController extends Controller
     protected $customer;
     protected $cabang;
     protected $produk;
+    protected $apiValidation;
     public $curMenu = 'admin-customer';
 
     public function __construct(
+        ApiValidation $apiValidation,
         ProdukRepositories $produkRepositories,
         UserMenuRepositories $userMenuRepositories,
         UserPriviledgesRepositories $userPriviledgesRepositories,
@@ -32,6 +35,7 @@ class CustomerController extends Controller
         CabangRepositories $cabangRepositories
     )
     {
+        $this->apiValidation = $apiValidation;
         $this->produk = $produkRepositories;
         $this->menuRepositories = $userMenuRepositories;
         $this->priviledges = $userPriviledgesRepositories;
@@ -135,5 +139,21 @@ class CustomerController extends Controller
             throw new \Matrix\Exception($exception->getMessage());
         }
         return view('customer.detail',compact('data','curMenu','privs','menus'));
+    }
+    public function getData(Request $request){
+        app('debugbar')->disable();
+        $data = [];
+        try{
+            $valid  = $this->apiValidation->getToken($request);
+            if (isset($valid['code'])){
+                if ($valid['code'] !== 1000){
+                    return format(500,$valid['msg'],$data);
+                }
+            }
+            $data = $this->customer->getAll($request);
+        }catch (\Matrix\Exception $exception){
+            throw new \Matrix\Exception( $exception->getMessage());
+        }
+        return format(1000,'OK',$data);
     }
 }
