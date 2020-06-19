@@ -111,4 +111,14 @@ class UserController extends Controller
         }
         return format(1000,'Pengguna berhasil dihapus',$save);
     }
+    public function profile(){
+        try{
+            $curMenu = $this->curMenu;
+            $privs   = $this->priviledges->checkPrivs(Auth::user()->level,$this->curMenu);
+            $menus = $this->menuRepositories->getMenu(Auth::user()->level);
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return view('users.profile',compact('curMenu','privs','menus'));
+    }
 }

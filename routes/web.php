@@ -28,6 +28,11 @@ Route::post('preview-id-pelanggan','TemplateController@PreviewCustomerID');
 Route::post('preview-harga','TemplateController@PreviewHarga');
 
 Auth::routes();
+
+Route::group(['middleware'=>'auth','prefix'=>'user'],function (){
+    Route::get('/profile','UserController@profile')->name('user.profile');
+});
+
 Route::group(['middleware'=>['auth','systemAccess']],function (){
     Route::get('/home', 'HomeController@index')->name('home');
 
