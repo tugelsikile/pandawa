@@ -85,6 +85,16 @@ Route::group(['middleware'=>['auth','systemAccess']],function (){
         Route::post('/bulk-delete','CustomerController@bulkDelete');
 
         Route::post('/set-status','CustomerController@setStatus');
+
+        Route::get('/detail','CustomerController@detail')->name('admin-customer.detail');
+
+        Route::group(['prefix'=>'details'],function (){
+            Route::get('/pelanggan','CustomerDetailController@pelanggan')->name('admin-customer.details.pelanggan');
+            Route::get('/perusahaan','CustomerDetailController@perusahaan')->name('admin-customer.details.perusahaan');
+            Route::get('/info-tagihan','CustomerDetailController@infoTagihan')->name('admin-customer.details.info-tagihan');
+            Route::get('/layanan','CustomerDetailController@layanan')->name('admin-customer.details.layanan');
+            Route::get('/tagihan','CustomerDetailController@tagihan')->name('admin-customer.details.tagihan');
+        });
     });
 
     Route::group(['prefix'=>'cabang-customer'],function (){

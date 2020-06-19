@@ -125,4 +125,15 @@ class CustomerController extends Controller
         }
         return format(1000,'Status Customer berhasil diupdate',$set);
     }
+    public function detail(Request $request){
+        try{
+            $curMenu = $this->curMenu;
+            $privs   = $this->priviledges->checkPrivs(Auth::user()->level,$this->curMenu);
+            $menus = $this->menuRepositories->getMenu(Auth::user()->level);
+            $data   = $this->customer->getByID($request->id);
+        }catch (\Matrix\Exception $exception){
+            throw new \Matrix\Exception($exception->getMessage());
+        }
+        return view('customer.detail',compact('data','curMenu','privs','menus'));
+    }
 }

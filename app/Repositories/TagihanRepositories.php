@@ -110,7 +110,12 @@ class TagihanRepositories{
                 'isp_customer.status' => 1
             ];
             if (strlen($cab_id)>0) $where['isp_invoice.cab_id'] = $cab_id;
-            if (strlen($isActive)>0) $where['isp_customer.is_active'] = $isActive;
+            /*if (strlen($isActive)>0) {
+                $where['isp_customer.is_active'] = $isActive;
+                if ($isActive==0){
+                    $where['isp_customer.nonactive_date'] =
+                }
+            }*/
             if (strlen($npwp)>0) $where['isp_customer.npwp'] = $npwp;
             if (strlen($isPaid)>0) $where['isp_invoice.is_paid'] = $isPaid;
 
@@ -120,6 +125,13 @@ class TagihanRepositories{
                 ->where('isp_invoice.cab_id','<>','')
                 ->whereNotNull('isp_invoice.cust_id')
                 ->where('isp_invoice.cust_id','<>','');
+            if (strlen($isActive)>0){
+                $data = $data->where('isp_customer.is_active','=',$isActive);
+                if ($isActive == 0){
+                    $data = $data->whereMonth('isp_customer.nonactive_date','=',$invMonth)
+                        ->whereYear('isp_customer.nonactive_date','=',$invYear);
+                }
+            }
             if (strlen($invMonth)>0) $data = $data->whereMonth('isp_invoice.inv_date','=',$invMonth);
             if (strlen($invYear)>0) $data = $data->whereYear('isp_invoice.inv_date','=',$invYear);
             $data       = $data->where(function ($q) use ($keyword){
@@ -286,5 +298,18 @@ class TagihanRepositories{
             throw new Exception($exception->getMessage());
         }
         return $request;
+    }
+    public function tagihanByCustomer($request){
+        try{
+            $data   = Tagihan::where($request)->get();
+            $data->map(function($data){
+                $data->paket    = $data->paketObj;
+                $data->makeHidden('paketObj');
+                return $data;
+            });
+        }catch (\Matrix\Exception $exception){
+            throw new \Matrix\Exception($exception->getMessage());
+        }
+        return $data;
     }
 }
