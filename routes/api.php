@@ -42,4 +42,5 @@ Route::post('preview-template-invoice','TemplateController@PreviewNomorInvoice')
 
 Route::group(['prefix'=>'pelanggan'],function (){
     Route::get('/','CustomerController@getData');
+    Route::post('/paid-tagihan','CustomerController@paidTagihan');
 });

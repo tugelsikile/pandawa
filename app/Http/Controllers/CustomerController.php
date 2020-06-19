@@ -156,4 +156,32 @@ class CustomerController extends Controller
         }
         return format(1000,'OK',$data);
     }
+    public function paidTagihan(Request $request){
+        app('debugbar')->disable();
+        $data = [];
+        try{
+            $valid  = $this->apiValidation->getToken($request);
+            if (isset($valid['code'])){
+                if ($valid['code'] !== 1000){
+                    return format(500,$valid['msg'],$valid);
+                }
+            }
+            $validCustomer = $this->apiValidation->validCustomer($valid);
+            if (isset($validCustomer['code'])){
+                if ($validCustomer['code'] !== 1000){
+                    return format(500,$validCustomer['msg'],$validCustomer);
+                }
+            }
+            $validInvoice   = $this->apiValidation->validInvoice($validCustomer);
+            if (isset($validInvoice['code'])){
+                if ($validInvoice['code'] !== 1000){
+                    return format(500,$validInvoice['msg'],$validInvoice);
+                }
+            }
+            $data   = $this->customer->paidTagihan($validInvoice);
+        }catch (\Matrix\Exception $exception){
+            throw new \Matrix\Exception( $exception->getMessage());
+        }
+        return format(1000,'OK',$data);
+    }
 }
