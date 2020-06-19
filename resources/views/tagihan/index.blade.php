@@ -174,8 +174,6 @@
                     } else {
                         d.inv_year = $('div.toolbar select.inv-year').val();
                     }
-                    console.log($('div.toolbar select.inv-month'))
-                    console.log($('div.toolbar select.inv-year'))
                 }
             },
             buttons         : [

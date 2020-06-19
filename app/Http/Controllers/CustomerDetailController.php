@@ -21,6 +21,7 @@ class CustomerDetailController extends Controller
     }
 
     public function pelanggan(Request $request){
+        if (!$request->ajax()) redirect(url('admin-customer'));
         try{
             $data   = $this->customerRepository->getByID($request->id);
         }catch (Exception $exception){
@@ -29,6 +30,7 @@ class CustomerDetailController extends Controller
         return view('customer.details.pelanggan',compact('data'));
     }
     public function perusahaan(Request $request){
+        if (!$request->ajax()) redirect(url('admin-customer'));
         try{
             $data   = $this->customerRepository->getByID($request->id);
         }catch (Exception $exception){
@@ -37,6 +39,7 @@ class CustomerDetailController extends Controller
         return view('customer.details.perusahaan',compact('data'));
     }
     public function infoTagihan(Request $request){
+        if (!$request->ajax()) redirect(url('admin-customer'));
         try{
             $data   = $this->customerRepository->getByID($request->id);
         }catch (Exception $exception){
@@ -45,6 +48,7 @@ class CustomerDetailController extends Controller
         return view('customer.details.info-tagihan',compact('data'));
     }
     public function layanan(Request $request){
+        if (!$request->ajax()) redirect(url('admin-customer'));
         try{
             $data   = $this->customerRepository->getByID($request->id);
         }catch (Exception $exception){
@@ -53,6 +57,7 @@ class CustomerDetailController extends Controller
         return view('customer.details.layanan',compact('data'));
     }
     public function tagihan(Request $request){
+        if (!$request->ajax()) redirect(url('admin-customer'));
         try{
             $data       = $this->customerRepository->getByID($request->id);
             $tagihan    = $this->tagihanRepository->tagihanByCustomer(['cust_id'=>$request->id]);

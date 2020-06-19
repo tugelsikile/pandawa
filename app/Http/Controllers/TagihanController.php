@@ -237,9 +237,17 @@ class TagihanController extends Controller
             }
             //pelanggan aktif
             if (strlen($request->is_active)>0){
-                $total = $total->where(['isp_customer.is_active'=>$request->is_active]);
+                $total = $total->where('isp_customer.is_active','=',$request->is_active);
                 $dibayar = $dibayar->where(['isp_customer.is_active'=>$request->is_active]);
                 $tunggak = $tunggak->where(['isp_customer.is_active'=>$request->is_active]);
+                if ($request->is_active == 0){
+                    $total = $total->whereMonth('isp_customer.nonactive_date',$request->bulan)
+                        ->whereYear('isp_customer.nonactive_date',$request->tahun);
+                    $dibayar = $dibayar->whereMonth('isp_customer.nonactive_date',$request->bulan)
+                        ->whereYear('isp_customer.nonactive_date',$request->tahun);
+                    $tunggak = $tunggak->whereMonth('isp_customer.nonactive_date',$request->bulan)
+                        ->whereYear('isp_customer.nonactive_date',$request->tahun);
+                }
             }
 
             $total = $total->sum('price_with_tax');
