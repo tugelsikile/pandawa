@@ -100,10 +100,26 @@ class UserRepositories{
     public function getByID($id){
         try{
             $data = User::where('id',$id)->get()->first();
+            $data->cabang   = $data->cabangObj;
+            $data->level    = $data->userLevelOjb;
+            $data->makeHidden('cabangObj');
+            $data->makeHidden('userLevelObj');
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
         return  $data;
+    }
+    public function profileUpdate(Request $request){
+        try{
+            $data   = User::where('id',auth()->user()->id)->get()->first();
+            $data->email    = $request->email;
+            $data->name     = $request->name;
+            if (strlen($request->kata_sandi)>0) $data->password     = Hash::make($request->kata_sandi);
+            $data->saveOrFail();
+        }catch (\Matrix\Exception $exception){
+            throw new \Matrix\Exception( $exception->getMessage());
+        }
+        return $request->merge(['data'=>$data]);
     }
     public function update(Request $request){
         try{

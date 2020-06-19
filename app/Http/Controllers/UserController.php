@@ -111,14 +111,25 @@ class UserController extends Controller
         }
         return format(1000,'Pengguna berhasil dihapus',$save);
     }
-    public function profile(){
-        try{
-            $curMenu = $this->curMenu;
-            $privs   = $this->priviledges->checkPrivs(Auth::user()->level,$this->curMenu);
-            $menus = $this->menuRepositories->getMenu(Auth::user()->level);
-        }catch (Exception $exception){
-            throw new Exception($exception->getMessage());
+    public function profile(Request $request){
+        if ($request->method()=='POST'){
+            if (!$request->ajax()) abort(403);
+            try{
+                $save   = $this->userRepositories->profileUpdate($request);
+            }catch (\Matrix\Exception $exception){
+                throw new \Matrix\Exception($exception->getMessage());
+            }
+            return format(1000,'Profil berhasil diupdate',$save);
+        } else {
+            try{
+                $curMenu = $this->curMenu;
+                $privs   = $this->priviledges->checkPrivs(Auth::user()->level,$this->curMenu);
+                $menus = $this->menuRepositories->getMenu(Auth::user()->level);
+                $data   = $this->userRepositories->getByID(auth()->user()->id);
+            }catch (Exception $exception){
+                throw new Exception($exception->getMessage());
+            }
+            return view('users.profile',compact('curMenu','privs','menus','data'));
         }
-        return view('users.profile',compact('curMenu','privs','menus'));
     }
 }

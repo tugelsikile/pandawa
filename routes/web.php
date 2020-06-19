@@ -31,6 +31,7 @@ Auth::routes();
 
 Route::group(['middleware'=>'auth','prefix'=>'user'],function (){
     Route::get('/profile','UserController@profile')->name('user.profile');
+    Route::post('/profile','UserController@profile')->name('user.profile');
 });
 
 Route::group(['middleware'=>['auth','systemAccess']],function (){
