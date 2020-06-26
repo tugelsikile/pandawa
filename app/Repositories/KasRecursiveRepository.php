@@ -6,6 +6,7 @@ use App\Kas;
 use App\KasRecursive;
 use Illuminate\Http\Request;
 use Mockery\Exception;
+use Illuminate\Support\Facades\DB;
 
 class KasRecursiveRepository{
     public function table(Request $request){
@@ -69,7 +70,8 @@ class KasRecursiveRepository{
                     ->whereYear('start_date','<=',$tahun)
                     ->where(function ($q) use ($tahun,$bulan){
                         $q->whereMonth('end_date','>=',$bulan);
-                        $q->orWhereYear('end_date','>=',$tahun);
+                        $q->orWhere(DB::raw("year(end_date)"), '>=', $tahun);
+                        //$q->orWhereYear('end_date','>=',$tahun);
                         $q->orWhereNull('end_date');
                     })
                     ->where('kategori','=','pengeluaran')->get();
