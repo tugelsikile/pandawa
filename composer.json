@@ -9,7 +9,7 @@
     "license": "MIT",
     "require": {
         "php": ">=7.0.0",
-        "doctrine/dbal": "2.6.0",
+        "doctrine/dbal": "2.5.13",
         "eternicode/bootstrap-datepicker": "^1.9",
         "fideloper/proxy": "~3.3",
         "fortawesome/font-awesome": "4.7",
