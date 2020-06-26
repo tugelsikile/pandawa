@@ -80,7 +80,7 @@ class SettingController extends Controller
                     throw new Exception($exception->getMessage());
                 }
                 $logs = Auth::user()->name.' membaca data perusahaan.';
-                Log::channel('customLog')->info($logs,['params'=>sanitize($request)]);
+                //Log::channel('customLog')->info($logs,['params'=>sanitize($request)]);
                 return format(1000,'Data berhasil dirubah',$data);
             } else {
                 try{
@@ -120,7 +120,7 @@ class SettingController extends Controller
             throw new Exception($exception->getMessage());
         }
         $logs = Auth::user()->name.' membaca data bank.';
-        Log::channel('customLog')->info($logs,['params'=>sanitize($request)]);
+        //Log::channel('customLog')->info($logs,['params'=>sanitize($request)]);
         return $response;
     }
     public function statusBank(Request $request){
@@ -138,7 +138,7 @@ class SettingController extends Controller
             throw new Exception($exception->getMessage());
         }
         $logs = Auth::user()->name.' merubah status aktif bank.';
-        Log::channel('customLog')->info($logs,['params'=>sanitize($request)]);
+        //Log::channel('customLog')->info($logs,['params'=>sanitize($request)]);
         return format(1000,'Status Account Bank berhasil dirubah');
     }
     public function createBank(Request $request){
@@ -164,7 +164,7 @@ class SettingController extends Controller
                 throw new Exception($exception->getMessage());
             }
             $logs = Auth::user()->name.' menambahkan data bank.';
-            Log::channel('customLog')->notice($logs,['params'=>sanitize($request)]);
+            //Log::channel('customLog')->notice($logs,['params'=>sanitize($request)]);
             return format(1000,'Bank berhasil ditambahkan',$data);
         } else {
             return view('setting.create-bank');
@@ -194,7 +194,7 @@ class SettingController extends Controller
                 throw new Exception($exception->getMessage());
             }
             $logs = Auth::user()->name.' merubah data bank.';
-            Log::channel('customLog')->notice($logs,['params'=>sanitize($request)]);
+            //Log::channel('customLog')->notice($logs,['params'=>sanitize($request)]);
             return format(1000,'Data Bank berhasil dirubah',$data);
         } else {
             try{
@@ -218,7 +218,7 @@ class SettingController extends Controller
             throw new Exception($exception->getMessage());
         }
         $logs = Auth::user()->name.' menghapus data bank.';
-        Log::channel('customLog')->warning($logs,['params'=>sanitize($request)]);
+        //Log::channel('customLog')->warning($logs,['params'=>sanitize($request)]);
         return format(1000,'data bank berhasil dihapus');
     }
     public function templateInvoice(Request $request){

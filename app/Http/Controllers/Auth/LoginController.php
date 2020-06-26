@@ -41,7 +41,7 @@ class LoginController extends Controller
 
     protected function credentials($request)
     {
-        Log::channel('customLog')->info('Login',['params'=>sanitize($request)]);
+        //Log::channel('customLog')->info('Login',['params'=>sanitize($request)]);
         return ['email' => $request->{$this->username()}, 'password' => $request->password, 'status' => 1];
     }
 }
