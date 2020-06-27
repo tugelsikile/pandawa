@@ -7,30 +7,12 @@ use App\Customer;
 use App\Desa;
 use App\Invoice;
 use App\Produk;
-use App\Tagihan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Mockery\Exception;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 class CustomerRepositories{
-    public function getAll(Request $request){
-        try{
-            $data   = Customer::where(['status'=>1]);
-            if ($request->id) $data = $data->where('kode',$request->id);
-            $data   = $data->get();
-            $data->map(function($data){
-                $data->cabang   = $data->cabangObj;
-                $data->paket    = $data->paketObj;
-                $data->tagihan  = $data->tagihanObj;
-                $data->makeHidden(['paketObj','cabangObj','tagihanObj']);
-                return $data;
-            });
-        }catch (\Matrix\Exception $exception){
-            throw new \Matrix\Exception($exception->getMessage());
-        }
-        return $data;
-    }
     public function getForGenerate(Request $request){
         try{
             $invDate = $request->tahun_tagihan.'-'.$request->bulan_tagihan.'-01';
@@ -346,22 +328,5 @@ class CustomerRepositories{
             throw new Exception($exception->getMessage());
         }
         return $data;
-    }
-    public function paidTagihan(Request $request){
-        try{
-            $customer = Customer::where('kode','=',$request->id)->get();
-            if ($customer->count()===0){ return format(500,'Customer not found'); }
-            $customer = $customer->first();
-            $tagihan    = Tagihan::where('inv_number','=',$request->invoice)->where('cust_id','=',$customer->cust_id)->get();
-            if ($tagihan->count()===0){ return format(500,'Invoice not found'); }
-            $tagihan    = $tagihan->first();
-            $tagihan->is_paid   = 1;
-            $tagihan->paid_date = date('Y-m-d');
-            $tagihan->paid_approved_by   = null;
-            $tagihan->saveOrFail();
-        }catch (\Matrix\Exception $exception){
-            throw new \Matrix\Exception($exception->getMessage());
-        }
-        return $request;
     }
 }
