@@ -249,6 +249,11 @@ class TagihanController extends Controller
                         ->whereYear('isp_customer.nonactive_date',$request->tahun);
                 }
             }
+            if (strlen($request->mitra)>0){
+                $total = $total->join('isp_cabang','isp_invoice.cab_id','=','isp_cabang.cab_id','left')->where('isp_cabang.mitra','=',$request->mitra);
+                $dibayar = $dibayar->join('isp_cabang','isp_invoice.cab_id','=','isp_cabang.cab_id','left')->where('isp_cabang.mitra','=',$request->mitra);
+                $tunggak = $tunggak->join('isp_cabang','isp_invoice.cab_id','=','isp_cabang.cab_id','left')->where('isp_cabang.mitra','=',$request->mitra);
+            }
 
             $total = $total->sum('price_with_tax');
             $dibayar = $dibayar->sum('price_with_tax');

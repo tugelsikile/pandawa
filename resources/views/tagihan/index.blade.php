@@ -88,9 +88,10 @@
             var cab_id  = $('div.toolbar select.cab-id').length === 0 ? '' : $('div.toolbar select.cab-id').val();
             var is_active = $('div.toolbar select.is-active').length === 0 ? '' : $('div.toolbar select.is-active').val();
             var is_paid = $('div.toolbar select.inv-paid').length === 0 ? '' : $('div.toolbar select.inv-paid').val();
+            var mitra   = $('div.toolbar select.mitra').length === 0 ? '' : $('div.toolbar select.mitra').val();
             var token   = '{{ csrf_token() }}';
             var url     = '{{ url('admin-tagihan/informasi') }}'
-            tagihanInformasi(url,token,bulan,tahun,cab_id,npwp,is_active,is_paid);
+            tagihanInformasi(url,token,bulan,tahun,cab_id,npwp,is_active,is_paid,mitra);
         }
         var table = $('#dataTable').dataTable({
             "drawCallback": function( settings ) {
@@ -161,6 +162,7 @@
                 "type"  : "POST",
                 "data"  : function (d) {
                     d._token    = '{{ csrf_token() }}';
+                    d.mitra         = $('div.toolbar select.mitra') ? $('div.toolbar select.mitra').val() : null;
                     @if(Auth::user()->cab_id)
                         d.cab_id    = '{{ Auth::user()->cab_id }}';
                     @else
