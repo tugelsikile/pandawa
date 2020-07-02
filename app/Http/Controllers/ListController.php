@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Repositories\CabangRepositories;
 use App\Repositories\CustomerRepositories;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -11,12 +12,24 @@ class ListController extends Controller
 {
     protected $customerRepository;
     protected $regionalRepository;
+    protected $cabangRepository;
 
     public function __construct(
         CustomerRepositories $customerRepositories
     )
     {
         $this->customerRepository = $customerRepositories;
+        $this->cabangRepository = new CabangRepositories();
+    }
+
+    public function ListCabang(Request $request){
+        $data = [];
+        try{
+            $data = $this->cabangRepository->all($request);
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return format(1000,'OK',$data);
     }
 
     public function CustomersCabang(Request $request){

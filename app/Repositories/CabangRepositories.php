@@ -7,19 +7,21 @@ use App\{
 };
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Mockery\Exception;
+use Exception;
 use Illuminate\Support\Facades\Log;
 
 class CabangRepositories{
-    public function all(){
+    public function all($request=false){
         try{
             if (strlen(Auth::user()->cab_id)>0){
-                $data = Cabang::where(['status'=>1,'cab_id'=>Auth::user()->cab_id])->get();
+                $data = Cabang::where(['status'=>1,'cab_id'=>Auth::user()->cab_id]);
             } else {
-                $data = Cabang::where(['status'=>1])->get();
+                $data = Cabang::where(['status'=>1]);
             }
-        }catch (\Exception $exception){
-            throw new \Exception($exception->getMessage());
+            if (isset($request->mitra)) $data = $data->where('mitra','=',$request->mitra);
+            $data = $data->get();
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
         }
         return $data;
     }

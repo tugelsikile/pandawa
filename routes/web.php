@@ -38,7 +38,7 @@ Route::group(['middleware'=>['auth','systemAccess']],function (){
     Route::get('/home', 'HomeController@index')->name('home');
 
     Route::group(['prefix'=>'lists'],function (){
-        Route::post('/cabang','ListController@cabang');
+        Route::post('/cabang','ListController@ListCabang');
         Route::post('/members','ListController@members');
         Route::post('/produk-cabang','ProdukController@getCabangProduk');
     });

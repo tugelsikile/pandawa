@@ -16,6 +16,7 @@ class VerifyCsrfToken extends Middleware
         'preview-harga',
         'preview-id-pelanggan',
         'lists/produk-cabang',
+        'lists/cabang',
         'admin-produk/kode-produk'
     ];
 }

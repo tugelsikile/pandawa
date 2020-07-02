@@ -98,9 +98,14 @@
                 if ($('div.toolbar .dt-buttons .float-right').length == 0){
                     $('div.toolbar .dt-buttons').append('' +
                         '<div class="float-right d-none d-md-block col-sm-3 pr-0">' +
+                            '<select name="mitra" onchange="cari_mitra()" class="mb-2 mitra custom-select custom-select-sm form-control form-control-sm">' +
+                                '<option value="">=== Cabang / Mitra ===</option>' +
+                                '<option value="1">Mitra</option>' +
+                                '<option value="0">Cabang</option>' +
+                            '</select>' +
                             '<select name="nama_cabang" onchange="table._fnDraw();" class="mb-2 cab-id custom-select custom-select-sm form-control form-control-sm">' +
                                 @if(strlen(Auth::user()->cab_id)==0)
-                                    '<option value="">=== Semua Cabang ===</option>' +
+                                    '<option value="">=== Semua Cabang / Mitra ===</option>' +
                                 @endif
                                 @if($cabangs)
                                     @foreach($cabangs as $key => $cabang)
@@ -244,6 +249,26 @@
                 }
             ]
         });
+        function cari_mitra() {
+            var mitra   = $('.mitra').val();
+            $.ajax({
+                url     : '{{ url('lists/cabang') }}',
+                type    : 'POST',
+                dataType: 'JSON',
+                data    : { mitra : mitra, _token : '{{ csrf_token() }}' },
+                error   : function (e) {
+                    $('.cab-id').html('<option value="">Error</option>');
+                    table._fnDraw();
+                },
+                success : function (e) {
+                    $('.cab-id').html('<option value="">=== Semua Cabang / Mitra ===</option>');
+                    $.each(e.params,function (i,v) {
+                        $('.cab-id').append('<option value="'+v.cab_id+'">'+v.cab_name+'</option>');
+                    });
+                    table._fnDraw();
+                }
+            })
+        }
     </script>
 
 @endsection

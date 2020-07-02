@@ -28,7 +28,7 @@ Route::group(['prefix'=>'tagihan'],function (){
 
 Route::group(['prefix'=>'lists'],function (){
     Route::post('/customers','ListController@CustomersCabang');
-    Route::post('/cabang','ListController@cabang');
+    Route::post('/cabang','ListController@Cabang');
     Route::post('/members','ListController@members');
     Route::post('/produk-cabang','ProdukController@getCabangProduk');
 });

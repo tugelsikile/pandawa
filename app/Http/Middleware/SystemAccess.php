@@ -19,10 +19,12 @@ class SystemAccess
         if (!auth()->user()){
             abort(403);
         } else {
+            $exclusion = ['home','lists'];
             $currentRoute = str_replace('-','_',$request->path());
             $currentRoute = explode('/',$currentRoute);
             $currentRoute = $currentRoute[0];
-            if ($currentRoute != 'home'){
+            if (!in_array($currentRoute,$exclusion)){
+            //if ($currentRoute != 'home'){
                 $lvl_id = auth()->user()->level;
                 $privileges = UserPriviledges::where('lvl_id','=',$lvl_id)
                     ->join('isp_controllers','isp_user_priviledges.ctrl_id','=','isp_controllers.ctrl_id','left')
