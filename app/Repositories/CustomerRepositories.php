@@ -61,7 +61,7 @@ class CustomerRepositories{
             throw new Exception($exception->getMessage());
         }
         $logs = Auth::user()->name.' menghapus data produk.';
-        //Log::channel('customLog')->warning($logs,['params'=>sanitize($request)]);
+        Log::channel('customLog')->warning($logs,['params'=>sanitize($request)]);
         return $request;
     }
     public function deletePackageID(Request $request){
@@ -71,7 +71,7 @@ class CustomerRepositories{
             throw new Exception($exception->getMessage());
         }
         $logs = Auth::user()->name.' menghapus data produk.';
-        //Log::channel('customLog')->warning($logs,['params'=>sanitize($request)]);
+        Log::channel('customLog')->warning($logs,['params'=>sanitize($request)]);
         return $request;
     }
     public function recordsTotal(Request $request){
@@ -148,7 +148,7 @@ class CustomerRepositories{
             throw new Exception($exception->getMessage());
         }
         $logs = Auth::user()->name.' membaca data customer';
-        //Log::channel('customLog')->info($logs,['params'=>sanitize($request)]);
+        Log::channel('customLog')->info($logs,['params'=>sanitize($request)]);
         return $data;
     }
     public function PreviewID($cabID,$kecID=false,$kabID=false,$provID=false){
@@ -219,7 +219,7 @@ class CustomerRepositories{
             throw new Exception($exception->getMessage());
         }
         $logs = Auth::user()->name.' menambahkan data customer '.$data->fullname;
-        //Log::channel('customLog')->notice($logs,['params'=>sanitize($request)]);
+        Log::channel('customLog')->notice($logs,['params'=>sanitize($request)]);
         return $request;
     }
     public function update(Request $request){
@@ -273,7 +273,7 @@ class CustomerRepositories{
             throw new Exception($exception->getMessage());
         }
         $logs = Auth::user()->name.' merubah data customer '.$data->fullname;
-        //Log::channel('customLog')->notice($logs,['params'=>sanitize($request)]);
+        Log::channel('customLog')->notice($logs,['params'=>sanitize($request)]);
         return $request;
     }
     public function delete(Request $request){
@@ -285,7 +285,7 @@ class CustomerRepositories{
             throw new Exception($exception->getMessage());
         }
         $logs = Auth::user()->name.' menghapus data customer';
-        //Log::channel('customLog')->warning($logs,['params'=>sanitize($request)]);
+        Log::channel('customLog')->warning($logs,['params'=>sanitize($request)]);
         return $request;
     }
     public function bulkDelete(Request $request){
@@ -299,7 +299,7 @@ class CustomerRepositories{
             throw new Exception($exception->getMessage());
         }
         $logs = Auth::user()->name.' menghapus banyak data customer.';
-        //Log::channel('customLog')->warning($logs,['params'=>sanitize($request)]);
+        Log::channel('customLog')->warning($logs,['params'=>sanitize($request)]);
         return $request;
     }
     public function setStatus(Request $request){
@@ -316,7 +316,7 @@ class CustomerRepositories{
             throw new Exception($exception->getMessage());
         }
         $logs = Auth::user()->name.' mengupdate status customer';
-        //Log::channel('customLog')->warning($logs,['params'=>sanitize($request)]);
+        Log::channel('customLog')->warning($logs,['params'=>sanitize($request)]);
         return $request;
     }
     public function CustomersCabang(Request $request){

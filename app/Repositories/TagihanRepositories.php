@@ -33,7 +33,7 @@ class TagihanRepositories{
             throw new Exception($exception->getMessage());
         }
         $logs = Auth::user()->name.' menambahkan data tagihan manual.' . $data->inv_number;
-        //Log::channel('customLog')->notice($logs,['params'=>sanitize($request)]);
+        Log::channel('customLog')->notice($logs,['params'=>sanitize($request)]);
         return $request;
     }
     public function GenInvoiceGetCustomer(Request $request){
@@ -57,7 +57,7 @@ class TagihanRepositories{
             throw new Exception($exception->getMessage());
         }
         $logs = Auth::user()->name.' menambahkan data tagihan otomatis.' . $data->inv_number;
-        //Log::channel('customLog')->notice($logs,['params'=>sanitize($request)]);
+        Log::channel('customLog')->notice($logs,['params'=>sanitize($request)]);
         return $request;
     }
     public function minYear(Request $request){
@@ -167,7 +167,7 @@ class TagihanRepositories{
             throw new Exception($exception->getMessage());
         }
         $logs = Auth::user()->name.' membaca data tagihan.';
-        //Log::channel('customLog')->info($logs,['params'=>sanitize($request)]);
+        Log::channel('customLog')->info($logs,['params'=>sanitize($request)]);
         return $data;
     }
     public function recordsFiltered(Request $request){
@@ -280,7 +280,7 @@ class TagihanRepositories{
             throw new Exception($exception->getMessage());
         }
         $logs = Auth::user()->name.' mengcancel tagihan. '.$data->inv_number;
-        //Log::channel('customLog')->warning($logs,['params'=>sanitize($request)]);
+        Log::channel('customLog')->warning($logs,['params'=>sanitize($request)]);
         return $request;
     }
     public function Approval(Request $request){
@@ -295,7 +295,7 @@ class TagihanRepositories{
             throw new Exception($exception->getMessage());
         }
         $logs = Auth::user()->name.' mengapprove tagihan. '.$data->inv_number;
-        //Log::channel('customLog')->warning($logs,['params'=>sanitize($request)]);
+        Log::channel('customLog')->warning($logs,['params'=>sanitize($request)]);
         return $request;
     }
     public function update(Request $request){
