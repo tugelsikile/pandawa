@@ -13,7 +13,7 @@ class AddCabIdToCustomerTable extends Migration
      */
     public function up()
     {
-        DB::table('isp_customer')->where(['pas_date'=>'0000-00-00'])->update(array('pas_date' => null));
+        //DB::table('isp_customer')->where(['pas_date'=>'0000-00-00'])->update(array('pas_date' => null));
         Schema::table('isp_customer', function (Blueprint $table) {
             $table->bigInteger('cab_id',false,true)->nullable();
             $table->foreign('cab_id')->on('isp_cabang')->references('cab_id')->onDelete('cascade')->onUpdate('no action');
