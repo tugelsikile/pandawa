@@ -13,8 +13,8 @@ class AddingCabIdToInvoiceTable extends Migration
      */
     public function up()
     {
-        DB::table('isp_invoice')->where(['inv_date'=>'0000-00-00'])->update(array('inv_date' => null));
-        DB::table('isp_invoice')->where(['due_date'=>'0000-00-00'])->update(array('due_date' => null));
+        /*DB::table('isp_invoice')->where(['inv_date'=>'0000-00-00'])->update(array('inv_date' => null));
+        DB::table('isp_invoice')->where(['due_date'=>'0000-00-00'])->update(array('due_date' => null));*/
         Schema::table('isp_invoice', function (Blueprint $table) {
             $table->bigInteger('cab_id',false,true)->nullable()->after('cust_id');
             $table->foreign('cab_id')->on('isp_cabang')->references('cab_id')->onDelete('cascade')->onUpdate('no action');
