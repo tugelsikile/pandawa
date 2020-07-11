@@ -195,7 +195,7 @@ class CabangController extends Controller
                         ->select(['isp_customer.cust_id','isp_customer.fullname','isp_customer.cab_id','isp_customer.kode'])
                         ->where(['isp_customer.status'=>1,'isp_customer.is_active'=>1])
                         ->orderBy('isp_customer.cab_id','asc')->orderBy('isp_customer.fullname','asc');
-                    if (strlen($cab_id)>0) $customers = $customers->where('cab_id','=',$cab_id);
+                    if (strlen($cab_id)>0) $customers = $customers->where('isp_customer.cab_id','=',$cab_id);
                     if (strlen($mitra)>0) $customers = $customers->where('isp_cabang.mitra','=',$mitra);
                     if (strlen($jenis)>0) $customers = $customers->where('isp_customer.jenis_layanan','=',$jenis);
                     $customers  = $customers->get();
@@ -238,7 +238,7 @@ class CabangController extends Controller
                         ->select(['isp_customer.cust_id','isp_customer.fullname','isp_customer.cab_id','isp_customer.kode'])
                         ->where(['isp_customer.status'=>1,'isp_customer.is_active'=>1])
                         ->orderBy('isp_customer.cab_id','asc')->orderBy('isp_customer.fullname','asc');
-                    if (strlen($cab_id)>0) $customers = $customers->where('cab_id','=',$cab_id);
+                    if (strlen($cab_id)>0) $customers = $customers->where('isp_customer.cab_id','=',$cab_id);
                     if (strlen($mitra)>0) $customers = $customers->where('isp_cabang.mitra','=',$mitra);
                     if (strlen($jenis)>0) $customers = $customers->where('isp_customer.jenis_layanan','=',$jenis);
                     $customers  = $customers->get();
