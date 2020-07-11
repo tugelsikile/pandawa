@@ -188,11 +188,16 @@ class CabangController extends Controller
                 $total_tagihan = 0;
                 try{
                     $cab_id     = $request->post('nama_cabang');
+                    $mitra      = $request->mitra;
+                    $jenis      = $request->jenis;
                     $customers  = DB::table('isp_customer')
-                        ->select(['cust_id','fullname','cab_id','kode'])
-                        ->where(['status'=>1,'is_active'=>1])
-                        ->orderBy('cab_id','asc')->orderBy('fullname','asc');
+                        ->join('isp_cabang','isp_customer.cab_id','=','isp_cabang.cab_id','left')
+                        ->select(['isp_customer.cust_id','isp_customer.fullname','isp_customer.cab_id','isp_customer.kode'])
+                        ->where(['isp_customer.status'=>1,'isp_customer.is_active'=>1])
+                        ->orderBy('isp_customer.cab_id','asc')->orderBy('isp_customer.fullname','asc');
                     if (strlen($cab_id)>0) $customers = $customers->where('cab_id','=',$cab_id);
+                    if (strlen($mitra)>0) $customers = $customers->where('isp_cabang.mitra','=',$mitra);
+                    if (strlen($jenis)>0) $customers = $customers->where('isp_customer.jenis_layanan','=',$jenis);
                     $customers  = $customers->get();
                     $customers->map(function ($customer,$index) use ($customers){
                         $tagihan = DB::table('isp_invoice')
@@ -226,11 +231,16 @@ class CabangController extends Controller
             if ($request->method()=='POST'){ abort(403); } else {
                 try{
                     $cab_id     = $request->id;
+                    $mitra      = $request->mitra == 'undefined' ? null : $request->mitra;
+                    $jenis      = $request->jenis == 'undefined' ? null : $request->jenis;
                     $customers  = DB::table('isp_customer')
-                        ->select(['cust_id','fullname','cab_id','kode'])
-                        ->where(['status'=>1,'is_active'=>1])
-                        ->orderBy('cab_id','asc')->orderBy('fullname','asc');
+                        ->join('isp_cabang','isp_customer.cab_id','=','isp_cabang.cab_id','left')
+                        ->select(['isp_customer.cust_id','isp_customer.fullname','isp_customer.cab_id','isp_customer.kode'])
+                        ->where(['isp_customer.status'=>1,'isp_customer.is_active'=>1])
+                        ->orderBy('isp_customer.cab_id','asc')->orderBy('isp_customer.fullname','asc');
                     if (strlen($cab_id)>0) $customers = $customers->where('cab_id','=',$cab_id);
+                    if (strlen($mitra)>0) $customers = $customers->where('isp_cabang.mitra','=',$mitra);
+                    if (strlen($jenis)>0) $customers = $customers->where('isp_customer.jenis_layanan','=',$jenis);
                     $customers  = $customers->get();
                     $customers->map(function ($customer,$index) use ($customers){
                         $jmlTag = DB::table('isp_invoice')

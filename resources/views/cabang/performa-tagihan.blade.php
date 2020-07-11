@@ -78,7 +78,7 @@
                             @endif
                             @if($cabangs)
                                 @foreach($cabangs as $key => $cabang)
-                                '<option @if($request->id == $cabang->cab_id) selected @endif value="{{$cabang->cab_id}}">{{$cabang->cab_name}}</option>' +
+                                    '<option @if($request->id == $cabang->cab_id) selected @endif value="{{$cabang->cab_id}}">{{$cabang->cab_name}}</option>' +
                                 @endforeach
                             @endif
                             '</select>' +
@@ -104,7 +104,7 @@
                     className   : 'btn btn-sm btn-primary',
                     text        : '<i class="fa fa-download"></i> Download Excel',
                     action      : function () {
-                        var url = '{{ url('admin-cabang/download-performa-tagihan') }}?id=' + $('.cab-id').val();
+                        var url = '{{ url('admin-cabang/download-performa-tagihan') }}?id=' + $('.cab-id').val() + '&mitra=' + $('.mitra').val() + '&jenis='+$('jenis').val();
                         window.open(url,'_blank');
                     }
                 }
