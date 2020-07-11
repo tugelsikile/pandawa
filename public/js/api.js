@@ -2,7 +2,7 @@ function Kabupaten(regencyID){
     $('#nama_kabupaten').html('<option value=""></option>');
     var province_id = $('#nama_provinsi').val();
     $.ajax({
-        url         : '/api/regional/kabupaten',
+        url         : APP_URL + '/api/regional/kabupaten',
         type        : 'POST',
         dataType    : 'JSON',
         data        : { province_id : province_id },
@@ -32,7 +32,7 @@ function Kecamatan(districtID){
     $('#nama_kecamatan').html('<option value=""></option>');
     var regency_id = $('#nama_kabupaten').val();
     $.ajax({
-        url         : '/api/regional/kecamatan',
+        url         : APP_URL + '/api/regional/kecamatan',
         type        : 'POST',
         dataType    : 'JSON',
         data        : { regency_id : regency_id },
@@ -62,7 +62,7 @@ function Desa(villageID){
     $('#nama_desa').html('<option value=""></option>');
     var district_id = $('#nama_kecamatan').val();
     $.ajax({
-        url         : '/api/regional/desa',
+        url         : APP_URL + '/api/regional/desa',
         type        : 'POST',
         dataType    : 'JSON',
         data        : { district_id : district_id },
@@ -88,7 +88,7 @@ function Desa(villageID){
 function previewNomorInvoice(string,pad,targetElement) {
     $('#'+targetElement).val('Loading...');
     $.ajax({
-        url     : '/api/preview-template-invoice',
+        url     : APP_URL + '/api/preview-template-invoice',
         type    : 'POST',
         dataType: 'JSON',
         data    : { string : string, padding : pad },
