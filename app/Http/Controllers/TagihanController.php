@@ -151,7 +151,7 @@ class TagihanController extends Controller
             $judul_laporan = 'laporan ';
             strlen($request->bulan_tagihan)>0 ? $judul_laporan .= ' bulan '.bulanIndo($request->bulan_tagihan) : false;
             strlen($request->tahun_tagihan)>0 ? $judul_laporan .= ' tahun ' . $request->tahun_tagihan : false;
-            strlen($request->nama_cabang)>0 ? $judul_laporan .= '<br>cabang '.$this->cabangRepositories->getByID($request->nama_cabang)->cab_name : false;
+            strlen($request->nama_cabang)>0 ? $judul_laporan .= '<br>cabang '.$this->cabangRepositories->getByID($request->nama_cabang)->first()->cab_name : false;
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
