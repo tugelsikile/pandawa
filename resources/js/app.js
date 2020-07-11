@@ -20,7 +20,7 @@ require('../../vendor/eternicode/bootstrap-datepicker/dist/js/bootstrap-datepick
 require('../../node_modules/summernote/dist/summernote');
 require('../../node_modules/summernote/dist/summernote-bs4.min');
 require('../../node_modules/bootstrap4-toggle/js/bootstrap4-toggle.min');
-
+let APP_URL = process.env.APP_URL;
 window.Vue = require('vue');
 
 /**
