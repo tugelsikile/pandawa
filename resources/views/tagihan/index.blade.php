@@ -89,9 +89,10 @@
             var is_active = $('div.toolbar select.is-active').length === 0 ? '' : $('div.toolbar select.is-active').val();
             var is_paid = $('div.toolbar select.inv-paid').length === 0 ? '' : $('div.toolbar select.inv-paid').val();
             var mitra   = $('div.toolbar select.mitra').length === 0 ? '' : $('div.toolbar select.mitra').val();
+            var jenis   = $('.jenis-layanan').val();
             var token   = '{{ csrf_token() }}';
             var url     = '{{ url('admin-tagihan/informasi') }}'
-            tagihanInformasi(url,token,bulan,tahun,cab_id,npwp,is_active,is_paid,mitra);
+            tagihanInformasi(url,token,bulan,tahun,cab_id,npwp,is_active,is_paid,mitra,jenis);
         }
         var table = $('#dataTable').dataTable({
             "drawCallback": function( settings ) {
@@ -123,6 +124,13 @@
                                 '<option value="">=== Status Aktif ===</option>' +
                                 '<option value="1">Pelanggan Aktif</option>' +
                                 '<option value="0">Pelanggan Non Aktif</option>' +
+                            '</select>' +
+                            '<select name="jenis" onchange="table._fnDraw();" class="mb-2 jenis-layanan custom-select custom-select-sm form-control form-control-sm">' +
+                                '<option value="">=== Semua Jenis Layanan ===</option>' +
+                                @forelse($jenis as $item)
+                                    '<option value="{{$item->id}}">{{$item->name}}</option>' +
+                                @empty
+                                @endforelse
                             '</select>' +
                         '</div>' +
                         '<div class="float-right d-none d-md-block col-sm-3 pr-0">' +
@@ -181,6 +189,7 @@
                     } else {
                         d.inv_year = $('div.toolbar select.inv-year').val();
                     }
+                    d.jenis_layanan = $('.jenis-layanan').val();
                 }
             },
             buttons         : [

@@ -37,12 +37,17 @@ class TagihanController extends Controller
     }
 
     public function index(Request $request){
-        $curMenu = $this->curMenu;
-        $privs = $this->privileges->checkPrivs(Auth::user()->level,$this->curMenu);
-        $cabangs    = $this->cabangRepositories->all();
-        $menus = $this->menuRepositories->getMenu(Auth::user()->level);
-        $minTahun = $this->tagihanRepositories->minYear($request);
-        return view('tagihan.index',compact('cabangs','curMenu','privs','menus','minTahun'));
+        try{
+            $curMenu = $this->curMenu;
+            $privs = $this->privileges->checkPrivs(Auth::user()->level,$this->curMenu);
+            $cabangs    = $this->cabangRepositories->all();
+            $menus = $this->menuRepositories->getMenu(Auth::user()->level);
+            $minTahun = $this->tagihanRepositories->minYear($request);
+            $jenis = $this->customerRepositories->getAllJenisLayanan();
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return view('tagihan.index',compact('jenis','cabangs','curMenu','privs','menus','minTahun'));
     }
     public function table(Request $request){
         $response = ['draw'=>$request->draw,'data'=>[],'recordsFiltered'=>0,'recordsTotal'=>0];
@@ -165,7 +170,7 @@ class TagihanController extends Controller
             $judul_laporan = 'laporan ';
             strlen($request->bulan_tagihan)>0 ? $judul_laporan .= ' bulan '.bulanIndo($request->bulan_tagihan) : false;
             strlen($request->tahun_tagihan)>0 ? $judul_laporan .= ' tahun ' . $request->tahun_tagihan : false;
-            strlen($request->nama_cabang)>0 ? $judul_laporan .= '<br>cabang '.$this->cabangRepositories->getByID($request->nama_cabang)->cab_name : false;
+            strlen($request->nama_cabang)>0 ? $judul_laporan .= '<br>cabang '.$this->cabangRepositories->getByID($request->nama_cabang)->first()->cab_name : false;
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
@@ -253,6 +258,11 @@ class TagihanController extends Controller
                 $total = $total->join('isp_cabang','isp_invoice.cab_id','=','isp_cabang.cab_id','left')->where('isp_cabang.mitra','=',$request->mitra);
                 $dibayar = $dibayar->join('isp_cabang','isp_invoice.cab_id','=','isp_cabang.cab_id','left')->where('isp_cabang.mitra','=',$request->mitra);
                 $tunggak = $tunggak->join('isp_cabang','isp_invoice.cab_id','=','isp_cabang.cab_id','left')->where('isp_cabang.mitra','=',$request->mitra);
+            }
+            if (strlen($request->jenis)>0){
+                $total = $total->where('isp_customer.jenis_layanan','=',$request->jenis);
+                $dibayar = $dibayar->where('isp_customer.jenis_layanan','=',$request->jenis);
+                $tunggak = $tunggak->where('isp_customer.jenis_layanan','=',$request->jenis);
             }
 
             $total = $total->sum('price_with_tax');

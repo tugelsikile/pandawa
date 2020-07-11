@@ -2,7 +2,7 @@
 
 return [
 
-    'version' => '11072020-1500 (bug fix filter mitra pada cetak laporan tagihan)',
+    'version' => '11072020-1500 (bug fix filter tagihan jenis layanan)',
     /*
     |--------------------------------------------------------------------------
     | Application Name

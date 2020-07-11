@@ -81,6 +81,7 @@ class TagihanRepositories{
                 ->select(['isp_customer.npwp','isp_customer.fullname','isp_invoice.inv_number','isp_invoice.inv_date','isp_invoice.price','isp_invoice.price_with_tax','isp_invoice.is_paid']);
             if (strlen($request->bulan_tagihan)>0) $data = $data->whereMonth('inv_date',$request->bulan_tagihan);
             if (strlen($request->tahun_tagihan)>0) $data = $data->whereYear('inv_date',$request->tahun_tagihan);
+            if (strlen($request->jenis)>0) $data = $data->where('isp_customer.jenis_layanan',$request->jenis);
             if (strlen($request->mitra)>0){
                 $data = $data->join('isp_cabang','isp_customer.cab_id','isp_cabang.cab_id','left')
                     ->where('isp_cabang.mitra','=',$request->mitra);
@@ -109,18 +110,13 @@ class TagihanRepositories{
             $invYear    = $request->inv_year;
             $isPaid     = $request->inv_paid;
             $mitra      = $request->mitra;
+            $jenis      = $request->jenis_layanan;
 
             $where      = [
                 'isp_invoice.status' => 1,
                 'isp_customer.status' => 1
             ];
             if (strlen($cab_id)>0) $where['isp_invoice.cab_id'] = $cab_id;
-            /*if (strlen($isActive)>0) {
-                $where['isp_customer.is_active'] = $isActive;
-                if ($isActive==0){
-                    $where['isp_customer.nonactive_date'] =
-                }
-            }*/
             if (strlen($npwp)>0) $where['isp_customer.npwp'] = $npwp;
             if (strlen($isPaid)>0) $where['isp_invoice.is_paid'] = $isPaid;
 
@@ -143,6 +139,7 @@ class TagihanRepositories{
             }
             if (strlen($invMonth)>0) $data = $data->whereMonth('isp_invoice.inv_date','=',$invMonth);
             if (strlen($invYear)>0) $data = $data->whereYear('isp_invoice.inv_date','=',$invYear);
+            if (strlen($jenis)>0) $data = $data->where('isp_customer.jenis_layanan','=',$jenis);
             $data       = $data->where(function ($q) use ($keyword){
                     $q->where('isp_invoice.inv_number','like',"%$keyword%");
                     $q->orWhere('isp_customer.fullname','like',"%$keyword%");
@@ -185,7 +182,7 @@ class TagihanRepositories{
             $invYear    = $request->inv_year;
             $isPaid     = $request->inv_paid;
             $mitra      = $request->mitra;
-
+            $jenis      = $request->jenis_layanan;
             $where      = [
                 'isp_invoice.status' => 1,
                 'isp_customer.status' => 1
@@ -206,6 +203,7 @@ class TagihanRepositories{
             }
             if (strlen($invMonth)>0) $data = $data->where(DB::raw('MONTH(isp_invoice.inv_date)'),$invMonth);
             if (strlen($invYear)>0) $data = $data->where(DB::raw('YEAR(isp_invoice.inv_date)'),$invYear);
+            if (strlen($jenis)>0) $data = $data->where('isp_customer.jenis_layanan','=',$jenis);
             $data       = $data->where(function ($q) use ($keyword){
                 $q->where('isp_invoice.inv_number','like',"%$keyword%");
                 $q->orWhere('isp_customer.fullname','like',"%$keyword%");
@@ -226,6 +224,7 @@ class TagihanRepositories{
             $invYear    = $request->inv_year;
             $isPaid     = $request->inv_paid;
             $mitra      = $request->mitra;
+            $jenis      = $request->jenis_layanan;
 
             $where      = [
                 'isp_invoice.status' => 1,
@@ -247,6 +246,7 @@ class TagihanRepositories{
             }
             if (strlen($invMonth)>0) $data = $data->where(DB::raw('MONTH(isp_invoice.inv_date)'),$invMonth);
             if (strlen($invYear)>0) $data = $data->where(DB::raw('YEAR(isp_invoice.inv_date)'),$invYear);
+            if (strlen($jenis)>0) $data = $data->where('isp_customer.jenis_layanan','=',$jenis);
             $data = $data->select(['isp_invoice.inv_id'])
                 ->get()->count();
         }catch (Exception $exception){
