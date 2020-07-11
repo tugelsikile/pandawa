@@ -446,7 +446,7 @@ function getKab(obj,defaultRegencyID){
     var prov_id = $(obj).val();
     $('.regency_id').html('<option value="">Loading...</option>');
     $.ajax({
-        url     : '/regional/get-kab',
+        url     : '/api/regional/get-kab',
         type    : 'GET',
         dataType: 'JSON',
         data    : { id : prov_id },
@@ -476,7 +476,7 @@ function getKabPenagihan(kabID) {
     var prov_id = $('#provinsi_penagihan').val();
     $('#kabupaten_penagihan,#kecamatan_penagihan,#desa_penagihan').html('<option value="">Loading...</option>');
     $.ajax({
-        url     : '/regional/get-kab',
+        url     : '/api/regional/get-kab',
         type    : 'GET',
         dataType: 'JSON',
         data    : { id : prov_id },
@@ -506,7 +506,7 @@ function getKec(obj,defaultDistrictID) {
     var kab_id = $(obj).val();
     $('.district_id').html('<option value="">Loading...</option>');
     $.ajax({
-        url     : '/regional/get-kec',
+        url     : '/api/regional/get-kec',
         type    : 'GET',
         dataType: 'JSON',
         data    : { id : kab_id },
@@ -536,7 +536,7 @@ function getKecPenagihan(kecID){
     var kab_id = $('#kabupaten_penagihan').val();
     $('#kecamatan_penagihan,#desa_penagihan').html('<option value="">Loading...</option>');
     $.ajax({
-        url     : '/regional/get-kec',
+        url     : '/api/regional/get-kec',
         type    : 'GET',
         dataType: 'JSON',
         data    : { id : kab_id },
@@ -566,7 +566,7 @@ function getDesa(obj,defaultDesaID) {
     var kab_id = $(obj).val();
     $('.village_id').html('<option value="">Loading...</option>');
     $.ajax({
-        url     : '/regional/get-desa',
+        url     : '/api/regional/get-desa',
         type    : 'GET',
         dataType: 'JSON',
         data    : { id : kab_id },
@@ -593,7 +593,7 @@ function getDesaPenagihan(desaID){
     var kec_id = $('#kecamatan_penagihan').val();
     $('#desa_penagihan').html('<option value="">Loading...</option>');
     $.ajax({
-        url     : '/regional/get-desa',
+        url     : '/api/regional/get-desa',
         type    : 'GET',
         dataType: 'JSON',
         data    : { id : kec_id },
