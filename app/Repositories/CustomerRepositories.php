@@ -7,12 +7,61 @@ use App\Customer;
 use App\Desa;
 use App\Invoice;
 use App\Produk;
+use App\JenisLayanan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Mockery\Exception;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 class CustomerRepositories{
+    public function deleteJenisLayanan(Request $request){
+        try{
+            $data = JenisLayanan::where(['id'=>$request->id])->delete();
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return $request;
+    }
+    public function updateJenisLayanan(Request $request){
+        try{
+            $data = JenisLayanan::where('id','=',$request->data_jenis_layanan)->get()->first();
+            $data->name = $request->nama_jenis_layanan;
+            $data->save();
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return $request;
+    }
+    public function createJenisLayanan(Request $request){
+        try{
+            $data   = new JenisLayanan();
+            $data->name = $request->nama_jenis_layanan;
+            $data->saveOrFail();
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return $request;
+    }
+    public function getAllJenisLayanan(){
+        try{
+            $data = JenisLayanan::all();
+            $data->map(function ($data){
+                $data->count = $data->customer;
+                return $data;
+            });
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return $data;
+    }
+    public function getJenisLayanan($request){
+        try{
+            $data = JenisLayanan::where($request)->get();
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return $data;
+    }
     public function getForGenerate(Request $request){
         try{
             $invDate = $request->tahun_tagihan.'-'.$request->bulan_tagihan.'-01';
@@ -124,21 +173,27 @@ class CustomerRepositories{
             $cab_id     = $request->post('cab_id');
             $is_active  = $request->post('is_active');
             $npwp       = $request->post('npwp');
-            $where      = ['status'=>1];
-            if (strlen($cab_id)>0) $where['cab_id'] = $cab_id;
-            if (strlen($is_active)>0) $where['is_active'] = $is_active;
-            if (strlen($npwp)>0) $where['npwp'] = $npwp;
+            $mitra      = $request->post('mitra');
+            $jenis      = $request->post('jenis_layanan');
+
+            $where      = ['isp_customer.status'=>1];
+            if (strlen($cab_id)>0) $where['isp_customer.cab_id'] = $cab_id;
+            if (strlen($is_active)>0) $where['isp_customer.is_active'] = $is_active;
+            if (strlen($npwp)>0) $where['isp_customer.npwp'] = $npwp;
+            if (strlen($jenis)>0) $where['isp_customer.jenis_layanan'] = $jenis;
             $data = Customer::where($where)
                 ->where(function ($query) use ($keyword){
-                    $query->where('kode','like',"%$keyword%");
-                    $query->orWhere('fullname','like',"%$keyword%");
-                })
-                ->orderBy($orderby,$orderdir)
+                    $query->where('isp_customer.kode','like',"%$keyword%");
+                    $query->orWhere('isp_customer.fullname','like',"%$keyword%");
+                });
+            if (strlen($mitra)>0){
+                $data = $data->join('isp_cabang','isp_customer.cab_id','=','isp_cabang.cab_id','left')->where('isp_cabang.mitra','=',$mitra);
+            }
+            $data = $data->orderBy($orderby,$orderdir)
                 ->limit($length)
-                ->offset($start)
-                ->get();
+                ->offset($start)->get();
             $curDate = date('Y-m-').'01';
-            $data->map(function($data) use ($curDate){
+            $data->map(function($data,$index) use ($curDate,$mitra){
                 $data->cabang  = Cabang::where(['cab_id'=>$data->cab_id,'status'=>1])->get()->first();
                 $data->invoice = Invoice::where(['cust_id'=>$data->cust_id,'status'=>1,'inv_date'=>$curDate])->get()->first();
                 $data->package = Produk::where(['pac_id'=>$data->pac_id,'status'=>1])->get()->first();
@@ -214,6 +269,7 @@ class CustomerRepositories{
             $data->duration     = $request->durasi_berlangganan;
             $data->pas_date     = $request->tanggal_pemasangan;
             $data->from_date    = $request->tanggal_berlangganan;
+            $data->jenis_layanan = $request->nama_jenis_layanan;
             $data->saveOrFail();
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
@@ -268,6 +324,7 @@ class CustomerRepositories{
             $data->duration     = $request->durasi_berlangganan;
             $data->pas_date     = $request->tanggal_pemasangan;
             $data->from_date    = $request->tanggal_berlangganan;
+            $data->jenis_layanan = $request->nama_jenis_layanan;
             $data->saveOrFail();
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());

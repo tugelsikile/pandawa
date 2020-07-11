@@ -43,14 +43,14 @@ class CustomerController extends Controller
     public function index(){
         $curMenu = $this->curMenu;
         $privs   = $this->priviledges->checkPrivs(Auth::user()->level,$this->curMenu);
-
+        $jenisLayanan = $this->customer->getAllJenisLayanan();
         $menus = $this->menuRepositories->getMenu(Auth::user()->level);
         if (strlen(Auth::user()->cab_id)>0){
             $cabangs = $this->cabang->getByID(Auth::user()->cab_id);
         } else {
             $cabangs = $this->cabang->all();
         }
-        return view('customer.index',compact('curMenu','menus','privs','cabangs'));
+        return view('customer.index',compact('jenisLayanan','curMenu','menus','privs','cabangs'));
     }
     public function table(Request $request){
         $response = [ 'draw' => $request->post('draw'), 'data' => [], 'recordsFiltered' => 0, 'recordsTotal' => 0 ];
@@ -75,7 +75,8 @@ class CustomerController extends Controller
         } else {
             $cabangs = $this->cabang->all();
             $provs = Provinces::all();
-            return view('customer.create',compact('provs','cabangs'));
+            $jenis = $this->customer->getAllJenisLayanan();
+            return view('customer.create',compact('jenis','provs','cabangs'));
         }
     }
     public function update(Request $request){
@@ -95,7 +96,8 @@ class CustomerController extends Controller
             $products = $this->produk->getCabangProduk($newReq);
             $cabangs = $this->cabang->all();
             $provs = Provinces::all();
-            return view('customer.update',compact('data','provs','cabangs','products'));
+            $jenis = $this->customer->getAllJenisLayanan();
+            return view('customer.update',compact('jenis','data','provs','cabangs','products'));
         }
     }
     public function delete(Request $request){
@@ -135,5 +137,63 @@ class CustomerController extends Controller
             throw new \Matrix\Exception($exception->getMessage());
         }
         return view('customer.detail',compact('data','curMenu','privs','menus'));
+    }
+    public function jenisLayanan(Request $request){
+        if ($request->method()=='POST'){
+            $response = [ 'draw' => $request->post('draw'), 'data' => [], 'recordsFiltered' => 0, 'recordsTotal' => 0 ];
+            try{
+                $response['data'] = $this->customer->getAllJenisLayanan();
+                $response['recordsFiltered'] = count($response['data']);
+                $response['recordsTotal'] = count($response['data']);
+            }catch (Exception $exception){
+                throw new Exception($exception->getMessage());
+            }
+            return $response;
+        } else {
+            $curMenu = $this->curMenu;
+            $privs   = $this->priviledges->checkPrivs(Auth::user()->level,$this->curMenu);
+            $menus = $this->menuRepositories->getMenu(Auth::user()->level);
+            return view('customer.jenis-layanan.index',compact('curMenu','menus','privs'));
+        }
+    }
+    public function createJenisLayanan(Request $request){
+        if ($request->method()=='POST'){
+            try{
+                $valid  = $this->customerValidation->createJenisLayanan($request);
+                $save   = $this->customer->createJenisLayanan($valid);
+            }catch (Exception $exception){
+                throw new Exception($exception->getMessage());
+            }
+            return format(1000,'Jenis Layanan berhasil dibuat',$save);
+        } else {
+            return view('customer.jenis-layanan.create');
+        }
+    }
+    public function updateJenisLayanan(Request $request){
+        if ($request->method()=='POST'){
+            try{
+                $valid  = $this->customerValidation->updateJenisLayanan($request);
+                $save = $this->customer->updateJenisLayanan($valid);
+            }catch (Exception $exception){
+                throw new Exception($exception->getMessage());
+            }
+            return format(1000,'Jenis layanan berhasil diupdate',$save);
+        } else {
+            try{
+                $data = $this->customer->getJenisLayanan(['id'=>$request->id]);
+            }catch (Exception $exception){
+                throw new Exception($exception->getMessage());
+            }
+            return view('customer.jenis-layanan.update',compact('data'));
+        }
+    }
+    public function deleteJenisLayanan(Request $request){
+        try{
+            $valid  = $this->customerValidation->deleteJenisLayanan($request);
+            $save   = $this->customer->deleteJenisLayanan($valid);
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return format(1000,'Jenis layanan berhasil dihapus',$save);
     }
 }

@@ -101,6 +101,16 @@ Route::group(['middleware'=>['auth','systemAccess']],function (){
             Route::get('/layanan','CustomerDetailController@layanan')->name('admin-customer.details.layanan');
             Route::get('/tagihan','CustomerDetailController@tagihan')->name('admin-customer.details.tagihan');
         });
+
+        Route::group(['prefix'=>'jenis-layanan'],function (){
+            Route::get('/','CustomerController@jenisLayanan');
+            Route::post('/table','CustomerController@jenisLayanan');
+            Route::get('/create','CustomerController@createJenisLayanan');
+            Route::post('/create','CustomerController@createJenisLayanan');
+            Route::get('/update','CustomerController@updateJenisLayanan');
+            Route::post('/update','CustomerController@updateJenisLayanan');
+            Route::post('/delete','CustomerController@deleteJenisLayanan');
+        });
     });
 
     Route::group(['prefix'=>'cabang-customer'],function (){

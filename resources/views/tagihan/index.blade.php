@@ -251,26 +251,6 @@
                 }
             ]
         });
-        function cari_mitra() {
-            var mitra   = $('.mitra').val();
-            $.ajax({
-                url     : '{{ url('lists/cabang') }}',
-                type    : 'POST',
-                dataType: 'JSON',
-                data    : { mitra : mitra, _token : '{{ csrf_token() }}' },
-                error   : function (e) {
-                    $('.cab-id').html('<option value="">Error</option>');
-                    table._fnDraw();
-                },
-                success : function (e) {
-                    $('.cab-id').html('<option value="">=== Semua Cabang / Mitra ===</option>');
-                    $.each(e.params,function (i,v) {
-                        $('.cab-id').append('<option value="'+v.cab_id+'">'+v.cab_name+'</option>');
-                    });
-                    table._fnDraw();
-                }
-            })
-        }
     </script>
 
 @endsection

@@ -7,6 +7,46 @@ use Illuminate\Support\Facades\Validator;
 use Mockery\Exception;
 
 class CustomerValidations{
+    public function deleteJenisLayanan(Request $request){
+        try{
+            $valid = Validator::make($request->all(),[
+                'id' => 'required|numeric|exists:isp_jenis_layanan,id'
+            ]);
+            if ($valid->fails()){
+                throw new Exception(collect($valid->errors()->all())->join('#'));
+            }
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return $request;
+    }
+    public function updateJenisLayanan(Request $request){
+        try{
+            $valid = Validator::make($request->all(),[
+                'data_jenis_layanan' => 'required|numeric|exists:isp_jenis_layanan,id',
+                'nama_jenis_layanan' => 'required|string|unique:isp_jenis_layanan,name,'.$request->data_jenis_layanan.',id'
+            ]);
+            if ($valid->fails()){
+                throw new Exception(collect($valid->errors()->all())->join('#'));
+            }
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return $request;
+    }
+    public function createJenisLayanan(Request $request){
+        try{
+            $valid = Validator::make($request->all(),[
+                'nama_jenis_layanan' => 'required|string|unique:isp_jenis_layanan,name'
+            ]);
+            if ($valid->fails()){
+                throw new Exception(collect($valid->errors()->all())->join('#'));
+            }
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return $request;
+    }
     public function create(Request $request){
         try{
             $valid  = Validator::make($request->all(),[
@@ -44,6 +84,7 @@ class CustomerValidations{
                 'kode_pos_penagihan'    => 'required|numeric',
                 'no_telp_penagihan'     => 'required|numeric',
                 'email_penagihan'       => 'required|email',
+                'nama_jenis_layanan'    => 'required|numeric|exists:isp_jenis_layanan,id',
                 'nama_produk'           => 'required|string|exists:isp_package,pac_id',
                 'alamat_ip'             => 'required|array|min:1',
                 'alamat_ip.*'           => 'required|ip',
@@ -99,6 +140,7 @@ class CustomerValidations{
                 'kode_pos_penagihan'    => 'required|numeric',
                 'no_telp_penagihan'     => 'required|numeric',
                 'email_penagihan'       => 'required|email',
+                'nama_jenis_layanan'    => 'required|numeric|exists:isp_jenis_layanan,id',
                 'nama_produk'           => 'required|string|exists:isp_package,pac_id',
                 'alamat_ip'             => 'required|array|min:1',
                 'alamat_ip.*'           => 'required|ip',

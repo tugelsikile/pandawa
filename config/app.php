@@ -2,7 +2,7 @@
 
 return [
 
-    'version' => '11072020-1220 (grand total performa tagihan)',
+    'version' => '11072020-1500 (jenis layanan pelanggan)',
     /*
     |--------------------------------------------------------------------------
     | Application Name

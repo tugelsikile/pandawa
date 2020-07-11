@@ -217,6 +217,18 @@
     </div>
     <div style="padding-top:20px" class="tab-pane fade show" id="nav-layanan" role="tabpanel" aria-labelledby="nav-layanan-tab">
         <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="nama_jenis_layanan">Jenis Layanan</label>
+            <div class="col-sm-10">
+                <select class="form-control" id="nama_jenis_layanan" name="nama_jenis_layanan">
+                    <option value="">=== Pilih Jenis Layanan ===</option>
+                    @forelse($jenis as $item)
+                        <option @if($data->jenis_layanan == $item->id) selected @endif value="{{$item->id}}">{{$item->name}}</option>
+                    @empty
+                    @endforelse
+                </select>
+            </div>
+        </div>
+        <div class="form-group row">
             <label class="col-sm-2 col-form-label" for="nama_produk">Nama Produk</label>
             <div class="col-sm-10">
                 <select name="nama_produk" id="nama_produk" class="form-control" required>

@@ -46,33 +46,55 @@
                     @endif
                     d.is_active = $('.is-active').val();
                     d.npwp = $('.npwp').val();
+                    d.mitra = $('.mitra').val();
+                    d.jenis_layanan = $('.jenis-layanan').val();
                 }
             },
             "drawCallback"  : function (settings) {
                 if ($('div.toolbar div.float-right').length === 0){
                     $('div.toolbar .dt-buttons').append('' +
                         @if($privs->D_opt == 1 || $privs->U_opt == 1)
-                            '<div class="float-right d-none d-md-block col-sm-3 pr-0">' +
-                                '<select onchange="table._fnDraw()" class="mb-1 cab-id custom-select custom-select-sm form-control form-control-sm">' +
-                            @if(strlen(auth()->user()->cab_id)===0)
-                                    '<option value="">=== Semua Cabang ===</option>' +
-                            @endif
-                            @if($cabangs)
-                                @foreach($cabangs as $key => $cabang)
-                                    '<option @if($cabang->cab_id == auth()->user()->cab_id) selected @endif value="{{ $cabang->cab_id }}">{{ $cabang->cab_name }}</option>' +
-                                @endforeach
-                            @endif
-                                '</select>' +
-                                '<select onchange="table._fnDraw()" class="is-active mb-1 custom-select custom-select-sm form-control form-control-sm">' +
-                                    '<option value="">=== Status Aktif ===</option>' +
-                                    '<option value="1">Aktif</option>' +
-                                    '<option value="0">Non Aktif</option>' +
-                                '</select>' +
-                                '<select onchange="table._fnDraw()" class="npwp mb-1 custom-select custom-select-sm form-control form-control-sm">' +
-                                    '<option value="">=== Status NPWP ===</option>' +
-                                    '<option value="1">Punya NPWP</option>' +
-                                    '<option value="0">Tidak Punya NPWP</option>' +
-                                '</select>' +
+                            '<div class="float-right d-none d-md-block col-sm-6 pr-0">' +
+                                '<div class="row">' +
+                                    '<div class="col-sm-6">' +
+                                        '<select name="mitra" onchange="cari_mitra()" class="mb-1 mitra custom-select custom-select-sm form-control form-control-sm">' +
+                                            '<option value="">=== Cabang / Mitra ===</option>' +
+                                            '<option value="1">Mitra</option>' +
+                                            '<option value="0">Cabang</option>' +
+                                        '</select>' +
+                                        '<select onchange="table._fnDraw()" class="mb-1 cab-id custom-select custom-select-sm form-control form-control-sm">' +
+                                            @if(strlen(auth()->user()->cab_id)===0)
+                                                '<option value="">=== Semua Cabang / Mitra ===</option>' +
+                                            @endif
+                                            @if($cabangs)
+                                                @foreach($cabangs as $key => $cabang)
+                                                    '<option @if($cabang->cab_id == auth()->user()->cab_id) selected @endif value="{{ $cabang->cab_id }}">{{ $cabang->cab_name }}</option>' +
+                                                @endforeach
+                                            @endif
+                                        '</select>' +
+                                    '</div>' +
+                                    '<div class="col-sm-6">' +
+                                        '<select onchange="table._fnDraw()" class="is-active mb-1 custom-select custom-select-sm form-control form-control-sm">' +
+                                            '<option value="">=== Status Aktif ===</option>' +
+                                            '<option value="1">Aktif</option>' +
+                                            '<option value="0">Non Aktif</option>' +
+                                        '</select>' +
+                                        '<select onchange="table._fnDraw()" class="npwp mb-1 custom-select custom-select-sm form-control form-control-sm">' +
+                                            '<option value="">=== Status NPWP ===</option>' +
+                                            '<option value="1">Punya NPWP</option>' +
+                                            '<option value="0">Tidak Punya NPWP</option>' +
+                                        '</select>' +
+                                        '<select onchange="table._fnDraw()" class="jenis-layanan mb-1 custom-select custom-select-sm form-control form-control-sm">' +
+                                            '<option value="">=== Semua Jenis Layanan ===</option>' +
+                                            @if($jenisLayanan)
+                                                @forelse($jenisLayanan as $item)
+                                                    '<option value="{{$item->id}}">{{$item->name}}</option>' +
+                                                @empty
+                                                @endforelse
+                                            @endif
+                                        '</select>' +
+                                    '</div>' +
+                                '</div>' +
                             '</div>' +
                         @endif
                         '');

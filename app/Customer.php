@@ -43,4 +43,7 @@ class Customer extends Model
     public function produk(){
         return $this->hasOne(Produk::class,'pac_id','pac_id');
     }
+    public function jenis_layanan(){
+        return $this->hasOne(JenisLayanan::class,'id','jenis_layanan');
+    }
 }
