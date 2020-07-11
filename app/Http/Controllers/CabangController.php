@@ -94,6 +94,7 @@ class CabangController extends Controller
                 if (!$data){
                     return format(500,'data not found');
                 }
+                $data = $data->first();
                 if (strlen($data->village_id)==0){
                     $village    = new Desa();
                     $village->id = null;
