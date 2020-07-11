@@ -26,6 +26,12 @@
                         </tr>
                         </thead>
                         <tbody></tbody>
+                        <tfoot>
+                        <tr>
+                            <th class="text-right" colspan="3">Grand Total</th>
+                            <th class="text-right grand-total">0</th>
+                        </tr>
+                        </tfoot>
                     </table>
                 </form>
             </div>
@@ -53,7 +59,9 @@
                     @endif
                 }
             },
-            "drawCallback" : function () {
+            "drawCallback" : function (a,b,c,d) {
+                console.log(a.json.total_tagihan);
+                $('.grand-total').html(a.json.total_tagihan);
                 if ($('div.toolbar .float-right').length === 0){
                     $('div.toolbar .dt-buttons').append('' +
                         '<div class="float-right d-none d-md-block col-sm-3 pr-0">' +

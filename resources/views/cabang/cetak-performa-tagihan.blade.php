@@ -46,6 +46,14 @@
                     @endforeach
                 @endif
                 </tbody>
+                @if($keyPage+1===count($customers))
+                    <tfoot>
+                    <tr>
+                        <th colspan="4">Grand Total</th>
+                        <th>{{ $total_tagihan }}</th>
+                    </tr>
+                    </tfoot>
+                @endif
             </table>
         </div>
     @endforeach

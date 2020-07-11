@@ -138,7 +138,7 @@ class CabangController extends Controller
             return view('cabang.performa-tagihan',compact('request','cabangs','curMenu','menus','privs'));
         } else {
             if (!$request->ajax()) abort(403);
-            $response = ['data'=>[],'draw'=>$request->draw,'recordsFiltered'=>0,'recordsTotal'=>0];
+            $response = ['data'=>[],'draw'=>$request->draw,'recordsFiltered'=>0,'recordsTotal'=>0,'total_tagihan'=>0];
             try{
                 $keyword    = $request->post('search')['value'];
                 $orderdir   = $request->post('order')[0]['dir'];
@@ -151,23 +151,26 @@ class CabangController extends Controller
                 if (strlen($cab_id)>0) $customers = $customers->where('cab_id','=',$cab_id);
                 $customers  = $customers->get();
                 $customers->map(function ($customer,$index) use ($customers){
-                    $jmlTag = DB::table('isp_invoice')
+                    $tagihan = DB::table('isp_invoice')
                         ->select(['inv_date','price_with_tax'])
                         ->where('cust_id','=',$customer->cust_id)
                         ->where(['is_paid'=>0,'status'=>1])
                         ->where('inv_date','<>',null)
                         ->whereMonth('inv_date','<',date('m'))
                         ->get();
-                    if ($jmlTag->count()>=2){
-                        $customer->tagihan = $jmlTag;
+                    $customer->total_tagihan = 0;
+                    if ($tagihan->count()>=2){
+                        $customer->tagihan = $tagihan;
+                        $customer->total_tagihan = $tagihan->sum('price_with_tax');
                         $customer->cabang  = DB::table('isp_cabang')->select('cab_name')->where('cab_id',$customer->cab_id)->get()->first();
                         return $customer;
                     } else {
                         $customers->forget($index);
                     }
                 });
-                //dd($customers->values());
-                $response['data'] = $customers->values();
+                $customers = $customers->values();
+                $response['data'] = $customers;
+                $response['total_tagihan'] = 'Rp. '.format_rp($customers->sum('total_tagihan'));
                 //dd($response);
             }catch (Exception $exception){
                 throw new Exception($exception->getMessage());
@@ -178,6 +181,7 @@ class CabangController extends Controller
     public function CetakPerformaTagihan(Request $request){
         if ($request->ajax()){ abort(403); } else {
             if ($request->method()!='POST'){ abort(403); } else {
+                $total_tagihan = 0;
                 try{
                     $cab_id     = $request->post('nama_cabang');
                     $customers  = DB::table('isp_customer')
@@ -187,26 +191,29 @@ class CabangController extends Controller
                     if (strlen($cab_id)>0) $customers = $customers->where('cab_id','=',$cab_id);
                     $customers  = $customers->get();
                     $customers->map(function ($customer,$index) use ($customers){
-                        $jmlTag = DB::table('isp_invoice')
+                        $tagihan = DB::table('isp_invoice')
                             ->select(['inv_date','price_with_tax'])
                             ->where('cust_id','=',$customer->cust_id)
                             ->where(['is_paid'=>0,'status'=>1])
                             ->where('inv_date','<>',null)
                             ->whereMonth('inv_date','<',date('m'))
                             ->get();
-                        if ($jmlTag->count()>=2){
-                            $customer->tagihan = $jmlTag;
+                        $customer->total_tagihan = 0;
+                        if ($tagihan->count()>=2){
+                            $customer->tagihan = $tagihan;
+                            $customer->total_tagihan = $tagihan->sum('price_with_tax');
                             $customer->cabang  = DB::table('isp_cabang')->select('cab_name')->where('cab_id',$customer->cab_id)->get()->first();
                             return $customer;
                         } else {
                             $customers->forget($index);
                         }
                     });
+                    $total_tagihan = 'Rp. '.format_rp($customers->values()->sum('total_tagihan'));
                     $customers = $customers->values()->chunk(33);
                 }catch (Exception $exception){
                     throw new Exception($exception->getMessage());
                 }
-                return view('cabang.cetak-performa-tagihan',compact('customers'));
+                return view('cabang.cetak-performa-tagihan',compact('total_tagihan','customers'));
             }
         }
     }

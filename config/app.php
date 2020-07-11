@@ -2,7 +2,7 @@
 
 return [
 
-    'version' => '08072020-2300 (migrasi server baru)',
+    'version' => '11072020-1220 (grand total performa tagihan)',
     /*
     |--------------------------------------------------------------------------
     | Application Name
