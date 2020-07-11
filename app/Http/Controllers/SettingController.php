@@ -263,7 +263,6 @@ class SettingController extends Controller
                 $save->mail_body        = $request->body_email;
                 $save->mail_sender      = $request->email_pengirim;
                 $save->sender_name      = $request->nama_pengirim;
-                dd($save);
                 $save->saveOrFail();
             }catch (Exception $exception){
                 throw new Exception($exception->getMessage());
