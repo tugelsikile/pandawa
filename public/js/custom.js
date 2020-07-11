@@ -87,7 +87,7 @@ function listCustomer() {
         var cabang_id   = $('#nama_cabang').val();
         var msg         = '';
         $.ajax({
-            url     : '/api/lists/customers',
+            url     : window.origin + '/api/lists/customers',
             type    : 'POST',
             dataType: 'JSON',
             data    : { nama_cabang : cabang_id },
@@ -117,7 +117,7 @@ function listProduk() {
         var cabang_id   = $('#nama_cabang').val();
         var msg         = '';
         $.ajax({
-            url     : '/api/lists/produk-cabang',
+            url     : window.origin + '/api/lists/produk-cabang',
             dataType: 'JSON',
             type    : 'POST',
             data    : { cab_id : cabang_id },
@@ -269,7 +269,7 @@ function getProdukCabang(obj){
     } else {
         $('#nama_produk').html('<option value="">Loading...</option>');
         $.ajax({
-            url     : '/lists/produk-cabang',
+            url     : window.origin + '/lists/produk-cabang',
             type    : 'POST',
             dataType: 'JSON',
             data    : { cab_id : cab_id },
@@ -293,7 +293,7 @@ function kodeProduk() {
         $('#kode_produk').val('');
     } else {
         $.ajax({
-            url     : '/admin-produk/kode-produk',
+            url     : window.origin + '/admin-produk/kode-produk',
             type    : 'POST',
             dataType: 'JSON',
             data    : { cab_id : cab_id },
@@ -312,7 +312,7 @@ function kodeCustomer() {
         $('#nomor_pelanggan,#nomor_pelanggan_text').val('');
     } else {
         $.ajax({
-            url     : '/preview-id-pelanggan',
+            url     : window.origin + '/preview-id-pelanggan',
             type    : 'POST',
             dataType: 'JSON',
             data    : { cab_id : cab_id },
@@ -330,7 +330,7 @@ function previewHarga() {
     var tax     = $('#pajak_produk').val();
     $('#preview_harga').val('Loading...');
     $.ajax({
-        url     : '/preview-harga',
+        url     : window.origin + '/preview-harga',
         type    : 'POST',
         dataType: 'JSON',
         data    : { price : price, tax : tax },
@@ -446,7 +446,7 @@ function getKab(obj,defaultRegencyID){
     var prov_id = $(obj).val();
     $('.regency_id').html('<option value="">Loading...</option>');
     $.ajax({
-        url     : '/api/regional/get-kab',
+        url     : window.origin + '/api/regional/get-kab',
         type    : 'GET',
         dataType: 'JSON',
         data    : { id : prov_id },
@@ -476,7 +476,7 @@ function getKabPenagihan(kabID) {
     var prov_id = $('#provinsi_penagihan').val();
     $('#kabupaten_penagihan,#kecamatan_penagihan,#desa_penagihan').html('<option value="">Loading...</option>');
     $.ajax({
-        url     : '/api/regional/get-kab',
+        url     : window.origin + '/api/regional/get-kab',
         type    : 'GET',
         dataType: 'JSON',
         data    : { id : prov_id },
@@ -506,7 +506,7 @@ function getKec(obj,defaultDistrictID) {
     var kab_id = $(obj).val();
     $('.district_id').html('<option value="">Loading...</option>');
     $.ajax({
-        url     : '/api/regional/get-kec',
+        url     : window.origin + '/api/regional/get-kec',
         type    : 'GET',
         dataType: 'JSON',
         data    : { id : kab_id },
@@ -536,7 +536,7 @@ function getKecPenagihan(kecID){
     var kab_id = $('#kabupaten_penagihan').val();
     $('#kecamatan_penagihan,#desa_penagihan').html('<option value="">Loading...</option>');
     $.ajax({
-        url     : '/api/regional/get-kec',
+        url     : window.origin + '/api/regional/get-kec',
         type    : 'GET',
         dataType: 'JSON',
         data    : { id : kab_id },
@@ -566,7 +566,7 @@ function getDesa(obj,defaultDesaID) {
     var kab_id = $(obj).val();
     $('.village_id').html('<option value="">Loading...</option>');
     $.ajax({
-        url     : '/api/regional/get-desa',
+        url     : window.origin + '/api/regional/get-desa',
         type    : 'GET',
         dataType: 'JSON',
         data    : { id : kab_id },
@@ -593,7 +593,7 @@ function getDesaPenagihan(desaID){
     var kec_id = $('#kecamatan_penagihan').val();
     $('#desa_penagihan').html('<option value="">Loading...</option>');
     $.ajax({
-        url     : '/api/regional/get-desa',
+        url     : window.origin + '/api/regional/get-desa',
         type    : 'GET',
         dataType: 'JSON',
         data    : { id : kec_id },
@@ -621,7 +621,7 @@ function previewID() {
     var padding     = $('#pad').val();
     $('#preview_id').val('Loading...');
     $.ajax({
-        url     : '/preview-id',
+        url     : window.origin + '/preview-id',
         type    : 'POST',
         dataType: 'JSON',
         data    : { template : template, padding : padding },
