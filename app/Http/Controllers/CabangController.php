@@ -13,10 +13,7 @@ use Mockery\Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Repositories\{
-    UserMenuRepositories,
-    UserPriviledgesRepositories,
-    CabangRepositories,
-    RegionalRepositories
+    CustomerRepositories, UserMenuRepositories, UserPriviledgesRepositories, CabangRepositories, RegionalRepositories
 };
 use App\Validations\CabangValidation;
 
@@ -42,6 +39,7 @@ class CabangController extends Controller
         $this->cabangValidation = $cabangValidation;
         $this->priviledges = $userPriviledgesRepositories;
         $this->menuRepositories = $menuRepositories;
+        $this->customerRepository = new CustomerRepositories();
         $this->middleware('auth');
     }
 
@@ -132,10 +130,11 @@ class CabangController extends Controller
                 } else {
                     $cabangs = $this->cabangRepositories->all();
                 }
+                $jenis = $this->customerRepository->getAllJenisLayanan();
             }catch (Exception $exception){
                 throw new Exception($exception->getMessage());
             }
-            return view('cabang.performa-tagihan',compact('request','cabangs','curMenu','menus','privs'));
+            return view('cabang.performa-tagihan',compact('jenis','request','cabangs','curMenu','menus','privs'));
         } else {
             if (!$request->ajax()) abort(403);
             $response = ['data'=>[],'draw'=>$request->draw,'recordsFiltered'=>0,'recordsTotal'=>0,'total_tagihan'=>0];
@@ -143,12 +142,17 @@ class CabangController extends Controller
                 $keyword    = $request->post('search')['value'];
                 $orderdir   = $request->post('order')[0]['dir'];
                 $cab_id     = $request->post('cab_id');
+                $mitra      = $request->mitra;
+                $jenis      = $request->jenis;
                 $customers  = DB::table('isp_customer')
-                    ->select(['cust_id','fullname','cab_id','kode'])
-                    ->where(['status'=>1,'is_active'=>1])
-                    ->where('fullname','like',"%$keyword%")
-                    ->orderBy('fullname',$orderdir);
-                if (strlen($cab_id)>0) $customers = $customers->where('cab_id','=',$cab_id);
+                    ->join('isp_cabang','isp_customer.cab_id','=','isp_cabang.cab_id','left')
+                    ->select(['isp_customer.cust_id','isp_customer.fullname','isp_customer.cab_id','isp_customer.kode'])
+                    ->where(['isp_customer.status'=>1,'isp_customer.is_active'=>1])
+                    ->where('isp_customer.fullname','like',"%$keyword%")
+                    ->orderBy('isp_customer.fullname',$orderdir);
+                if (strlen($cab_id)>0) $customers = $customers->where('isp_customer.cab_id','=',$cab_id);
+                if (strlen($mitra)>0) $customers = $customers->where('isp_cabang.mitra','=',$mitra);
+                if (strlen($jenis)>0) $customers = $customers->where('isp_customer.jenis_layanan','=',$jenis);
                 $customers  = $customers->get();
                 $customers->map(function ($customer,$index) use ($customers){
                     $tagihan = DB::table('isp_invoice')

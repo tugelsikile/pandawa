@@ -2,7 +2,7 @@
 
 return [
 
-    'version' => '11072020-1500 (bug fix filter tagihan jenis layanan)',
+    'version' => '11072020-1600 (filter mitra dan jenis layanan pada halaman performa tagihan)',
     /*
     |--------------------------------------------------------------------------
     | Application Name

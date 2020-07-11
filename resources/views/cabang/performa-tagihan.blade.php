@@ -57,6 +57,8 @@
                     @else
                         d.cab_id = '{{ auth()->user()->cab_id }}';
                     @endif
+                    d.mitra = $('.mitra').val();
+                    d.jenis = $('.jenis-layanan').val();
                 }
             },
             "drawCallback" : function (a,b,c,d) {
@@ -65,6 +67,11 @@
                 if ($('div.toolbar .float-right').length === 0){
                     $('div.toolbar .dt-buttons').append('' +
                         '<div class="float-right d-none d-md-block col-sm-3 pr-0">' +
+                            '<select name="mitra" onchange="cari_mitra();" class="mb-2 mitra custom-select custom-select-sm form-control form-control-sm">' +
+                                '<option value="">=== Jenis Cabang ===</option> ' +
+                                '<option value="0">Cabang</option> ' +
+                                '<option value="1">Mitra</option> ' +
+                            '</select>' +
                             '<select name="nama_cabang" onchange="table._fnDraw();" class="mb-2 cab-id custom-select custom-select-sm form-control form-control-sm">' +
                             @if(strlen(Auth::user()->cab_id)==0)
                                 '<option value="">=== Semua Cabang ===</option>' +
@@ -74,6 +81,13 @@
                                 '<option @if($request->id == $cabang->cab_id) selected @endif value="{{$cabang->cab_id}}">{{$cabang->cab_name}}</option>' +
                                 @endforeach
                             @endif
+                            '</select>' +
+                            '<select name="jenis" onchange="table._fnDraw();" class="mb-2 jenis-layanan custom-select custom-select-sm form-control form-control-sm">' +
+                                '<option value="">=== Semua Jenis Layanan ===</option>' +
+                                @forelse($jenis as $item)
+                                    '<option value="{{$item->id}}">{{$item->name}}</option>' +
+                                @empty
+                                @endforelse
                             '</select>' +
                         '</div>');
                 }
