@@ -119,7 +119,7 @@
             </div>
             <label class="col-sm-2 col-form-label" for="email_penanggungjawab">Email Penanggungjawab</label>
             <div class="col-sm-4">
-                <input type="email" class="form-control" name="email_penanggungjawab" id="email_penanggungjawab" value="{{ $data->penjab_email }}">
+                <input type="text" class="form-control" name="email_penanggungjawab" id="email_penanggungjawab" value="{{ $data->penjab_email }}">
             </div>
         </div>
         <div class="form-group row">
@@ -139,7 +139,7 @@
             </div>
             <label class="col-sm-2 col-form-label" for="email_teknisi">Email Teknisi</label>
             <div class="col-sm-4">
-                <input type="email" class="form-control" name="email_teknisi" id="email_teknisi" value="{{ $data->tech_email }}">
+                <input type="text" class="form-control" name="email_teknisi" id="email_teknisi" value="{{ $data->tech_email }}">
             </div>
         </div>
     </div>

@@ -81,6 +81,10 @@ class TagihanRepositories{
                 ->select(['isp_customer.npwp','isp_customer.fullname','isp_invoice.inv_number','isp_invoice.inv_date','isp_invoice.price','isp_invoice.price_with_tax','isp_invoice.is_paid']);
             if (strlen($request->bulan_tagihan)>0) $data = $data->whereMonth('inv_date',$request->bulan_tagihan);
             if (strlen($request->tahun_tagihan)>0) $data = $data->whereYear('inv_date',$request->tahun_tagihan);
+            if (strlen($request->mitra)>0){
+                $data = $data->join('isp_cabang','isp_customer.cab_id','isp_cabang.cab_id','left')
+                    ->where('isp_cabang.mitra','=',$request->mitra);
+            }
             $data = $data->orderBy('isp_invoice.inv_number','asc')->get()->chunk(20);
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());

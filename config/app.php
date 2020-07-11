@@ -2,7 +2,7 @@
 
 return [
 
-    'version' => '11072020-1500 (jenis layanan pelanggan)',
+    'version' => '11072020-1500 (filter mitra pada cetak laporan tagihan)',
     /*
     |--------------------------------------------------------------------------
     | Application Name
