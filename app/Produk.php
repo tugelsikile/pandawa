@@ -11,6 +11,12 @@ class Produk extends Model
     public $timestamps = false;
 
     public function customerObj(){
-        return $this->hasMany(Customer::class,'pac_id');
+        return $this->hasMany(Customer::class,'pac_id')->where('status','=',1);
+    }
+    public function cabang(){
+        return $this->hasOne(Cabang::class,'cab_id','cab_id')->where('status','=',1);
+    }
+    public function invoice(){
+        return $this->hasMany(Invoice::class,'pac_id','pac_id')->where('status','=',1);
     }
 }

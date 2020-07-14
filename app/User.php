@@ -43,5 +43,6 @@ class User extends Authenticatable
     public function cabangObj(){
         return $this->belongsTo(Cabang::class,'cab_id');
     }
+    protected $with = ['cabangObj','userLevelOjb'];
 
 }

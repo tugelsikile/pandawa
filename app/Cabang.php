@@ -12,6 +12,6 @@ class Cabang extends Model
     public $timestamps = false;
 
     public function customerObj(){
-        return $this->hasMany(CabangMember::class,'cab_id');
+        return $this->hasMany(Customer::class,'cab_id')->where('is_active','=',1)->where('status','=',1);
     }
 }

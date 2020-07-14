@@ -2,16 +2,16 @@
 
 @section('content')
 <div class="container">
-    <div class="row">
-        <div class="card">
-            <div class="card-body">asda</div>
+    <div class="card mb-2">
+        <div class="card-body">
+            Selamat Datang di aplikasi <strong>{{env('APP_NAME')}}</strong>.
+            <br>
+            Saat ini anda login sebagai <strong>{{ auth()->user()->name }}</strong> dengan hak akses <strong>{{auth()->user()->userLevelOjb->lvl_name}}</strong>.
         </div>
     </div>
-    <div class="card">
-        <div class="card-header">Dashboard</div>
-
-        <div class="card-body">
-            Selamat Datang {{ auth()->user()->name }}
+    <div class="row">
+        <div class="col-sm-3">
+            asdasd
         </div>
     </div>
 </div>
