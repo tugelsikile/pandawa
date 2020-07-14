@@ -13,6 +13,7 @@
             @forelse($data['data'] as $key => $item)
                 { 'tanggal' : '{{$key}}', 'total' : {{$data['total']}},'customer' : {{$item->count()}} },
             @empty
+                { 'tanggal' : '', 'total' : 0, 'customer' : 0 },
             @endforelse
         ],
         // The name of the data record attribute that contains x-values.

@@ -13,6 +13,7 @@
             @forelse($data['paid'] as $key => $item)
                 { 'bulan' : '{{$key}}', 'total' : {{$item->sumnya}} + @if(isset($data['unpaid'][$key]->sumnya)) {{$data['unpaid'][$key]->sumnya}} @else 0 @endif, 'paid' : {{$item->sumnya}}, 'unpaid' : @if(isset($data['unpaid'][$key]->sumnya)) {{$data['unpaid'][$key]->sumnya}} @else 0 @endif },
             @empty
+                { 'bulan' : '', 'total' : 0, 'paid' : 0, 'unpaid' : 0 },
             @endforelse
         ],
         // The name of the data record attribute that contains x-values.
