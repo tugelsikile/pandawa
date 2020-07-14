@@ -390,10 +390,11 @@ class CustomerRepositories{
         try{
             $data = Customer::where('status','=',1)->orderBy('from_date','asc')->get();
             if (strlen($request->cab_id)>0) $data = $data->where('cab_id','=',$request->cab_id);
+            $total = $data->count();
             $data = $data->groupBy('from_date');
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
-        return $data;
+        return ['data'=>$data,'total'=>$total];
     }
 }

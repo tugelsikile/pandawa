@@ -10,18 +10,18 @@
         // Chart data records -- each entry in this array corresponds to a point on
         // the chart.
         data: [
-            @forelse($data as $key => $item)
-                { 'tanggal' : '{{$key}}', 'customer' : {{$item->count()}} },
+            @forelse($data['data'] as $key => $item)
+                { 'tanggal' : '{{$key}}', 'total' : {{$data['total']}},'customer' : {{$item->count()}} },
             @empty
             @endforelse
         ],
         // The name of the data record attribute that contains x-values.
         xkey: 'tanggal',
         // A list of names of data record attributes that contain y-values.
-        ykeys: ['customer'],
+        ykeys: ['total','customer'],
         // Labels for the ykeys -- will be displayed when you hover over the
         // chart.
-        labels: ['Pertambahan Jumlah Pelanggan'],
-        lineColors: ['#63acff']
+        labels: ['total','Pertambahan Jumlah Pelanggan'],
+        lineColors: ['#cccccc','#63acff']
     });
 </script>
