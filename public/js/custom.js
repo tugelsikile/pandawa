@@ -648,7 +648,7 @@ function printNow() {
 function printCancel() {
     if ($('.is-print')){ if ($('.is-print').is(':visible')){ $('.is-print').hide(); } }
     if ($('.no-print')){ if ($('.no-print').is(':hidden')){ $('.no-print').show(); }}
-    if ($('#printFrame')){ $('#printFrame').attr({'src':'/api/cetak-loading'}); }
+    if ($('#printFrame')){ $('#printFrame').attr({'src':APP_URL + '/api/cetak-loading'}); }
 }
 function printDataPost(obj) {
     var formElement     = $('#'+$(obj).attr('data-form'));

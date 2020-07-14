@@ -2,7 +2,7 @@
 
 return [
 
-    'version' => '11072020-1600 (filter mitra dan jenis layanan pada halaman download dan cetak performa tagihan)',
+    'version' => '14072020-2300 (dashboard grafik tagihan dan pelanggan)',
     /*
     |--------------------------------------------------------------------------
     | Application Name

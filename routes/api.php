@@ -18,6 +18,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::post('/grafik-tagihan','HomeController@grafikTagihan');
+Route::post('/grafik-customer','HomeController@grafikCustomer');
 Route::get('/cetak-loading',function (){return 'Loading ...';});
 
 Route::group(['prefix'=>'tagihan'],function (){

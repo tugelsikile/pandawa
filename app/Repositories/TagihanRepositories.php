@@ -331,4 +331,27 @@ class TagihanRepositories{
         }
         return $data;
     }
+    public function grafikTagihan(Request $request){
+        try{
+            $tagihans = Tagihan::where('status','=',1)->whereNotNull(['inv_date','cab_id','cust_id'])->orderBy('inv_date','asc')->get();
+            if (strlen($request->cab_id)>0) $tagihans = $tagihans->where('cab_id','=',$request->cab_id)->values();
+            $paidTagihan    = $tagihans->where('is_paid','=',1)->values();
+            $unpaidTagihan  = $tagihans->where('is_paid','<>',1)->values();
+
+            $paidTagihan    = $paidTagihan->groupBy('inv_date');
+            $unpaidTagihan  = $unpaidTagihan->groupBy('inv_date');
+
+            $paidTagihan->map(function($data){
+                $data->sumnya = $data->sum('price_with_tax');
+                return $data;
+            });
+            $unpaidTagihan->map(function($data){
+                $data->sumnya = $data->sum('price_with_tax');
+                return $data;
+            });
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return ['unpaid'=>$unpaidTagihan,'paid'=>$paidTagihan];
+    }
 }

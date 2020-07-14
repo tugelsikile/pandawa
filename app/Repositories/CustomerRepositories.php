@@ -386,4 +386,14 @@ class CustomerRepositories{
         }
         return $data;
     }
+    public function grafikCustomer(Request $request){
+        try{
+            $data = Customer::where('status','=',1)->orderBy('from_date','asc')->get();
+            if (strlen($request->cab_id)>0) $data = $data->where('cab_id','=',$request->cab_id);
+            $data = $data->groupBy('from_date');
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return $data;
+    }
 }
