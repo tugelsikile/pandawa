@@ -47,6 +47,15 @@
             <div class="form-control">{{ companyInfo()->phone }}</div>
         </div>
     </div>
+    <hr>
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Terms</label>
+        <div class="col-sm-10"><div class="card"><div class="card-body">{!! companyInfo()->terms !!}</div> </div> </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Footer</label>
+        <div class="col-sm-10"><div class="card"><div class="card-body">{!! companyInfo()->footer !!}</div> </div> </div>
+    </div>
     <div class="form-group row">
         <div class="col-sm-12">
             <a class="btn btn-primary float-right" href="javascript:;" onclick="$('#form-data-perusahaan').show();$('#tabel-data-perusahaan').hide()"><i class="fa fa-pencil"></i> Rubah Data</a>
@@ -108,6 +117,19 @@
                 <input type="text" class="form-control" name="nomor_telepon" id="nomor_telepon" value="{{ companyInfo()->phone }}">
             </div>
         </div>
+        <hr>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="terms">Terms</label>
+            <div class="col-sm-10">
+                <textarea name="terms" id="terms" class="form-control">{{ companyInfo()->terms }}</textarea>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label" for="footer">Footer</label>
+            <div class="col-sm-10">
+                <textarea name="footer" id="footer" class="form-control">{{ companyInfo()->footer }}</textarea>
+            </div>
+        </div>
         <div class="form-group row">
             <div class="col-sm-12">
                 <button type="submit" class="btn btn-primary float-right"><i class="fa fa-floppy-o"></i> Simpan</button>
@@ -115,6 +137,9 @@
         </div>
     </form>
     <script>
+        $('#terms,#footer').summernote({
+            minHeight : 300
+        });
         $('#nama_provinsi').trigger('change');
         $('#nama_provinsi,#nama_kabupaten,#nama_kecamatan,#nama_desa').select2();
         $('#ModalForm').submit(function () {

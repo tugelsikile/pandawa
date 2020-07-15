@@ -10,12 +10,12 @@
                         Menu
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a onclick="settingPage(this);return false" class="dropdown-item" href="{{ url('setting/data-perusahaan') }}">Data Perusahaan</a>
-                        <a onclick="settingPage(this);return false" class="dropdown-item" href="{{ url('setting/data-bank') }}">Data Akun Bank</a>
-                        <a onclick="settingPage(this);return false" class="dropdown-item" href="{{ url('setting/template-invoice') }}">Template Nomor Invoice</a>
-                        <a onclick="settingPage(this);return false" class="dropdown-item" href="{{ url('setting/template-email') }}">Template Email</a>
-                        <a onclick="settingPage(this);return false" class="dropdown-item" href="{{ url('setting/email') }}">Setting Email</a>
-                        <a target="_blank" class="dropdown-item" href="{{ url('setting/application-logs') }}">Application Logs</a>
+                        @if(checkPrivileges('setting','usaha_data')->R_opt==1)<a onclick="settingPage(this);return false" class="dropdown-item" href="{{ url('setting/data-perusahaan') }}">Data Perusahaan</a>@endif
+                        @if(checkPrivileges('setting','bank_data')->R_opt==1)<a onclick="settingPage(this);return false" class="dropdown-item" href="{{ url('setting/data-bank') }}">Data Akun Bank</a>@endif
+                        @if(checkPrivileges('setting','invoice_data')->R_opt==1)<a onclick="settingPage(this);return false" class="dropdown-item" href="{{ url('setting/template-invoice') }}">Template Nomor Invoice</a>@endif
+                        @if(checkPrivileges('setting','email_data')->R_opt==1)<a onclick="settingPage(this);return false" class="dropdown-item" href="{{ url('setting/template-email') }}">Template Email</a>@endif
+                        @if(checkPrivileges('setting','email_template_data')->R_opt==1)<a onclick="settingPage(this);return false" class="dropdown-item" href="{{ url('setting/email') }}">Setting Email</a>@endif
+                        @if(checkPrivileges('setting','usaha_data')->R_opt==1)<a target="_blank" class="dropdown-item" href="{{ url('setting/application-logs') }}">Application Logs</a>@endif
                     </div>
                 </div>
             </div>

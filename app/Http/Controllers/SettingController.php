@@ -74,7 +74,9 @@ class SettingController extends Controller
                         'postal_code' => $request->kode_pos,
                         'village_id' => $request->nama_desa,
                         'regency_id' => $request->nama_kabupaten,
-                        'province_id' => $request->nama_provinsi
+                        'province_id' => $request->nama_provinsi,
+                        'terms' => $request->terms,
+                        'footer' => $request->footer
                     ]);
                 }catch (Exception $exception){
                     throw new Exception($exception->getMessage());

@@ -117,11 +117,11 @@
     </table>
     <div class="terms" style="float:left;margin-top:30px;line-height:12px;">
         <strong>Terms</strong><br>
-        {!! nl2br($companyInfo->terms) !!}
+        {!! $companyInfo->terms !!}
     </div>
     <div class="qrcode qrcode_{{ $data->inv_id }}"></div>
     <div class="inv_footer" style="line-height:12px;">
-        {!! nl2br($companyInfo->footer) !!}
+        {!! $companyInfo->footer !!}
     </div>
 </div>
 </body>
