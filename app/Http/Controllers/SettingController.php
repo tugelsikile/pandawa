@@ -317,7 +317,7 @@ class SettingController extends Controller
                 'nama_pengirim'     => 'required|string|min:3',
                 'email_pengirim'    => 'required|email',
                 'judul_email'       => 'required|string',
-                'isi_email'         => 'required|string|min:10'
+                'isi_email'         => 'required|string|min:1'
             ]);
             if ($valid->fails()){
                 throw new Exception(collect($valid->errors()->all())->join('#'));
