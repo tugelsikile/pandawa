@@ -25,6 +25,7 @@
     },
     "dependencies": {
         "animate.css": "^4.1.0",
+        "bootstrap-daterangepicker": "^3.1.0",
         "bootstrap-icons": "^1.0.0-alpha5",
         "bootstrap4-toggle": "^3.6.1",
         "datatables.net": "^1.10.21",
