@@ -21,7 +21,7 @@
             </div>
         </div>
     </div>
-    <script>
+    <script> 
         var table = $('#dataTable').dataTable({
             "dom"           : '<"mb-2 toolbar"B><"row clearfix"<"col-sm-8"l><"col-sm-4"f>>rt<"row"<"col-sm-6"i><"col-sm-6"p>>',
             "lengthMenu"    : [[30, 60, 120, 240, 580], [30, 60, 120, 240, 580]],
