@@ -148,4 +148,34 @@ class TagihanValidation{
         }
         return $request;
     }
+    public function bulkApprove(Request $request){
+        try{
+            $valid  = Validator::make($request->all(),[
+                'inv_id' => 'required|array|min:1',
+                'tanggal_approval' => 'required|string',
+                'keterangan_approval' => 'required|string|min:10'
+            ]);
+            if ($valid->fails()){
+                return collect($valid->errors()->all())->join('#');
+            }
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return $request;
+    }
+    public function BulkDisApproval(Request $request){
+        try{
+            $valid  = Validator::make($request->all(),[
+                'inv_id' => 'required|array|min:1',
+                'tanggal_approval' => 'required|string',
+                'keterangan_approval' => 'required|string|min:10'
+            ]);
+            if ($valid->fails()){
+                return collect($valid->errors()->all())->join('#');
+            }
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return $request;
+    }
 }

@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Customer;
 use App\Tagihan;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -254,6 +255,24 @@ class TagihanRepositories{
         }
         return $data;
     }
+    public function getByIDs($request){
+        try{
+            $data   = Tagihan::whereIn('inv_id',$request)->get();
+            $data->map(function ($data){
+                $data->cabang   = $data->cabangObj;
+                $data->customer = $data->customerObj;
+                $data->paket    = $data->paketObj;
+                $data->approved = User::where('id','=',$data->paid_approved_by)->get()->first();
+                $data->makeHidden('cabangObj');
+                $data->makeHidden('customerObj');
+                $data->makeHidden('paketObj');
+                return $data;
+            });
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return $data;
+    }
     public function getByID(Request $request){
         try{
             $data   = Tagihan::where('inv_id',$request->id)->get();
@@ -353,5 +372,37 @@ class TagihanRepositories{
             throw new Exception($exception->getMessage());
         }
         return ['unpaid'=>$unpaidTagihan,'paid'=>$paidTagihan];
+    }
+    public function bulkApprove(Request $request){
+        try{
+            $data   = Tagihan::whereIn('inv_id',$request->inv_id)->update([
+                'is_paid' => 1,
+                'paid_date' => Carbon::parse($request->tanggal_approval),
+                'paid_approved_by' => auth()->user()->id,
+                'notes' => $request->keterangan_approval
+            ]);
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        $logs = Auth::user()->name.' approve banyak tagihan. ('.count($request->inv_id).')';
+        Log::channel('customLog')->notice($logs,['params'=>sanitize($request)]);
+        return $data;
+    }
+    public function BulkDisApproval(Request $request){
+        try{
+            $data   = Tagihan::whereIn('inv_id',$request->inv_id)->update([
+                'is_paid' => 0,
+                'paid_date' => null,
+                'paid_approved_by' => null,
+                'paid_cancel_date' => Carbon::parse($request->tanggal_approval),
+                'cancel_reason' => $request->keterangan_approval,
+                'cancel_by' => auth()->user()->id
+            ]);
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        $logs = Auth::user()->name.' cancel approve banyak tagihan. ('.count($request->inv_id).')';
+        Log::channel('customLog')->notice($logs,['params'=>sanitize($request)]);
+        return $data;
     }
 }

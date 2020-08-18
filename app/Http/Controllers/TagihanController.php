@@ -276,4 +276,38 @@ class TagihanController extends Controller
         }
         return format(1000,'OK',$params);
     }
+    public function BulkApproval(Request $request){
+        try{
+            if ($request->method()=='POST'){
+                $valid  = $this->tagihanValidation->bulkApprove($request);
+                if (is_string($valid)) return format(999,$valid,$request);
+                $save   = $this->tagihanRepositories->bulkApprove($valid);
+                return format(1000,'Tagihan berhasil diapproval',$save);
+            } else {
+                $ids = $request->id;
+                $ids = explode('-',$ids);
+                $data   = $this->tagihanRepositories->getByIDs($ids);
+                return view('tagihan.bulk-approval',compact('ids','data'));
+            }
+        }catch (\Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+    }
+    public function BulkDisApproval(Request $request){
+        try{
+            if ($request->method()=='POST'){
+                $valid  = $this->tagihanValidation->BulkDisApproval($request);
+                if (is_string($valid)) return format(999,$valid,$request);
+                $save   = $this->tagihanRepositories->BulkDisApproval($valid);
+                return format(1000,'Approval Tagihan berhasil dibatalkan',$save);
+            } else {
+                $ids = $request->id;
+                $ids = explode('-',$ids);
+                $data   = $this->tagihanRepositories->getByIDs($ids);
+                return view('tagihan.bulk-disapproval',compact('ids','data'));
+            }
+        }catch (\Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+    }
 }
