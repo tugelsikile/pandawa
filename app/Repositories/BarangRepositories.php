@@ -17,18 +17,19 @@ class BarangRepositories{
             $orderby    = $request->post('order')[0]['column'];
             $orderby    = $request->post('columns')[$orderby]['data'];
             $orderdir   = $request->post('order')[0]['dir'];
+            $cab_id     = $request->cab_id;
             $data       = Barang::where(['status'=>1])
                 ->where(function ($q) use ($keyword){
                     $q->where('kode','like',"%$keyword%");
                     $q->orWhere('nama_barang','like',"%$keyword%");
-                })
-                ->orderBy($orderby,$orderdir)
-                ->limit($length)
-                ->offset($start)
-                ->get();
+                });
+            if (strlen($cab_id)>0) $data = $data->where('origin',$cab_id);
+            $data       = $data->orderBy($orderby,$orderdir)->limit($length)->offset($start)->get();
             $data->map(function ($data){
                 $data->tgl_beli     = tglIndo($data->date_buy);
                 $data->harga_beli   = format_rp($data->price_buy);
+                $data->origin       = $data->originObj;
+                $data->makeHidden('originObj');
                 return $data;
             });
         }catch (Exception $exception){
@@ -41,12 +42,15 @@ class BarangRepositories{
     public function recordsFiltered(Request $request){
         try{
             $keyword    = $request->post('search')['value'];
+            $cab_id     = $request->cab_id;
             $data       = Barang::where(['status'=>1])
                 ->select('br_id')
                 ->where(function ($q) use ($keyword){
                     $q->where('kode','like',"%$keyword%");
                     $q->orWhere('nama_barang','like',"%$keyword%");
-                })->get()->count();
+                });
+            if (strlen($cab_id)>0) $data = $data->where('origin',$cab_id);
+            $data = $data->get()->count();
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
@@ -54,9 +58,9 @@ class BarangRepositories{
     }
     public function recordsTotal(Request $request){
         try{
-            $data       = Barang::where(['status'=>1])
-                ->select('br_id')
-                ->get()->count();
+            $data       = Barang::where(['status'=>1])->select('br_id');
+            if (strlen($request->cab_id)>0) $data = $data->where('origin',$request->cab_id);
+            $data = $data->get()->count();
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
@@ -81,6 +85,7 @@ class BarangRepositories{
             $data->mac_address  = $request->mac_address;
             $data->date_buy     = $request->tanggal_pembelian;
             $data->create_by    = Auth::user()->id;
+            $data->origin       = auth()->user()->cab_id;
             $data->saveOrFail();
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());

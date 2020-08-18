@@ -39,10 +39,11 @@ class BarangController extends Controller
             $curMenu = $this->curMenu;
             $privs   = $this->priviledges->checkPrivs(Auth::user()->level,$this->curMenu);
             $menus = $this->menuRepositories->getMenu(Auth::user()->level);
+            $cabangs = $this->cabangRepository->all();
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
-        return view('barang.index',compact('curMenu','privs','menus'));
+        return view('barang.index',compact('cabangs','curMenu','privs','menus'));
     }
     public function table(Request $request){
         if (!$request->ajax()){ abort(403);} else {

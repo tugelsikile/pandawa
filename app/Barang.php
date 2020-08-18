@@ -11,7 +11,7 @@ class Barang extends Model
     public $timestamps = false;
 
     public function originObj(){
-        return $this->belongsTo(Cabang::class,'cab_id','origin');
+        return $this->belongsTo(Cabang::class,'origin','cab_id');
     }
     public function locationObj(){
         return $this->belongsTo(Cabang::class,'cab_id','location');

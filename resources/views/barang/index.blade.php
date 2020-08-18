@@ -23,7 +23,7 @@
     </div>
     <script>
         var table = $('#dataTable').dataTable({
-            "dom"           : '<"mb-2 toolbar"B><"row clearfix"<"col-sm-8"l><"col-sm-4"f>>rt<"row"<"col-sm-6"i><"col-sm-6"p>>',
+            "dom"           : '<"row"<"col-sm-6 mb-2"B><"col-sm-6 filters mb-2"f>><"row"<"col-sm-12"l>>rt<"row"<"col-sm-6"i><"col-sm-6"p>>',
             "lengthMenu"    : [[30, 60, 120, 240, 580], [30, 60, 120, 240, 580]],
             "order"         : [[ 1, "asc" ]],
             "searchDelay"   : 2000,
@@ -37,6 +37,7 @@
                 "type"  : "POST",
                 "data"  : function (d) {
                     d._token = '{{ csrf_token() }}';
+                    d.cab_id  = $('div.filters select.cab-id').length === 0 ? '' : $('div.filters select.cab-id').val();
                 }
             },
             buttons         : [
@@ -52,6 +53,33 @@
                     }
                 }
             ],
+            "drawCallback": function( settings ) {
+                if ($('div.filters .row').length == 0) {
+                    $('div.filters').prepend('' +
+                        '<div class="row">' +
+                            '<div class="col-sm-6">' +
+                                '<select name="mitra" onchange="cari_mitra()" class="mb-2 mitra custom-select custom-select-sm form-control form-control-sm">' +
+                                    '<option value="">=== Cabang / Mitra ===</option>' +
+                                    '<option value="1">Mitra</option>' +
+                                    '<option value="0">Cabang</option>' +
+                                '</select>' +
+                            '</div>' +
+                            '<div class="col-sm-6">' +
+                                '<select name="nama_cabang" onchange="table._fnDraw();" class="mb-2 cab-id custom-select custom-select-sm form-control form-control-sm">' +
+                                    @if(strlen(Auth::user()->cab_id)==0)
+                                        '<option value="">=== Semua Cabang / Mitra ===</option>' +
+                                    @endif
+                                    @if($cabangs)
+                                        @foreach($cabangs as $key => $cabang)
+                                            '<option value="{{$cabang->cab_id}}">{{$cabang->cab_name}}</option>' +
+                                        @endforeach
+                                    @endif
+                                '</select>' +
+                            '</div>' +
+                        '</div>' +
+                        '');
+                }
+            },
             "columns"   : [
                 { "data" : "kode", "width" : "150px" },
                 { "data" : "nama_barang", render : function (a,b,c) {
@@ -70,7 +98,12 @@
                             '</div>' +
                         @endif
                     '';
-                    return c.nama_barang + html;
+                    if (c.origin != null){
+                        var cabang = '<br><small class="text-muted">'+ c.origin.cab_name + '</span>';
+                    } else {
+                        var cabang = '';
+                    }
+                    return html + '<strong>' + c.nama_barang + '</strong>' + cabang ;
                     }
                 },
                 { "data" : "price_buy", "width" : "150px", render : function (a,b,c) {
