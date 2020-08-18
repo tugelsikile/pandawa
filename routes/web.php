@@ -137,6 +137,11 @@ Route::group(['middleware'=>['auth','systemAccess']],function (){
 
         Route::post('/delete','TagihanController@delete');
         Route::post('/bulk-delete','TagihanController@bulkDelete');
+
+        Route::get('/bulk-approve','TagihanController@BulkApproval');
+        Route::get('/bulk-disapprove','TagihanController@BulkDisApproval');
+        Route::post('/bulk-approve','TagihanController@BulkApproval');
+        Route::post('/bulk-disapprove','TagihanController@BulkDisApproval');
     });
     Route::group(['prefix'=>'cabang-tagihan'],function (){
         Route::get('/','CabangTagihanController@index');
