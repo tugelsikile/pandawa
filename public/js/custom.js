@@ -354,7 +354,10 @@ function previewHarga() {
     });
 }
 function tableCbxAll(obj) {
-    $('#dataTable tbody input:checkbox').prop({'checked':$(obj).prop('checked')});
+    let parentTable = $(obj).parents('table');
+    $(parentTable).find('tbody input:checkbox').prop({'checked':$(obj).prop('checked')});
+    let datalength  = $(parentTable).find('tbody input:checkbox:checked').length;
+    $('.check-count').html(datalength);
 }
 $(document).on('hidden.bs.modal','#MyModal', function () {
     $('#MyModal').remove();
