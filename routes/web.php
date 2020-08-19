@@ -1,7 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Mail\SendInvoice;
+use Illuminate\Support\Facades\Mail;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -12,6 +13,10 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::get('/send-mail', function () {
+    Mail::to('f1dd7b5d1f-0d1057@inbox.mailtrap.io')->send(new SendInvoice());
+    return 'A message has been sent to Mailtrap!';
+});
 
 Route::get('/', function () {
     return view('welcome');
