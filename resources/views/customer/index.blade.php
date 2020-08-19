@@ -48,6 +48,7 @@
                     d.npwp = $('.npwp').val();
                     d.mitra = $('.mitra').val();
                     d.jenis_layanan = $('.jenis-layanan').val();
+                    d.pac_id = $('.pac-id').val();
                 }
             },
             "drawCallback"  : function (settings) {
@@ -62,7 +63,7 @@
                                             '<option value="1">Mitra</option>' +
                                             '<option value="0">Cabang</option>' +
                                         '</select>' +
-                                        '<select onchange="table._fnDraw()" class="mb-1 cab-id custom-select custom-select-sm form-control form-control-sm">' +
+                                        '<select onchange="cari_paketan()" class="mb-1 cab-id custom-select custom-select-sm form-control form-control-sm">' +
                                             @if(strlen(auth()->user()->cab_id)===0)
                                                 '<option value="">=== Semua Cabang / Mitra ===</option>' +
                                             @endif
@@ -71,6 +72,14 @@
                                                     '<option @if($cabang->cab_id == auth()->user()->cab_id) selected @endif value="{{ $cabang->cab_id }}">{{ $cabang->cab_name }}</option>' +
                                                 @endforeach
                                             @endif
+                                        '</select>' +
+                                        '<select name="pac_id" onchange="table._fnDraw()" class="mb-1 pac-id custom-select custom-select-sm form-control form-control-sm">' +
+                                            '<option value="">=== Pilih Nama Produk ===</option>' +
+                                            @forelse($paketan as $paket)
+                                                '<option value="{{$paket->pac_id}}">{{$paket->pac_name}} - @isset($paket->cabang->cab_name) {{$paket->cabang->cab_name}} @endisset</option>' +
+                                            @empty
+                                                '<option value="">Tidak ada data produk===</option>' +
+                                            @endforelse
                                         '</select>' +
                                     '</div>' +
                                     '<div class="col-sm-6">' +
@@ -169,6 +178,7 @@
                 }
             ]
         });
+
     </script>
 
 @endsection

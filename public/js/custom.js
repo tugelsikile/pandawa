@@ -731,12 +731,40 @@ function cari_mitra() {
         data    : { mitra : mitra, _token : csrf_token },
         error   : function (e) {
             $('.cab-id').html('<option value="">Error</option>');
-            table._fnDraw();
+            if ($('.pac-id').length === 0){
+                table._fnDraw();
+            } else {
+                cari_paketan();
+            }
         },
         success : function (e) {
             $('.cab-id').html('<option value="">=== Semua Cabang / Mitra ===</option>');
             $.each(e.params,function (i,v) {
                 $('.cab-id').append('<option value="'+v.cab_id+'">'+v.cab_name+'</option>');
+            });
+            if ($('.pac-id').length === 0){
+                table._fnDraw();
+            } else {
+                cari_paketan();
+            }
+        }
+    })
+}
+function cari_paketan() {
+    var mitra   = $('.mitra').val();
+    var cab_id  = $('.cab-id').val();
+    $.ajax({
+        url     : APP_URL + '/api/lists/produk-cabang',
+        type    : 'POST',
+        data    : { cab_id : cab_id, mitra : mitra },
+        error   : function (e) {
+            $('.pac-id').html('<option value="">=== Pilih Nama Produk ===</option>');
+            table._fnDraw();
+        },
+        success : function (e) {
+            $('.pac-id').html('<option value="">=== Pilih Nama Produk ===</option>');
+            $.each(e.params,function (i,v) {
+                $('.pac-id').append('<option value="'+v.pac_id+'">'+v.pac_name+'</option>');
             });
             table._fnDraw();
         }

@@ -11,18 +11,37 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 
 class ProdukRepositories{
+    public function getAll(){
+        try{
+            $data   = Produk::where('status',1)->whereNotNull('cab_id')->orderBy('cab_id','asc')->get();
+            $data->map(function ($data){
+                $data->price_format = 'Rp. '.format_rp($data->price_with_tax);
+                $data->cabang = $data->cabang;
+            });
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return $data;
+    }
     public function getCabangProduk(Request $request){
         try{
             if ($request->method()=='POST'){
-                $data = Produk::where(['status'=>1,'cab_id'=>$request->cab_id])->orderBy('cap','asc')->orderBy('price','asc')->get();
+                $data = Produk::where(['status'=>1]);
+                if (strlen($request->cab_id)>0) $data = $data->where('cab_id',$request->cab_id);
+                $data = $data->orderBy('cap','asc')->orderBy('price','asc')->get();
                 $data->map(function ($data){
                     $data->price_format = 'Rp. '.format_rp($data->price_with_tax);
+                    $data->cabang   = $data->cabang;
                     return $data;
                 });
+                if (strlen($request->mitra)>0){
+                    $data = $data->where('cabang.mitra',$request->mitra);
+                }
             } else {
                 $data = Produk::where(['status'=>1,'cab_id'=>$request->id])->orderBy('cap','asc')->orderBy('price','asc')->get();
                 $data->map(function ($data){
                     $data->price_format = 'Rp. '.format_rp($data->price_with_tax);
+                    $data->cabang   = $data->cabang;
                     return $data;
                 });
             }
