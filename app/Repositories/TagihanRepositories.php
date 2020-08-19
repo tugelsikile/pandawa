@@ -73,6 +73,13 @@ class TagihanRepositories{
     public function CetakLaporan(Request $request){
         try{
             $where = ['isp_invoice.status'=>1];
+            $date_range = $request->date_range;
+            $min_date = $max_date = '';
+            if (strlen($date_range)>0){
+                $range = explode(' - ',$date_range);
+                $min_date   = Carbon::createFromFormat('d/m/Y',$range[0])->format('Y-m-d');
+                $max_date   = Carbon::createFromFormat('d/m/Y',$range[1])->format('Y-m-d');
+            }
             if (strlen($request->nama_cabang)>0) $where['isp_invoice.cab_id'] = $request->nama_cabang;
             if (strlen($request->npwp)>0) $where['isp_customer.npwp'] = $request->npwp;
             if (strlen($request->is_active)>0) $where['isp_customer.is_active'] = $request->is_active;
@@ -80,8 +87,12 @@ class TagihanRepositories{
             $data = Tagihan::where($where)
                 ->join('isp_customer','isp_invoice.cust_id','=','isp_customer.cust_id','left')
                 ->select(['isp_customer.npwp','isp_customer.fullname','isp_invoice.inv_number','isp_invoice.inv_date','isp_invoice.price','isp_invoice.price_with_tax','isp_invoice.is_paid']);
-            if (strlen($request->bulan_tagihan)>0) $data = $data->whereMonth('inv_date',$request->bulan_tagihan);
-            if (strlen($request->tahun_tagihan)>0) $data = $data->whereYear('inv_date',$request->tahun_tagihan);
+            if (strlen($min_date)>0 && strlen($max_date)>0){
+                $data = $data->whereBetween('paid_date',[$min_date,$max_date]);
+            } else {
+                if (strlen($request->bulan_tagihan)>0) $data = $data->whereMonth('inv_date',$request->bulan_tagihan);
+                if (strlen($request->tahun_tagihan)>0) $data = $data->whereYear('inv_date',$request->tahun_tagihan);
+            }
             if (strlen($request->jenis)>0) $data = $data->where('isp_customer.jenis_layanan',$request->jenis);
             if (strlen($request->mitra)>0){
                 $data = $data->join('isp_cabang','isp_customer.cab_id','isp_cabang.cab_id','left')
@@ -112,6 +123,13 @@ class TagihanRepositories{
             $isPaid     = $request->inv_paid;
             $mitra      = $request->mitra;
             $jenis      = $request->jenis_layanan;
+            $date_range = $request->date_range;
+            $min_date = $max_date = '';
+            if(strlen($date_range)>0){
+                $range  = explode(' - ',$date_range);
+                $min_date   = Carbon::createFromFormat('d/m/Y',$range[0])->format('Y-m-d');
+                $max_date   = Carbon::createFromFormat('d/m/Y',$range[1])->format('Y-m-d');
+            }
 
             $where      = [
                 'isp_invoice.status' => 1,
@@ -127,6 +145,13 @@ class TagihanRepositories{
                 ->where('isp_invoice.cab_id','<>','')
                 ->whereNotNull('isp_invoice.cust_id')
                 ->where('isp_invoice.cust_id','<>','');
+
+            if (strlen($min_date)>0 && strlen($max_date)>0){
+                $data = $data->whereBetween('isp_invoice.paid_date',[$min_date,$max_date]);
+            } else {
+                if (strlen($invMonth)>0) $data = $data->whereMonth('isp_invoice.inv_date','=',$invMonth);
+                if (strlen($invYear)>0) $data = $data->whereYear('isp_invoice.inv_date','=',$invYear);
+            }
             if (strlen($mitra)>0){
                 $data = $data->join('isp_cabang','isp_invoice.cab_id','=','isp_cabang.cab_id')
                     ->where('isp_cabang.mitra','=',$mitra);
@@ -138,8 +163,7 @@ class TagihanRepositories{
                         ->whereYear('isp_customer.nonactive_date','=',$invYear);
                 }
             }
-            if (strlen($invMonth)>0) $data = $data->whereMonth('isp_invoice.inv_date','=',$invMonth);
-            if (strlen($invYear)>0) $data = $data->whereYear('isp_invoice.inv_date','=',$invYear);
+
             if (strlen($jenis)>0) $data = $data->where('isp_customer.jenis_layanan','=',$jenis);
             $data       = $data->where(function ($q) use ($keyword){
                     $q->where('isp_invoice.inv_number','like',"%$keyword%");
@@ -184,6 +208,14 @@ class TagihanRepositories{
             $isPaid     = $request->inv_paid;
             $mitra      = $request->mitra;
             $jenis      = $request->jenis_layanan;
+            $date_range = $request->date_range;
+            $min_date = $max_date = '';
+            if(strlen($date_range)>0){
+                $range  = explode(' - ',$date_range);
+                $min_date   = Carbon::createFromFormat('d/m/Y',$range[0])->format('Y-m-d');
+                $max_date   = Carbon::createFromFormat('d/m/Y',$range[1])->format('Y-m-d');
+            }
+
             $where      = [
                 'isp_invoice.status' => 1,
                 'isp_customer.status' => 1
@@ -198,12 +230,16 @@ class TagihanRepositories{
                 ->where('isp_invoice.cab_id','<>','')
                 ->whereNotNull('isp_invoice.cust_id')
                 ->where('isp_invoice.cust_id','<>','');
+            if (strlen($min_date)>0 && strlen($max_date)>0){
+                $data = $data->whereBetween('isp_invoice.paid_date',[$min_date,$max_date]);
+            } else {
+                if (strlen($invMonth)>0) $data = $data->whereMonth('isp_invoice.inv_date','=',$invMonth);
+                if (strlen($invYear)>0) $data = $data->whereYear('isp_invoice.inv_date','=',$invYear);
+            }
             if (strlen($mitra)>0){
                 $data = $data->join('isp_cabang','isp_invoice.cab_id','=','isp_cabang.cab_id')
                     ->where('isp_cabang.mitra','=',$mitra);
             }
-            if (strlen($invMonth)>0) $data = $data->where(DB::raw('MONTH(isp_invoice.inv_date)'),$invMonth);
-            if (strlen($invYear)>0) $data = $data->where(DB::raw('YEAR(isp_invoice.inv_date)'),$invYear);
             if (strlen($jenis)>0) $data = $data->where('isp_customer.jenis_layanan','=',$jenis);
             $data       = $data->where(function ($q) use ($keyword){
                 $q->where('isp_invoice.inv_number','like',"%$keyword%");
@@ -226,7 +262,13 @@ class TagihanRepositories{
             $isPaid     = $request->inv_paid;
             $mitra      = $request->mitra;
             $jenis      = $request->jenis_layanan;
-
+            $date_range = $request->date_range;
+            $min_date = $max_date = '';
+            if(strlen($date_range)>0){
+                $range  = explode(' - ',$date_range);
+                $min_date   = Carbon::createFromFormat('d/m/Y',$range[0])->format('Y-m-d');
+                $max_date   = Carbon::createFromFormat('d/m/Y',$range[1])->format('Y-m-d');
+            }
             $where      = [
                 'isp_invoice.status' => 1,
                 'isp_customer.status' => 1
@@ -241,12 +283,16 @@ class TagihanRepositories{
                 ->where('isp_invoice.cab_id','<>','')
                 ->whereNotNull('isp_invoice.cust_id')
                 ->where('isp_invoice.cust_id','<>','');
+            if (strlen($min_date)>0 && strlen($max_date)>0){
+                $data = $data->whereBetween('isp_invoice.paid_date',[$min_date,$max_date]);
+            } else {
+                if (strlen($invMonth)>0) $data = $data->whereMonth('isp_invoice.inv_date','=',$invMonth);
+                if (strlen($invYear)>0) $data = $data->whereYear('isp_invoice.inv_date','=',$invYear);
+            }
             if (strlen($mitra)>0){
                 $data = $data->join('isp_cabang','isp_invoice.cab_id','=','isp_cabang.cab_id')
                     ->where('isp_cabang.mitra','=',$mitra);
             }
-            if (strlen($invMonth)>0) $data = $data->where(DB::raw('MONTH(isp_invoice.inv_date)'),$invMonth);
-            if (strlen($invYear)>0) $data = $data->where(DB::raw('YEAR(isp_invoice.inv_date)'),$invYear);
             if (strlen($jenis)>0) $data = $data->where('isp_customer.jenis_layanan','=',$jenis);
             $data = $data->select(['isp_invoice.inv_id'])
                 ->get()->count();

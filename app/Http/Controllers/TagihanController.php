@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Repositories\{ CustomerRepositories, CabangRepositories, TagihanRepositories, UserMenuRepositories, UserPriviledgesRepositories };
 use App\Tagihan;
 use App\Validations\TagihanValidation;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Mockery\Exception;
@@ -191,6 +192,13 @@ class TagihanController extends Controller
     public function InformasiTagihan(Request $request){
         $params = ['total'=>0,'dibayar'=>0,'tunggak'=>0];
         try{
+            $date_range = $request->range;
+            $min_date = $max_date = '';
+            if (strlen($date_range)>0){
+                $range = explode(' - ',$date_range);
+                $min_date   = Carbon::createFromFormat('d/m/Y',$range[0])->format('Y-m-d');
+                $max_date   = Carbon::createFromFormat('d/m/Y',$range[1])->format('Y-m-d');
+            }
             $where = ['isp_customer.status'=>1,'isp_invoice.status'=>1];
             $total  = Tagihan::where($where)
                 ->join('isp_customer','isp_invoice.cust_id','=','isp_customer.cust_id','left')
@@ -222,17 +230,23 @@ class TagihanController extends Controller
                 $dibayar = $dibayar->where(['isp_invoice.cab_id'=>$request->cab_id]);
                 $tunggak = $tunggak->where(['isp_invoice.cab_id'=>$request->cab_id]);
             }
-            //bulan
-            if ($request->bulan){
-                $total = $total->whereMonth('inv_date',$request->bulan);
-                $dibayar = $dibayar->whereMonth('inv_date',$request->bulan);
-                $tunggak = $tunggak->whereMonth('inv_date',$request->bulan);
-            }
-            //tahun
-            if ($request->tahun){
-                $total = $total->whereYear('inv_date',$request->tahun);
-                $dibayar = $dibayar->whereYear('inv_date',$request->tahun);
-                $tunggak = $tunggak->whereYear('inv_date',$request->tahun);
+            if (strlen($min_date)>0 && strlen($max_date)>0){
+                $total  = $total->whereBetween('isp_invoice.paid_date',[$min_date,$max_date]);
+                $dibayar = $dibayar->whereBetween('isp_invoice.paid_date',[$min_date,$max_date]);
+                $tunggak = $tunggak->whereBetween('isp_invoice.paid_date',[$min_date,$max_date]);
+            } else {
+                //bulan
+                if ($request->bulan){
+                    $total = $total->whereMonth('inv_date',$request->bulan);
+                    $dibayar = $dibayar->whereMonth('inv_date',$request->bulan);
+                    $tunggak = $tunggak->whereMonth('inv_date',$request->bulan);
+                }
+                //tahun
+                if ($request->tahun){
+                    $total = $total->whereYear('inv_date',$request->tahun);
+                    $dibayar = $dibayar->whereYear('inv_date',$request->tahun);
+                    $tunggak = $tunggak->whereYear('inv_date',$request->tahun);
+                }
             }
             //npwp
             if (strlen($request->npwp)>0){

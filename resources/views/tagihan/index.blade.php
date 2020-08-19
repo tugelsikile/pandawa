@@ -92,8 +92,9 @@
             var mitra   = $('div.filters select.mitra').length === 0 ? '' : $('div.filters select.mitra').val();
             var jenis   = $('.jenis-layanan').val();
             var token   = '{{ csrf_token() }}';
+            var range   = $('.date-range').val();
             var url     = '{{ url('admin-tagihan/informasi') }}'
-            tagihanInformasi(url,token,bulan,tahun,cab_id,npwp,is_active,is_paid,mitra,jenis);
+            tagihanInformasi(url,token,bulan,tahun,cab_id,npwp,is_active,is_paid,mitra,jenis,range);
         }
         var table = $('#dataTable').dataTable({
             "drawCallback": function( settings ) {
@@ -103,14 +104,15 @@
                     $('div.filters').prepend('' +
                         '<div class="row">' +
                             '<div class="col-sm-6">' +
+                                '<input placeholder="Range tanggal pembayaran" type="text" name="date_range" class="date-range form-control form-control-sm mb-2" value="">' +
                                 '<select name="bulan_tagihan" onchange="table._fnDraw();" class="mb-2 inv-month custom-select custom-select-sm form-control form-control-sm">' +
-                                '<option value="">=== Bulan Tagihan ===</option>' +
+                                    '<option value="">=== Bulan Tagihan ===</option>' +
                                     @foreach(ArrayBulan() as $key => $bulan)
                                         '<option @if($bulan['value']==date('m')) selected @endif value="{{ $bulan['value'] }}">{{ $bulan['name'] }}</option>' +
                                     @endforeach
                                 '</select>' +
                                 '<select name="tahun_tagihan" onchange="table._fnDraw();" class="mb-2 inv-year custom-select custom-select-sm form-control form-control-sm">' +
-                                '<option value="">=== Tahun Tagihan ===</option>' +
+                                    '<option value="">=== Tahun Tagihan ===</option>' +
                                     @if(strlen($minTahun)>0)
                                         @for($tahun = $minTahun; $tahun <= date('Y'); $tahun++)
                                             '<option @if($tahun == date('Y')) selected @endif value="{{ $tahun }}">{{ $tahun }}</option>' +
@@ -159,6 +161,23 @@
                             '</div>' +
                         '</div>' +
                         '');
+                    $('.date-range').daterangepicker({
+                        autoUpdateInput: false,
+                        maxDate : '{{\Carbon\Carbon::now()->format('d/m/Y')}}',
+                        minDate : '01/01/2020',
+                        locale: {
+                            format: 'DD/MM/YYYY',
+                            cancelLabel: 'Clear'
+                        }
+                    });
+                    $('input[name="date_range"]').on('apply.daterangepicker', function(ev, picker) {
+                        $(this).val(picker.startDate.format('DD/MM/YYYY') + ' - ' + picker.endDate.format('DD/MM/YYYY'));
+                        table._fnDraw();
+                    });
+                    $('input[name="date_range"]').on('cancel.daterangepicker', function(ev, picker) {
+                        $(this).val('');
+                        table._fnDraw();
+                    });
                 }
             },
             "dom"           : '<"row"<"col-sm-6 mb-2"B><"col-sm-6 filters mb-2"f>><"row"<"col-sm-12"l>>rt<"row"<"col-sm-6"i><"col-sm-6"p>>',
@@ -175,26 +194,27 @@
                 "type"  : "POST",
                 "data"  : function (d) {
                     d._token    = '{{ csrf_token() }}';
-                    d.mitra         = $('div.toolbar select.mitra') ? $('div.toolbar select.mitra').val() : null;
+                    d.mitra         = $('div.filters select.mitra') ? $('div.filters select.mitra').val() : null;
                     @if(Auth::user()->cab_id)
                         d.cab_id    = '{{ Auth::user()->cab_id }}';
                     @else
-                        d.cab_id    = $('div.toolbar select.cab-id') ? $('div.toolbar select.cab-id').val() : null;
+                        d.cab_id    = $('div.filters select.cab-id') ? $('div.filters select.cab-id').val() : null;
                     @endif
-                    d.is_active = $('div.toolbar select.is-active') ? $('div.toolbar select.is-active').val() : null;
-                    d.npwp      = $('div.toolbar select.npwp') ? $('div.toolbar select.npwp').val() : null;
-                    d.inv_paid  = $('div.toolbar select.inv-paid') ? $('div.toolbar select.inv-paid').val() : null;
-                    if ($('div.toolbar select.inv-month').length===0){
+                    d.is_active = $('div.filters select.is-active') ? $('div.filters select.is-active').val() : null;
+                    d.npwp      = $('div.filters select.npwp') ? $('div.filters select.npwp').val() : null;
+                    d.inv_paid  = $('div.filters select.inv-paid') ? $('div.filters select.inv-paid').val() : null;
+                    if ($('div.filters select.inv-month').length===0){
                         d.inv_month = '{{ date('m') }}';
                     } else {
-                        d.inv_month = $('div.toolbar select.inv-month').val();
+                        d.inv_month = $('div.filters select.inv-month').val();
                     }
-                    if ($('div.toolbar select.inv-year').length===0){
+                    if ($('div.filters select.inv-year').length===0){
                         d.inv_year = '{{ date('Y') }}';
                     } else {
-                        d.inv_year = $('div.toolbar select.inv-year').val();
+                        d.inv_year = $('div.filters select.inv-year').val();
                     }
                     d.jenis_layanan = $('.jenis-layanan').val();
+                    d.date_range    = $('.date-range').val();
                 }
             },
             buttons         : [
