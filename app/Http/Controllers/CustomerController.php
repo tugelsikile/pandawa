@@ -44,13 +44,19 @@ class CustomerController extends Controller
         $curMenu = $this->curMenu;
         $privs   = $this->priviledges->checkPrivs(Auth::user()->level,$this->curMenu);
         $jenisLayanan = $this->customer->getAllJenisLayanan();
+        if (strlen(auth()->user()->cab_id)===0){
+            $paketan    = $this->produk->getAll();
+        } else {
+            $paketan    = $this->produk->getCabangProduk(new Request(['cab_id'=>auth()->user()->cab_id,'id'=>auth()->user()->cab_id]));
+        }
         $menus = $this->menuRepositories->getMenu(Auth::user()->level);
         if (strlen(Auth::user()->cab_id)>0){
             $cabangs = $this->cabang->getByID(Auth::user()->cab_id);
         } else {
             $cabangs = $this->cabang->all();
         }
-        return view('customer.index',compact('jenisLayanan','curMenu','menus','privs','cabangs'));
+
+        return view('customer.index',compact('paketan','jenisLayanan','curMenu','menus','privs','cabangs'));
     }
     public function table(Request $request){
         $response = [ 'draw' => $request->post('draw'), 'data' => [], 'recordsFiltered' => 0, 'recordsTotal' => 0 ];

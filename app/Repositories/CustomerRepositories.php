@@ -128,10 +128,12 @@ class CustomerRepositories{
             $cab_id     = $request->post('cab_id');
             $is_active  = $request->post('is_active');
             $npwp       = $request->post('npwp');
+            $pac_id     = $request->post('pac_id');
             $where      = ['status'=>1];
             if (strlen($cab_id)>0) $where['cab_id'] = $cab_id;
             if (strlen($is_active)>0) $where['is_active'] = $is_active;
             if (strlen($npwp)>0) $where['npwp'] = $npwp;
+            if (strlen($pac_id)>0) $where['pac_id'] = $pac_id;
             $data = Customer::select('cust_id')
                 ->where($where)
                 ->get()->count();
@@ -146,10 +148,12 @@ class CustomerRepositories{
             $cab_id     = $request->post('cab_id');
             $is_active  = $request->post('is_active');
             $npwp       = $request->post('npwp');
+            $pac_id     = $request->post('pac_id');
             $where      = ['status'=>1];
             if (strlen($cab_id)>0) $where['cab_id'] = $cab_id;
             if (strlen($is_active)>0) $where['is_active'] = $is_active;
             if (strlen($npwp)>0) $where['npwp'] = $npwp;
+            if (strlen($pac_id)>0) $where['pac_id'] = $pac_id;
             $data = Customer::select('cust_id')
                 ->where($where)
                 ->where(function ($query) use ($keyword){
@@ -175,6 +179,7 @@ class CustomerRepositories{
             $npwp       = $request->post('npwp');
             $mitra      = $request->post('mitra');
             $jenis      = $request->post('jenis_layanan');
+            $pac_id     = $request->post('pac_id');
 
             $where      = ['isp_customer.status'=>1];
             if (strlen($cab_id)>0) $where['isp_customer.cab_id'] = $cab_id;
@@ -188,6 +193,9 @@ class CustomerRepositories{
                 });
             if (strlen($mitra)>0){
                 $data = $data->join('isp_cabang','isp_customer.cab_id','=','isp_cabang.cab_id','left')->where('isp_cabang.mitra','=',$mitra);
+            }
+            if (strlen($pac_id)>0){
+                $data = $data->where('isp_customer.pac_id',$pac_id);
             }
             $data = $data->orderBy($orderby,$orderdir)
                 ->limit($length)
