@@ -2,7 +2,7 @@
 
 return [
 
-    'version' => '14072020-2300 (dashboard grafik tagihan dan pelanggan)',
+    'version' => '19082929-2200 (date range tagihan dan customer)',
     /*
     |--------------------------------------------------------------------------
     | Application Name
