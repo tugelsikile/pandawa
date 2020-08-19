@@ -49,6 +49,7 @@
                     d.mitra = $('.mitra').val();
                     d.jenis_layanan = $('.jenis-layanan').val();
                     d.pac_id = $('.pac-id').val();
+                    d.date_range = $('.date-range').val();
                 }
             },
             "drawCallback"  : function (settings) {
@@ -83,6 +84,7 @@
                                         '</select>' +
                                     '</div>' +
                                     '<div class="col-sm-6">' +
+                                        '<input placeholder="Tanggal pemasangan / berlangganan" type="text" name="date_range" class="date-range form-control form-control-sm mb-2" value="">' +
                                         '<select onchange="table._fnDraw()" class="is-active mb-1 custom-select custom-select-sm form-control form-control-sm">' +
                                             '<option value="">=== Status Aktif ===</option>' +
                                             '<option value="1">Aktif</option>' +
@@ -107,6 +109,23 @@
                             '</div>' +
                         @endif
                         '');
+                    $('.date-range').daterangepicker({
+                        autoUpdateInput: false,
+                        maxDate : '{{\Carbon\Carbon::now()->format('d/m/Y')}}',
+                        minDate : '01/01/2020',
+                        locale: {
+                            format: 'DD/MM/YYYY',
+                            cancelLabel: 'Clear'
+                        }
+                    });
+                    $('input[name="date_range"]').on('apply.daterangepicker', function(ev, picker) {
+                        $(this).val(picker.startDate.format('DD/MM/YYYY') + ' - ' + picker.endDate.format('DD/MM/YYYY'));
+                        table._fnDraw();
+                    });
+                    $('input[name="date_range"]').on('cancel.daterangepicker', function(ev, picker) {
+                        $(this).val('');
+                        table._fnDraw();
+                    });
                 }
             },
             buttons         : [

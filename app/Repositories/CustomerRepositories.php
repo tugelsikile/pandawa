@@ -8,6 +8,7 @@ use App\Desa;
 use App\Invoice;
 use App\Produk;
 use App\JenisLayanan;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Mockery\Exception;
@@ -129,14 +130,25 @@ class CustomerRepositories{
             $is_active  = $request->post('is_active');
             $npwp       = $request->post('npwp');
             $pac_id     = $request->post('pac_id');
+            $date_range = $request->post('date_range');
+            $min_date = $max_date = '';
+            if (strlen($date_range)>0){
+                $range = explode(' - ',$date_range);
+                $min_date   = Carbon::createFromFormat('d/m/Y',$range[0])->format('Y-m-d');
+                $max_date   = Carbon::createFromFormat('d/m/Y',$range[1])->format('Y-m-d');
+            }
             $where      = ['status'=>1];
             if (strlen($cab_id)>0) $where['cab_id'] = $cab_id;
             if (strlen($is_active)>0) $where['is_active'] = $is_active;
             if (strlen($npwp)>0) $where['npwp'] = $npwp;
             if (strlen($pac_id)>0) $where['pac_id'] = $pac_id;
             $data = Customer::select('cust_id')
-                ->where($where)
-                ->get()->count();
+                ->where($where);
+            if (strlen($min_date)>0 && strlen($max_date)>0){
+                $data = $data->whereBetween('from_date',[$min_date,$max_date])
+                    ->orWhereBetween('pas_date',[$min_date,$max_date]);
+            }
+            $data = $data->get()->count();
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
@@ -149,6 +161,13 @@ class CustomerRepositories{
             $is_active  = $request->post('is_active');
             $npwp       = $request->post('npwp');
             $pac_id     = $request->post('pac_id');
+            $date_range = $request->post('date_range');
+            $min_date = $max_date = '';
+            if (strlen($date_range)>0){
+                $range = explode(' - ',$date_range);
+                $min_date   = Carbon::createFromFormat('d/m/Y',$range[0])->format('Y-m-d');
+                $max_date   = Carbon::createFromFormat('d/m/Y',$range[1])->format('Y-m-d');
+            }
             $where      = ['status'=>1];
             if (strlen($cab_id)>0) $where['cab_id'] = $cab_id;
             if (strlen($is_active)>0) $where['is_active'] = $is_active;
@@ -159,8 +178,12 @@ class CustomerRepositories{
                 ->where(function ($query) use ($keyword){
                     $query->where('kode','like',"%$keyword%");
                     $query->orWhere('fullname','like',"%$keyword%");
-                })
-                ->get()->count();
+                });
+            if (strlen($min_date)>0 && strlen($max_date)>0){
+                $data = $data->whereBetween('from_date',[$min_date,$max_date])
+                    ->orWhereBetween('pas_date',[$min_date,$max_date]);
+            }
+            $data = $data->get()->count();
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
@@ -180,6 +203,13 @@ class CustomerRepositories{
             $mitra      = $request->post('mitra');
             $jenis      = $request->post('jenis_layanan');
             $pac_id     = $request->post('pac_id');
+            $date_range = $request->post('date_range');
+            $min_date = $max_date = '';
+            if (strlen($date_range)>0){
+                $range = explode(' - ',$date_range);
+                $min_date   = Carbon::createFromFormat('d/m/Y',$range[0])->format('Y-m-d');
+                $max_date   = Carbon::createFromFormat('d/m/Y',$range[1])->format('Y-m-d');
+            }
 
             $where      = ['isp_customer.status'=>1];
             if (strlen($cab_id)>0) $where['isp_customer.cab_id'] = $cab_id;
@@ -191,6 +221,10 @@ class CustomerRepositories{
                     $query->where('isp_customer.kode','like',"%$keyword%");
                     $query->orWhere('isp_customer.fullname','like',"%$keyword%");
                 });
+            if (strlen($min_date)>0 && strlen($max_date)>0){
+                $data = $data->whereBetween('isp_customer.from_date',[$min_date,$max_date])
+                    ->orWhereBetween('isp_customer.pas_date',[$min_date,$max_date]);
+            }
             if (strlen($mitra)>0){
                 $data = $data->join('isp_cabang','isp_customer.cab_id','=','isp_cabang.cab_id','left')->where('isp_cabang.mitra','=',$mitra);
             }
