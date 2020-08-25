@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <title>Cetak Laporan</title>
     <script src="{{ asset('js/app.js') }}"></script>
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet" type="text/css">
+    {{--<link href="{{ asset('css/app.css') }}" rel="stylesheet" type="text/css">--}}
     <link href="{{ asset('css/cetak.min.css') }}" rel="stylesheet">
     <link href="{{ asset('fonts/chandara.css') }}">
 
@@ -117,11 +117,15 @@
     </table>
     <div class="terms" style="float:left;margin-top:30px;line-height:12px;">
         <strong>Terms</strong><br>
-        {!! $companyInfo->terms !!}
+        @php $terms = $companyInfo->terms @endphp
+        @php $terms = strip_tags($terms) @endphp
+        {{ nl2br($terms) }}
     </div>
     <div class="qrcode qrcode_{{ $data->inv_id }}"></div>
     <div class="inv_footer" style="line-height:12px;">
-        {!! $companyInfo->footer !!}
+        @php $footer = $companyInfo->footer @endphp
+        @php $footer = strip_tags($footer) @endphp
+        {{ nl2br($footer) }}
     </div>
 </div>
 </body>

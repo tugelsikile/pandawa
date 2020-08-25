@@ -2,13 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Repositories\{ CustomerRepositories, CabangRepositories, TagihanRepositories, UserMenuRepositories, UserPriviledgesRepositories };
+use App\Repositories\{
+    CustomerRepositories, CabangRepositories, MailRepository, TagihanRepositories, UserMenuRepositories, UserPriviledgesRepositories
+};
 use App\Tagihan;
 use App\Validations\TagihanValidation;
+use PDF;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Mockery\Exception;
+
+use Mpdf;
+use PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
 
 class TagihanController extends Controller
 {
@@ -321,6 +328,85 @@ class TagihanController extends Controller
                 return view('tagihan.bulk-disapproval',compact('ids','data'));
             }
         }catch (\Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+    }
+    public function formSendInvoice(Request $request){
+        try{
+            if ($request->method()=='POST'){
+                $ids = $request->id;
+                foreach ($ids as $key => $id){
+                    if (strlen($id)>0){
+                        $this->sendInvoice(new Request(['id'=>$id]));
+                    }
+                }
+                return format(1000,'Invoice sent');
+            } else {
+                $ids = $request->id;
+                $ids = explode('-',$ids);
+                $invoices   = $this->tagihanRepositories->getByIDs($ids);
+                return view('tagihan.bulk-send-invoice',compact('invoices'));
+            }
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+    }
+    public function sendInvoice(Request $request){
+        try{
+            $companyInfo = companyInfo();
+            $data   = $this->tagihanRepositories->getByID(new Request(['id'=>$request->id]));
+
+            //CREATE PDF
+            $file_name = $data->pac_id.$data->cab_id.$data->cust_id.$data->inv_id.'.pdf';
+            $destination = storage_path() . '/app/public/invoices/' .  $file_name;
+            $pdf = new Mpdf\Mpdf(['mode' => 'utf-8', 'format' => 'A4']);
+            $html = view('tagihan.invoice-pdf',compact('companyInfo','data'));
+            $pdf->SetDisplayMode('fullpage');
+            $pdf->WriteHTML($html);
+            $pdf->Output($destination,'F');
+
+            //CHECK EMAIL
+            $email_tagih    = $data->customer->tagih_email;
+            $nama_tagih     = $data->customer->fullname;
+            $bulan_tagihan  = Carbon::createFromFormat('Y-m-d',$data->inv_date)->format('F Y');
+            $email_flags    = 0;
+            if (strlen($email_tagih)==0) $email_flags++;
+            if (!filter_var($email_tagih,FILTER_VALIDATE_EMAIL)) $email_flags++;
+
+            if ($email_flags === 0){
+                $mail_repository= new MailRepository();
+                $mail_config    = $mail_repository->getSetting();
+                $mail_template  = $mail_repository->getTemplate(2);
+
+                $mailer = new PHPMailer\PHPMailer();
+                $mailer->SMTPOptions = array(
+                    'ssl' => array(
+                        'verify_peer' => false,
+                        'verify_peer_name' => false,
+                        'allow_self_signed' => true
+                    )
+                );
+                $mailer->SMTPDebug = SMTP::DEBUG_LOWLEVEL;
+                $mailer->isSMTP();
+                $mailer->Host       = $mail_config->mail_host;
+                $mailer->SMTPAuth   = true;
+                $mailer->Username   = $mail_config->mail_user;
+                $mailer->Password   = $mail_config->mail_pass;
+                $mailer->SMTPSecure = PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
+                $mailer->Port       = $mail_config->mail_port;
+
+                $mailer->setFrom($mail_template->mail_sender, $mail_template->sender_name);
+                $mailer->addAddress($email_tagih,$nama_tagih);
+                $mailer->addReplyTo($mail_template->mail_sender,'Informasi Tagihan Bulan '.$bulan_tagihan);
+
+                $mailer->addAttachment($destination, $bulan_tagihan.'.pdf');
+
+                $mailer->isHTML(true);
+                $mailer->Subject    = $mail_template->mail_subject;
+                $mailer->Body       = $mail_template->mail_body;
+                $mailer->send();
+            }
+        }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
     }

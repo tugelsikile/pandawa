@@ -9,6 +9,8 @@
     "license": "MIT",
     "require": {
         "php": "^7.2.5",
+        "barryvdh/laravel-dompdf": "^0.8.6",
+        "carlos-meneses/laravel-mpdf": "^2.1",
         "doctrine/dbal": "^2.10",
         "eternicode/bootstrap-datepicker": "^1.9",
         "fideloper/proxy": "^4.2",
@@ -19,6 +21,8 @@
         "laravel/tinker": "^2.0",
         "laravel/ui": "^2.0",
         "mouse0270/bootstrap-growl": "^3.1",
+        "mpdf/mpdf": "^8.0",
+        "phpmailer/phpmailer": "^6.1",
         "phpoffice/phpspreadsheet": "^1.13",
         "rap2hpoutre/laravel-log-viewer": "^1.6",
         "select2/select2": "^4.0"
