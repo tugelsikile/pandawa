@@ -2,7 +2,7 @@
 
 return [
 
-    'version' => '19082929-2200 (date range tagihan dan customer)',
+    'version' => '26082020-0100 (kirim invoice via email)',
     /*
     |--------------------------------------------------------------------------
     | Application Name
