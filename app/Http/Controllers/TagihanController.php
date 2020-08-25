@@ -336,6 +336,13 @@ class TagihanController extends Controller
             $mail_template  = $mail_repository->getTemplate(2);
 
             $mailer = new PHPMailer\PHPMailer();
+            $mailer->SMTPOptions = array(
+                'ssl' => array(
+                    'verify_peer' => false,
+                    'verify_peer_name' => false,
+                    'allow_self_signed' => true
+                )
+            );
             $mailer->SMTPDebug = SMTP::DEBUG_LOWLEVEL;
             $mailer->isSMTP();
             $mailer->Host       = $mail_config->mail_host;
