@@ -2,13 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Repositories\{ CustomerRepositories, CabangRepositories, TagihanRepositories, UserMenuRepositories, UserPriviledgesRepositories };
+use App\Repositories\{
+    CustomerRepositories, CabangRepositories, MailRepository, TagihanRepositories, UserMenuRepositories, UserPriviledgesRepositories
+};
 use App\Tagihan;
 use App\Validations\TagihanValidation;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Mockery\Exception;
+
+use PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
 
 class TagihanController extends Controller
 {
@@ -321,6 +326,35 @@ class TagihanController extends Controller
                 return view('tagihan.bulk-disapproval',compact('ids','data'));
             }
         }catch (\Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+    }
+    public function sendInvoice(Request $request){
+        try{
+            $mail_repository= new MailRepository();
+            $mail_config    = $mail_repository->getSetting();
+            $mail_template  = $mail_repository->getTemplate(2);
+
+            $mailer = new PHPMailer\PHPMailer();
+            $mailer->SMTPDebug = SMTP::DEBUG_SERVER;
+            $mailer->isSMTP();
+            $mailer->Host       = $mail_config->mail_host;
+            $mailer->SMTPAuth   = true;
+            $mailer->Username   = $mail_config->mail_user;
+            $mailer->Password   = $mail_config->mail_pass;
+            $mailer->SMTPSecure = PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
+            $mailer->Port       = $mail_config->mail_port;
+
+            $mailer->setFrom($mail_template->mail_sender, $mail_template->sender_name);
+            $mailer->addAddress('reyang19@gmail.com','Dodi Suprayogi');
+            $mailer->addReplyTo($mail_template->mail_sender,'Informasi Tagihan');
+
+            $mailer->isHTML(true);
+            $mailer->Subject    = $mail_template->mail_subject;
+            $mailer->Body       = $mail_template->mail_body;
+            $mailer->send();
+
+        }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
     }

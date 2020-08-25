@@ -13,10 +13,6 @@ use Illuminate\Support\Facades\Mail;
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::get('/send-mail', function () {
-    Mail::to('f1dd7b5d1f-0d1057@inbox.mailtrap.io')->send(new SendInvoice());
-    return 'A message has been sent to Mailtrap!';
-});
 
 Route::get('/', function () {
     return view('welcome');
@@ -147,6 +143,8 @@ Route::group(['middleware'=>['auth','systemAccess']],function (){
         Route::get('/bulk-disapprove','TagihanController@BulkDisApproval');
         Route::post('/bulk-approve','TagihanController@BulkApproval');
         Route::post('/bulk-disapprove','TagihanController@BulkDisApproval');
+
+        Route::get('/send-invoice','TagihanController@sendInvoice');
     });
     Route::group(['prefix'=>'cabang-tagihan'],function (){
         Route::get('/','CabangTagihanController@index');
