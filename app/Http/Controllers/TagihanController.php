@@ -336,7 +336,7 @@ class TagihanController extends Controller
             $mail_template  = $mail_repository->getTemplate(2);
 
             $mailer = new PHPMailer\PHPMailer();
-            $mailer->SMTPDebug = SMTP::DEBUG_SERVER;
+            $mailer->SMTPDebug = SMTP::DEBUG_LOWLEVEL;
             $mailer->isSMTP();
             $mailer->Host       = $mail_config->mail_host;
             $mailer->SMTPAuth   = true;
