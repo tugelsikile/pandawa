@@ -359,7 +359,11 @@ class TagihanController extends Controller
             //CREATE PDF
             $file_name = $data->pac_id.$data->cab_id.$data->cust_id.$data->inv_id.'.pdf';
             $destination = storage_path() . '/app/public/invoices/' .  $file_name;
-            $pdf = new Mpdf\Mpdf(['mode' => 'utf-8', 'format' => 'A4']);
+            $pdf = new Mpdf\Mpdf([
+                'tempDir' => storage_path() . '/temp',
+                'mode' => 'utf-8',
+                'format' => 'A4'
+            ]);
             $html = view('tagihan.invoice-pdf',compact('companyInfo','data'));
             $pdf->SetDisplayMode('fullpage');
             $pdf->WriteHTML($html);
