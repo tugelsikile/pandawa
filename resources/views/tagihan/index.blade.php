@@ -290,6 +290,23 @@
                     }
                 }
                 @endif
+                ,{
+                    className   : 'btn btn-sm btn-outline-primary mb-1',
+                    text        : '<i class="fa fa-envelope"></i> Kirim Email Invoice',
+                    action      : function (e,dt,node,config) {
+                        let panjang = $('#dataTable tbody td input:checkbox:checked').length;
+                        if (panjang === 0){
+                            showError('Pilih tagihan terlebih dahulu');
+                        } else {
+                            ids = '';
+                            $.each($('#dataTable tbody input:checkbox:checked'),function (i,v) {
+                                ids += v.value + '-';
+                            });
+                            let data = {'href':'{{url('admin-tagihan/bulk-send-invoice?id=')}}' + ids,'title':'Kirim Email Tagihan'}
+                            show_modal(data);
+                        }
+                    }
+                }
             ],
             "columns"   : [
                 { "data" : "inv_id", "className" : "text-center", "width" : "30px", "orderable" : false, render : function (a,b,c) {

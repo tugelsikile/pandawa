@@ -7,11 +7,13 @@ use App\Repositories\{
 };
 use App\Tagihan;
 use App\Validations\TagihanValidation;
+use PDF;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Mockery\Exception;
 
+use Mpdf;
 use PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 
@@ -331,6 +333,16 @@ class TagihanController extends Controller
     }
     public function sendInvoice(Request $request){
         try{
+            $companyInfo = companyInfo();
+            $data   = $this->tagihanRepositories->getByID(new Request(['id'=>1]));
+            $file_name = storage_path() . '/app/public/invoices/' . $data->pac_id.$data->cab_id.$data->cust_id.$data->inv_id.'.pdf';
+            $pdf = new Mpdf\Mpdf(['mode' => 'utf-8', 'format' => 'A4']);
+            $html = view('tagihan.invoice-pdf',compact('companyInfo','data'));
+            $pdf->SetDisplayMode('fullpage');
+            $pdf->WriteHTML($html);
+            $pdf->Output($file_name,'F');
+
+die();
             $mail_repository= new MailRepository();
             $mail_config    = $mail_repository->getSetting();
             $mail_template  = $mail_repository->getTemplate(2);
@@ -355,6 +367,8 @@ class TagihanController extends Controller
             $mailer->setFrom($mail_template->mail_sender, $mail_template->sender_name);
             $mailer->addAddress('reyang19@gmail.com','Dodi Suprayogi');
             $mailer->addReplyTo($mail_template->mail_sender,'Informasi Tagihan');
+
+            $mailer->addAttachment('/tmp/image.jpg', 'new.jpg');
 
             $mailer->isHTML(true);
             $mailer->Subject    = $mail_template->mail_subject;
