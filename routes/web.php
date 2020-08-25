@@ -144,7 +144,8 @@ Route::group(['middleware'=>['auth','systemAccess']],function (){
         Route::post('/bulk-approve','TagihanController@BulkApproval');
         Route::post('/bulk-disapprove','TagihanController@BulkDisApproval');
 
-        Route::get('/send-invoice','TagihanController@sendInvoice');
+        Route::get('/bulk-send-invoice','TagihanController@formSendInvoice');
+        Route::post('/bulk-send-invoice','TagihanController@formSendInvoice');
     });
     Route::group(['prefix'=>'cabang-tagihan'],function (){
         Route::get('/','CabangTagihanController@index');
