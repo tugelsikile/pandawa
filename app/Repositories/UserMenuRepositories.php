@@ -12,6 +12,7 @@ class UserMenuRepositories{
             LEFT JOIN isp_controllers AS ic ON iup.ctrl_id = ic.ctrl_id
             LEFT JOIN isp_functions AS isf ON iup.func_id = isf.func_id
             WHERE     iup.lvl_id = '$user_level' AND iup.R_opt = 1
+            ORDER BY  iup.ctrl_id ASC
         ");
         $datas = [];
         if (!is_null($data)){

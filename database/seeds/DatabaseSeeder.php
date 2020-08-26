@@ -12,7 +12,10 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $this->call([
-            SeedControllerUrl::class
+            SeedControllerUrl::class,
+            removeUnusedMenu::class,
+            seedMenuJenisLayanan::class,
+            seedMenuToPrivileges::class,
         ]);
     }
 }

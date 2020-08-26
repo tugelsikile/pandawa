@@ -48,15 +48,13 @@
                     @if(Auth::check())
                         @if($menus)
                             @foreach($menus as $key => $menu)
-                                @if($menu->ctrl_url=='admin-customer')
-                                    <li class="nav-item dropdown @if($curMenu==$menu->ctrl_url) active @endif">
-                                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            {{ $menu->ctrl_label }}
-                                        </a>
-                                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                            <a class="dropdown-item" href="{{ url($menu->ctrl_url) }}">Data {{ $menu->ctrl_label }}</a>
-                                            <a class="dropdown-item" href="{{ url('admin-customer/jenis-layanan') }}">Data Jenis Layanan</a>
-                                        </div>
+                                @if($menu->ctrl_url=='admin-customer' && $menu->func_url == 'jenis-layanan')
+                                    <li class="nav-item @if($curMenu == $menu->ctrl_url) active @endif">
+                                        <a class="nav-link" href="{{ url($menu->ctrl_url) }}/jenis-layanan">{{ $menu->ctrl_label }}</a>
+                                    </li>
+                                @elseif($menu->ctrl_url=='admin-customer' && $menu->func_url == 'index')
+                                    <li class="nav-item @if($curMenu == $menu->ctrl_url) active @endif">
+                                        <a class="nav-link" href="{{ url($menu->ctrl_url) }}">{{ $menu->ctrl_label }}</a>
                                     </li>
                                 @elseif($menu->ctrl_url == 'admin-kas')
                                     <li class="nav-item dropdown @if($curMenu == $menu->ctrl_url) active @endif">
