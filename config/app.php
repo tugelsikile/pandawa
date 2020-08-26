@@ -2,7 +2,7 @@
 
 return [
 
-    'version' => '26082020-0100 (kirim invoice via email)',
+    'version' => '26082020-0800 (bug fix privileges)',
     /*
     |--------------------------------------------------------------------------
     | Application Name
