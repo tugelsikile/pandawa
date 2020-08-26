@@ -13,7 +13,9 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             SeedControllerUrl::class,
-            removeUnusedMenu::class
+            removeUnusedMenu::class,
+            seedMenuJenisLayanan::class,
+            seedMenuToPrivileges::class,
         ]);
     }
 }

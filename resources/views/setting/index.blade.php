@@ -22,7 +22,7 @@
             <div class="card-body" id="setting-container"></div>
         </div>
     </div>
-    <script>
+    {{--<script>
         settingPage({'href':'{{ url('setting/data-perusahaan') }}'})
-    </script>
+    </script>--}}
 @endsection
