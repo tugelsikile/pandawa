@@ -23,10 +23,3 @@
     @endforelse
     </tbody>
 </table>
-
-<script>
-    /*function bulkSend() {
-
-    }
-    $('#ModalForm .modal-footer').html('<button type="button" onclick="bulkSend();return false" class="btn btn-outline-primary"><i class="fa fa-send"></i> Mulai Kirim Email</button>');*/
-</script>

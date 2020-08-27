@@ -377,38 +377,54 @@ class TagihanController extends Controller
             if (strlen($email_tagih)==0) $email_flags++;
             if (!filter_var($email_tagih,FILTER_VALIDATE_EMAIL)) $email_flags++;
 
+
             if ($email_flags === 0){
                 $mail_repository= new MailRepository();
                 $mail_config    = $mail_repository->getSetting();
                 $mail_template  = $mail_repository->getTemplate(2);
 
-                $mailer = new PHPMailer\PHPMailer();
-                $mailer->SMTPOptions = array(
-                    'ssl' => array(
-                        'verify_peer' => false,
-                        'verify_peer_name' => false,
-                        'allow_self_signed' => true
-                    )
-                );
-                $mailer->SMTPDebug = SMTP::DEBUG_LOWLEVEL;
-                $mailer->isSMTP();
-                $mailer->Host       = $mail_config->mail_host;
-                $mailer->SMTPAuth   = true;
-                $mailer->Username   = $mail_config->mail_user;
-                $mailer->Password   = $mail_config->mail_pass;
-                $mailer->SMTPSecure = PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
-                $mailer->Port       = $mail_config->mail_port;
+                $mail_body      = $mail_template->mail_body;
+                $mail_body      = str_replace("{inv_num}",$data->inv_number,$mail_body);
+                $mail_body      = str_replace("{cust_id}",$data->customer->kode,$mail_body);
+                $mail_body      = str_replace("{fullname}",$data->customer->fullname,$mail_body);
+                $mail_body      = str_replace("{inv_date}",tglIndo($data->inv_date),$mail_body);
+                $mail_body      = str_replace("{inv_sum}",'Rp. '.format_rp($data->price_with_tax),$mail_body);
 
-                $mailer->setFrom($mail_template->mail_sender, $mail_template->sender_name);
-                $mailer->addAddress($email_tagih,$nama_tagih);
-                $mailer->addReplyTo($mail_template->mail_sender,'Informasi Tagihan Bulan '.$bulan_tagihan);
+                $mail_subject   = $mail_template->mail_subject;
+                $mail_subject   = str_replace("{site_name}",companyInfo()->company_name01,$mail_subject);
+                $mail_subject   = str_replace("{inv_date}",tglIndo($data->inv_date),$mail_subject);
 
-                $mailer->addAttachment($destination, $bulan_tagihan.'.pdf');
+                try{
+                    $mailer = new PHPMailer\PHPMailer();
+                    $mailer->SMTPOptions = array(
+                        'ssl' => array(
+                            'verify_peer' => false,
+                            'verify_peer_name' => false,
+                            'allow_self_signed' => true
+                        )
+                    );
+                    $mailer->SMTPDebug = SMTP::DEBUG_OFF;
+                    $mailer->isSMTP();
+                    $mailer->Host       = $mail_config->mail_host;
+                    $mailer->SMTPAuth   = true;
+                    $mailer->Username   = $mail_config->mail_user;
+                    $mailer->Password   = $mail_config->mail_pass;
+                    $mailer->SMTPSecure = PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
+                    $mailer->Port       = $mail_config->mail_port;
 
-                $mailer->isHTML(true);
-                $mailer->Subject    = $mail_template->mail_subject;
-                $mailer->Body       = $mail_template->mail_body;
-                $mailer->send();
+                    $mailer->setFrom($mail_template->mail_sender, $mail_template->sender_name);
+                    $mailer->addAddress($email_tagih,$nama_tagih);
+                    $mailer->addReplyTo($mail_template->mail_sender,'Informasi Tagihan Bulan '.$bulan_tagihan);
+
+                    $mailer->addAttachment($destination, $bulan_tagihan.'.pdf');
+
+                    $mailer->isHTML(true);
+                    $mailer->Subject    = $mail_subject;
+                    $mailer->Body       = $mail_body;
+                    $mailer->send();
+                }catch (PHPMailer\Exception $exception){
+                    throw new PHPMailer\Exception($exception->getMessage());
+                }
             }
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
