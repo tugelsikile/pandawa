@@ -15,6 +15,8 @@ class DatabaseSeeder extends Seeder
             SeedControllerUrl::class,
             removeUnusedMenu::class,
             seedMenuJenisLayanan::class,
+            seedChangeMenu::class,
+            seedMenuMikrotik::class,
             seedMenuToPrivileges::class,
         ]);
     }

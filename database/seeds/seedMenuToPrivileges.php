@@ -23,6 +23,15 @@ class seedMenuToPrivileges extends Seeder
                 $priv->R_opt = $priv->C_opt = $priv->U_opt = $priv->D_opt = 0;
                 $priv->save();
             }
+            $chk = \App\UserPriviledges::where('lvl_id',$item->lvl_id)->where('ctrl_id',15)->where('func_id',25)->get();
+            if ($chk->count()===0){
+                $priv = new \App\UserPriviledges();
+                $priv->lvl_id   = $item->lvl_id;
+                $priv->ctrl_id  = 15;
+                $priv->func_id  = 25;
+                $priv->R_opt = $priv->C_opt = $priv->U_opt = $priv->D_opt = 0;
+                $priv->save();
+            }
         }
     }
 }
