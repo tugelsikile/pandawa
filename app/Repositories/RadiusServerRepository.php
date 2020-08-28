@@ -49,6 +49,7 @@ class RadiusServerRepository{
                     return $response->params;
                 }
             }
+            return [];
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
