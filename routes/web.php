@@ -249,7 +249,10 @@ Route::group(['middleware'=>['auth','systemAccess']],function (){
     Route::group(['prefix'=>'radius-server'],function (){
         Route::get('/','RadiusServerController@index')->name('radius-server');
         Route::post('/table','RadiusServerController@table')->name('radius-server.table');
-        Route::get('/create','RadiusServerController@create')->name('radius-server.create');
-        Route::post('/create','RadiusServerController@create')->name('radius-server.create');
+        Route::get('/create','RadiusServerController@createUser')->name('radius-server.create');
+        Route::post('/create','RadiusServerController@createUser')->name('radius-server.create');
+        Route::get('/update','RadiusServerController@updateUser')->name('radius-server.update');
+        Route::post('/update','RadiusServerController@updateUser')->name('radius-server.update');
+        Route::post('/delete','RadiusServerController@deleteUser')->name('radius-server.delete');
     });
 });

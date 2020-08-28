@@ -43,7 +43,7 @@ class RadiusServerController extends Controller
             throw new Exception($exception->getMessage());
         }
     }
-    public function create(Request $request){
+    public function createUser(Request $request){
         try{
             if ($request->method()=='POST'){
                 $save = $this->RadiusServerRepository->createUser($request);
@@ -53,6 +53,34 @@ class RadiusServerController extends Controller
                 $user_levels    = $this->RadiusServerRepository->getAllUserLevel();
                 return view('radius-server.create',compact('cabangs','user_levels'));
             }
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+    }
+    public function updateUser(Request $request){
+        try{
+            if ($request->method()=='POST'){
+                $save = $this->RadiusServerRepository->updateUser($request);
+                return format($save->code,$save->msg,$save->params);
+            } else {
+                $data = collect($this->RadiusServerRepository->getUserByID($request));
+                if ($data->count()===0){
+                    die('Tidak ada data');
+                } else {
+                    $data = $data->first();
+                    $cabangs    = $this->cabangRepositories->all();
+                    $user_levels    = $this->RadiusServerRepository->getAllUserLevel();
+                    return view('radius-server.update',compact('cabangs','user_levels','data'));
+                }
+            }
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+    }
+    public function deleteUser(Request $request){
+        try{
+            $save = $this->RadiusServerRepository->deleteUser($request);
+            return format($save->code,$save->msg,$save->params);
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }

@@ -61,8 +61,28 @@
                 @endif
             ],
             "columns"   : [
-                { "data" : "name" },
-                { "data" : "email", },
+                { "data" : "name", render : function (a,b,c) {
+                        var html = '' +
+                        @if($privs)
+                            @if($privs->U_opt == 1 || $privs->D_opt == 1)
+                                '<div class="dropdown show float-right">' +
+                                    '<a class="btn btn-secondary btn-sm dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></a>' +
+                                    '<div class="dropdown-menu" aria-labelledby="dropdownMenuLink">' +
+                                    @if($privs->U_opt == 1)
+                                        '<a class="dropdown-item" onclick="show_modal(this);return false" title="Rubah Data Pengguna" href="{{ url('radius-server/update?id=') }}'+c.id+'"><i class="fa fa-pencil"></i> Rubah Data</a>' +
+                                    @endif
+                                    @if($privs->D_opt == 1)
+                                        '<a class="dropdown-item" data-token="{{ csrf_token() }}" title="Hapus Data Pengguna" data-id="'+c.id+'" onclick="delete_data(this);return false" href="{{ url('radius-server/delete') }}"><i class="fa fa-trash-o"></i> Hapus Data</a>' +
+                                    @endif
+                                    '</div>' +
+                                '</div>' +
+                            @endif
+                        @endif
+                                '';
+                        return c.name + html;
+                    }
+                },
+                { "data" : "email" },
                 { "data" : "level_id", "width" : "120px", render : function (a,b,c) {
                         return c.level_id.name;
                     }

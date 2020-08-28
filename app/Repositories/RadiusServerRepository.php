@@ -86,4 +86,54 @@ class RadiusServerRepository{
             throw new Exception($exception->getMessage());
         }
     }
+    public function updateUser(Request $request){
+        try{
+            $client = new \GuzzleHttp\Client();
+            $header = [
+                'form_params' => [
+                    'id' => $request->id,
+                    'cab_id' => $request->nama_cabang,
+                    'name' => $request->nama_pengguna,
+                    'email' => $request->alamat_email,
+                    'password' => $request->kata_sandi,
+                    'user_level' => $request->level_pengguna,
+                ]
+            ];
+            $response = $client->request('POST',config('app.MIX_API_RADIUS').'/api/user/update',$header);
+            $response = json_decode($response->getBody());
+            return $response;
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+    }
+    public function deleteUser(Request $request){
+        try{
+            $client = new \GuzzleHttp\Client();
+            $header = [
+                'form_params' => [
+                    'id' => $request->id,
+                ]
+            ];
+            $response = $client->request('POST',config('app.MIX_API_RADIUS').'/api/user/delete',$header);
+            $response = json_decode($response->getBody());
+            return $response;
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+    }
+    public function getUserByID(Request $request){
+        try{
+            $client = new \GuzzleHttp\Client();
+            $response = $client->request('GET',config('app.MIX_API_RADIUS').'/api/user/get?column=id&value='.$request->id);
+            $response = json_decode($response->getBody());
+            if (isset($response->code)){
+                if ($response->code === 1000){
+                    return $response->params;
+                }
+            }
+            return [];
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+    }
 }
