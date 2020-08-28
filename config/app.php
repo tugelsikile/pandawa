@@ -2,6 +2,8 @@
 
 return [
 
+    'MIX_API_RADIUS' => env('MIX_API_RADIUS','http://pandawa-radius.lan'),
+
     'version' => '26082020-0800 (bug fix privileges)',
     /*
     |--------------------------------------------------------------------------

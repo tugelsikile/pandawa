@@ -248,5 +248,6 @@ Route::group(['middleware'=>['auth','systemAccess']],function (){
 
     Route::group(['prefix'=>'radius-server'],function (){
         Route::get('/','RadiusServerController@index')->name('radius-server');
+        Route::post('/table','RadiusServerController@table')->name('radius-server.table');
     });
 });
