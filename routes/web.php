@@ -245,4 +245,8 @@ Route::group(['middleware'=>['auth','systemAccess']],function (){
         Route::get('/update-pengeluaran-rutin','KasController@RecursiveOutputUpdate')->name('admin-kas.update-pengeluaran-rutin');
         Route::post('/update-pengeluaran-rutin','KasController@RecursiveOutputUpdate')->name('admin-kas.update-pengeluaran-rutin');
     });
+
+    Route::group(['prefix'=>'radius-server'],function (){
+        Route::get('/','RadiusServerController@index')->name('radius-server');
+    });
 });
