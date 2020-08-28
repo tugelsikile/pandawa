@@ -15,14 +15,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        @forelse($users as $key => $user)
-                            <tr>
-                                <td>{{$user->name}}</td>
-                                <td>{{$user->email}}</td>
-                                <td>{{$user->user_level->name}}</td>
-                            </tr>
-                        @empty
-                        @endforelse
+
                         </tbody>
                     </table>
                 </form>
@@ -38,6 +31,20 @@
             "searchDelay"   : 2000,
             "fixedHeader"   : true,
             "responsive"    : true,
+            "processing"    : true,
+            "serverSide"    : true,
+            "ajax"          : {
+                "url"   : '{{ url('radius-server/table') }}',
+                "type"  : "POST",
+                "data"  : function (d) {
+                    d._token = '{{ csrf_token() }}';
+                    @if(auth()->user()->cab_id)
+                        d.cab_id = '{{ auth()->user()->cab_id }}';
+                    @else
+                        d.cab_id = $('div.toolbar select.cab-id').val();
+                    @endif
+                }
+            },
             buttons         : [
                 @if($privs->C_opt == 1)
                 {
@@ -45,7 +52,7 @@
                     text: '<i class="fa fa-plus"></i> Tambah Pengguna',
                     action : function (e,dt,node,config) {
                         @if($privs->C_opt == 1)
-                            show_modal({'href':'{{ url('admin-account/create') }}','title':'Tambah Pengguna'});
+                            show_modal({'href':'{{ url('radius-server/create') }}','title':'Tambah Pengguna'});
                         @else
                             showError('Forbidden Action');
                         @endif
@@ -53,6 +60,14 @@
                 }
                 @endif
             ],
+            "columns"   : [
+                { "data" : "name" },
+                { "data" : "email", },
+                { "data" : "level_id", "width" : "120px", render : function (a,b,c) {
+                        return c.level_id.name;
+                    }
+                }
+            ]
         });
         $('div.toolbar .dt-buttons').append('' +
             '<div class="float-right d-none d-md-block col-sm-3 pr-0">' +

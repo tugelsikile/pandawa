@@ -21,12 +21,38 @@ class RadiusServerController extends Controller
     }
     public function index(Request $request){
         try{
-            $users      = $this->RadiusServerRepository->getUsers($request);
             $curMenu    = $this->curMenu;
             $privs      = $this->priviledges->checkPrivs(auth()->user()->level,$this->curMenu);
             $menus      = $this->menuRepositories->getMenu(auth()->user()->level);
             $cabangs    = $this->cabangRepositories->all();
-            return view('radius-server.index',compact('cabangs','users','curMenu','privs','menus'));
+            return view('radius-server.index',compact('cabangs','curMenu','privs','menus'));
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+    }
+    public function table(Request $request){
+        try{
+            $data   = $this->RadiusServerRepository->getUsersTable($request);
+            return [
+                'data' => $data->data,
+                'draw' => $request->draw,
+                'recordsFiltered' => $data->recordsFiltered,
+                'recordsTotal' => $data->recordsTotal
+            ];
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+    }
+    public function create(Request $request){
+        try{
+            if ($request->method()=='POST'){
+                $save = $this->RadiusServerRepository->createUser($request);
+                return format($save->code,$save->msg,$save->params);
+            } else {
+                $cabangs        = $this->cabangRepositories->all();
+                $user_levels    = $this->RadiusServerRepository->getAllUserLevel();
+                return view('radius-server.create',compact('cabangs','user_levels'));
+            }
         }catch (Exception $exception){
             throw new Exception($exception->getMessage());
         }
