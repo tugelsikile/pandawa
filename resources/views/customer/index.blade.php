@@ -55,7 +55,7 @@
             "drawCallback"  : function (settings) {
                 if ($('div.toolbar div.float-right').length === 0){
                     $('div.toolbar .dt-buttons').append('' +
-                        @if($privs->D_opt == 1 || $privs->U_opt == 1)
+                        @if($privs->R_opt == 1)
                             '<div class="float-right d-none d-md-block col-sm-6 pr-0">' +
                                 '<div class="row">' +
                                     '<div class="col-sm-6">' +
