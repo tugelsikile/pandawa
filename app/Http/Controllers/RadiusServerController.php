@@ -33,7 +33,7 @@ class RadiusServerController extends Controller
     public function table(Request $request){
         try{
             $data   = $this->RadiusServerRepository->getUsersTable($request);
-            if (count($data)===0){
+            if (count($data->data)===0){
                 return ['data'=>[],'recordsFiltered'=>0,'recordsTotal'=>0];
             }
             return [

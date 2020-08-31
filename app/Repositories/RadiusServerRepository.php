@@ -6,6 +6,11 @@ use Illuminate\Http\Request;
 use Exception;
 
 class RadiusServerRepository{
+    public function __construct()
+    {
+        $this->cabangRepository = new CabangRepositories();
+    }
+
     public function getUsers(Request $request){
         $data   = [];
         try{
@@ -73,7 +78,7 @@ class RadiusServerRepository{
             $client = new \GuzzleHttp\Client();
             $header = [
                 'form_params' => [
-                    'cab_id' => $request->nama_cabang,
+                    'cab_id' => json_encode(collect($this->cabangRepository->getByID($request->nama_cabang)->first())),
                     'name' => $request->nama_pengguna,
                     'email' => $request->alamat_email,
                     'password' => $request->kata_sandi,

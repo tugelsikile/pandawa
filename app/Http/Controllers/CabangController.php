@@ -310,4 +310,12 @@ class CabangController extends Controller
             }
         }
     }
+    public function getCabang(Request $request){
+        try{
+            $data   = $this->cabangRepositories->getByID($request->id);
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+        return format(1000,'data loaded',$data);
+    }
 }
