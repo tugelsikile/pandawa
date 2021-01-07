@@ -87,7 +87,7 @@ function listCustomer() {
         var cabang_id   = $('#nama_cabang').val();
         var msg         = '';
         $.ajax({
-            url     : window.origin + '/api/lists/customers',
+            url     : APP_URLS + '/api/lists/customers',
             type    : 'POST',
             dataType: 'JSON',
             data    : { nama_cabang : cabang_id },
@@ -117,7 +117,7 @@ function listProduk() {
         var cabang_id   = $('#nama_cabang').val();
         var msg         = '';
         $.ajax({
-            url     : window.origin + '/api/lists/produk-cabang',
+            url     : APP_URLS + '/api/lists/produk-cabang',
             dataType: 'JSON',
             type    : 'POST',
             data    : { cab_id : cabang_id },
@@ -269,7 +269,7 @@ function getProdukCabang(obj){
     } else {
         $('#nama_produk').html('<option value="">Loading...</option>');
         $.ajax({
-            url     : window.origin + '/lists/produk-cabang',
+            url     : APP_URLS + '/lists/produk-cabang',
             type    : 'POST',
             dataType: 'JSON',
             data    : { cab_id : cab_id },
@@ -293,7 +293,7 @@ function kodeProduk() {
         $('#kode_produk').val('');
     } else {
         $.ajax({
-            url     : window.origin + '/admin-produk/kode-produk',
+            url     : APP_URLS + '/admin-produk/kode-produk',
             type    : 'POST',
             dataType: 'JSON',
             data    : { cab_id : cab_id },
@@ -312,7 +312,7 @@ function kodeCustomer() {
         $('#nomor_pelanggan,#nomor_pelanggan_text').val('');
     } else {
         $.ajax({
-            url     : window.origin + '/preview-id-pelanggan',
+            url     : APP_URLS + '/preview-id-pelanggan',
             type    : 'POST',
             dataType: 'JSON',
             data    : { cab_id : cab_id },
@@ -330,7 +330,7 @@ function previewHarga() {
     var tax     = $('#pajak_produk').val();
     $('#preview_harga').val('Loading...');
     $.ajax({
-        url     : window.origin + '/preview-harga',
+        url     : APP_URLS + '/preview-harga',
         type    : 'POST',
         dataType: 'JSON',
         data    : { price : price, tax : tax },
@@ -449,7 +449,7 @@ function getKab(obj,defaultRegencyID){
     var prov_id = $(obj).val();
     $('.regency_id').html('<option value="">Loading...</option>');
     $.ajax({
-        url     : window.origin + '/regional/get-kab',
+        url     : APP_URLS + '/regional/get-kab',
         type    : 'GET',
         dataType: 'JSON',
         data    : { id : prov_id },
@@ -479,7 +479,7 @@ function getKabPenagihan(kabID) {
     var prov_id = $('#provinsi_penagihan').val();
     $('#kabupaten_penagihan,#kecamatan_penagihan,#desa_penagihan').html('<option value="">Loading...</option>');
     $.ajax({
-        url     : window.origin + '/regional/get-kab',
+        url     : APP_URLS + '/regional/get-kab',
         type    : 'GET',
         dataType: 'JSON',
         data    : { id : prov_id },
@@ -509,7 +509,7 @@ function getKec(obj,defaultDistrictID) {
     var kab_id = $(obj).val();
     $('.district_id').html('<option value="">Loading...</option>');
     $.ajax({
-        url     : window.origin + '/regional/get-kec',
+        url     : APP_URLS + '/regional/get-kec',
         type    : 'GET',
         dataType: 'JSON',
         data    : { id : kab_id },
@@ -539,7 +539,7 @@ function getKecPenagihan(kecID){
     var kab_id = $('#kabupaten_penagihan').val();
     $('#kecamatan_penagihan,#desa_penagihan').html('<option value="">Loading...</option>');
     $.ajax({
-        url     : window.origin + '/regional/get-kec',
+        url     : APP_URLS + '/regional/get-kec',
         type    : 'GET',
         dataType: 'JSON',
         data    : { id : kab_id },
@@ -569,7 +569,7 @@ function getDesa(obj,defaultDesaID) {
     var kab_id = $(obj).val();
     $('.village_id').html('<option value="">Loading...</option>');
     $.ajax({
-        url     : window.origin + '/regional/get-desa',
+        url     : APP_URLS + '/regional/get-desa',
         type    : 'GET',
         dataType: 'JSON',
         data    : { id : kab_id },
@@ -596,7 +596,7 @@ function getDesaPenagihan(desaID){
     var kec_id = $('#kecamatan_penagihan').val();
     $('#desa_penagihan').html('<option value="">Loading...</option>');
     $.ajax({
-        url     : window.origin + '/regional/get-desa',
+        url     : APP_URLS + '/regional/get-desa',
         type    : 'GET',
         dataType: 'JSON',
         data    : { id : kec_id },
@@ -624,7 +624,7 @@ function previewID() {
     var padding     = $('#pad').val();
     $('#preview_id').val('Loading...');
     $.ajax({
-        url     : window.origin + '/preview-id',
+        url     : APP_URLS + '/preview-id',
         type    : 'POST',
         dataType: 'JSON',
         data    : { template : template, padding : padding },
@@ -651,7 +651,7 @@ function printNow() {
 function printCancel() {
     if ($('.is-print')){ if ($('.is-print').is(':visible')){ $('.is-print').hide(); } }
     if ($('.no-print')){ if ($('.no-print').is(':hidden')){ $('.no-print').show(); }}
-    if ($('#printFrame')){ $('#printFrame').attr({'src':window.origin + '/api/cetak-loading'}); }
+    if ($('#printFrame')){ $('#printFrame').attr({'src':APP_URLS + '/api/cetak-loading'}); }
 }
 function printDataPost(obj) {
     var formElement     = $('#'+$(obj).attr('data-form'));
@@ -725,7 +725,7 @@ function tahunIndo(string) {
 function cari_mitra() {
     var mitra   = $('.mitra').val();
     $.ajax({
-        url     : window.origin + '/lists/cabang',
+        url     : APP_URLS + '/lists/cabang',
         type    : 'POST',
         dataType: 'JSON',
         data    : { mitra : mitra, _token : csrf_token },
@@ -754,7 +754,7 @@ function cari_paketan() {
     var mitra   = $('.mitra').val();
     var cab_id  = $('.cab-id').val();
     $.ajax({
-        url     : window.origin + '/api/lists/produk-cabang',
+        url     : APP_URLS + '/api/lists/produk-cabang',
         type    : 'POST',
         data    : { cab_id : cab_id, mitra : mitra },
         error   : function (e) {

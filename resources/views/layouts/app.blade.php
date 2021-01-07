@@ -11,7 +11,7 @@
 
     <!-- Scripts -->
     <script>
-        var APP_URL = '{{ env('APP_URL') }}';
+        var APP_URLS = '{{ config('app.url') }}';
         var csrf_token = '{{ csrf_token() }}'
     </script>
     <script src="{{ asset('js/app.js') }}"></script>
