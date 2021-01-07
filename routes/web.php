@@ -245,4 +245,14 @@ Route::group(['middleware'=>['auth','systemAccess']],function (){
         Route::get('/update-pengeluaran-rutin','KasController@RecursiveOutputUpdate')->name('admin-kas.update-pengeluaran-rutin');
         Route::post('/update-pengeluaran-rutin','KasController@RecursiveOutputUpdate')->name('admin-kas.update-pengeluaran-rutin');
     });
+
+    Route::group(['prefix'=>'radius-server'],function (){
+        Route::get('/','RadiusServerController@index')->name('radius-server');
+        Route::post('/table','RadiusServerController@table')->name('radius-server.table');
+        Route::get('/create','RadiusServerController@createUser')->name('radius-server.create');
+        Route::post('/create','RadiusServerController@createUser')->name('radius-server.create');
+        Route::get('/update','RadiusServerController@updateUser')->name('radius-server.update');
+        Route::post('/update','RadiusServerController@updateUser')->name('radius-server.update');
+        Route::post('/delete','RadiusServerController@deleteUser')->name('radius-server.delete');
+    });
 });
