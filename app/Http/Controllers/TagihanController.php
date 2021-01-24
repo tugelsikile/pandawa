@@ -430,4 +430,13 @@ class TagihanController extends Controller
             throw new Exception($exception->getMessage());
         }
     }
+    public function bulkDelete(Request $request){
+        try{
+            $valid = $this->tagihanValidation->bulkDelete($request);
+            $bulkDelete = $this->tagihanRepositories->bulkDelete($valid);
+            return format(1000,'Data dihapus',$bulkDelete);
+        }catch (Exception $exception){
+            return format(500,$exception->getMessage());
+        }
+    }
 }

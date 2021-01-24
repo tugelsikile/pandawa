@@ -451,4 +451,19 @@ class TagihanRepositories{
         Log::channel('customLog')->notice($logs,['params'=>sanitize($request)]);
         return $data;
     }
+    public function bulkDelete(Request $request){
+        try{
+            $delete = Tagihan::whereIn('inv_id',$request->inv_id)->get();
+            foreach ($delete as $invoice){
+                $invoice->status = 0;
+                $invoice->delete_date = Carbon::now()->format('Y-m-d H:i:s');
+                $invoice->delete_by = \auth()->user()->id;
+                $invoice->delete_reason = 'none';
+                $invoice->saveOrFail();
+            }
+            return $delete;
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+    }
 }

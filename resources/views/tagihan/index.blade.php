@@ -63,7 +63,7 @@
             </div>
             <div class="card-body no-print">
                 <form id="FormTable">
-                    <table class="table table-bordered" id="dataTable" style="width: 100%">
+                    <table class="table table-bordered table-sm" id="dataTable" style="width: 100%">
                         <thead>
                         <tr>
                             <th class="min-mobile"><input type="checkbox" onclick="tableCbxAll(this);"></th>
@@ -71,7 +71,7 @@
                             <th class="min-mobile">Nomor Invoice / Nama Pelanggan</th>
                             <th class="min-desktop">Periode</th>
                             <th class="min-desktop">Jml Tagihan</th>
-                            <th class="min-desktop">Status Pembayaran</th>
+                            <th class="min-desktop">Status</th>
                         </tr>
                         </thead>
                         <tbody></tbody>
@@ -219,6 +219,38 @@
             },
             buttons         : [
                 {
+                    className   : 'btn btn-sm btn-outline-primary mb-1',
+                    text        : '<i class="fa fa-print"></i> Cetak Laporan',
+                    action      : function (e,dt,node,config) {
+                        printDataPost({'href':'{{ url('api/tagihan/cetak-laporan') }}','data-frame':'printFrame','data-form':'FormTable'});
+                    }
+                },
+                {
+                    className   : 'btn btn-sm btn-outline-secondary mb-1',
+                    text        : '<i class="fa fa-print"></i> Cetak Rekap',
+                    action      : function (e,dt,node,config) {
+                        printDataPost({'href':'{{ url('api/tagihan/cetak-rekap') }}','data-frame':'printFrame','data-form':'FormTable'});
+                    }
+                }
+                ,{
+                    className   : 'btn btn-sm btn-outline-primary mb-1',
+                    text        : '<i class="fa fa-envelope"></i> Kirim Email Invoice',
+                    action      : function (e,dt,node,config) {
+                        let panjang = $('#dataTable tbody td input:checkbox:checked').length;
+                        if (panjang === 0){
+                            showError('Pilih tagihan terlebih dahulu');
+                        } else {
+                            ids = '';
+                            $.each($('#dataTable tbody input:checkbox:checked'),function (i,v) {
+                                ids += v.value + '-';
+                            });
+                            let data = {'href':'{{url('admin-tagihan/bulk-send-invoice?id=')}}' + ids,'title':'Kirim Email Tagihan'}
+                            show_modal(data);
+                        }
+                    }
+                }
+                @if(checkPrivileges('admin_tagihan','index')->C_opt == 1)
+                ,{
                     className   : 'btn btn-sm btn-primary mb-1',
                     text        : '<i class="fa fa-refresh"></i> Generate Invoice',
                     action      : function (e,dt,node,config) {
@@ -239,21 +271,8 @@
                             showError('Forbidden Action');
                         @endif
                     }
-                },
-                {
-                    className   : 'btn btn-sm btn-outline-primary mb-1',
-                    text        : '<i class="fa fa-print"></i> Cetak Laporan',
-                    action      : function (e,dt,node,config) {
-                        printDataPost({'href':'{{ url('api/tagihan/cetak-laporan') }}','data-frame':'printFrame','data-form':'FormTable'});
-                    }
-                },
-                {
-                    className   : 'btn btn-sm btn-outline-secondary mb-1',
-                    text        : '<i class="fa fa-print"></i> Cetak Rekap',
-                    action      : function (e,dt,node,config) {
-                        printDataPost({'href':'{{ url('api/tagihan/cetak-rekap') }}','data-frame':'printFrame','data-form':'FormTable'});
-                    }
                 }
+                @endif
                 @if(checkPrivileges('admin_tagihan','approve_paid')->U_opt == 1)
                 ,{
                     className   : 'btn btn-sm btn-outline-success mb-1',
@@ -290,23 +309,21 @@
                     }
                 }
                 @endif
+                @if(checkPrivileges('admin_tagihan','index')->D_opt == 1)
                 ,{
-                    className   : 'btn btn-sm btn-outline-primary mb-1',
-                    text        : '<i class="fa fa-envelope"></i> Kirim Email Invoice',
+                    className   : 'btn btn-sm btn-outline-danger mb-1',
+                    text        : '<i class="fa fa-trash-o"></i> Hapus Tagihan',
                     action      : function (e,dt,node,config) {
                         let panjang = $('#dataTable tbody td input:checkbox:checked').length;
                         if (panjang === 0){
                             showError('Pilih tagihan terlebih dahulu');
                         } else {
-                            ids = '';
-                            $.each($('#dataTable tbody input:checkbox:checked'),function (i,v) {
-                                ids += v.value + '-';
-                            });
-                            let data = {'href':'{{url('admin-tagihan/bulk-send-invoice?id=')}}' + ids,'title':'Kirim Email Tagihan'}
-                            show_modal(data);
+                            let data = {'title' : 'Hapus Tagihan Dipilih ?', 'href' : '{{url('admin-tagihan/bulk-delete')}}', 'data-token' : '{{csrf_token()}}'};
+                            bulk_delete(data);
                         }
                     }
                 }
+                @endif
             ],
             "columns"   : [
                 { "data" : "inv_id", "className" : "text-center", "width" : "30px", "orderable" : false, render : function (a,b,c) {

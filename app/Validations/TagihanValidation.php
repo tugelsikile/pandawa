@@ -178,4 +178,18 @@ class TagihanValidation{
         }
         return $request;
     }
+    public function bulkDelete(Request $request){
+        try{
+            $valid = Validator::make($request->all(),[
+                'inv_id' => 'required|array|min:1',
+                'inv_id.*' => 'required|string|exists:isp_invoice,inv_id',
+            ]);
+            if ($valid->fails()){
+                return collect($valid->errors()->all())->join('#');
+            }
+            return $request;
+        }catch (Exception $exception){
+            throw new Exception($exception->getMessage());
+        }
+    }
 }
